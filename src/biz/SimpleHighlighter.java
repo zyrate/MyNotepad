@@ -3,10 +3,7 @@ package biz;
 import entity.Highlight;
 import view.MyTextPane;
 
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -137,7 +134,7 @@ public class SimpleHighlighter {
     }
     //设置默认样式
     public void defaultSetting(){
-        styledDocument.setCharacterAttributes(0, textPane.getText().length(), sys, true);
+        this.setCharacterAttributes(0, textPane.getText().length(), sys, true);
     }
 
     //返回是否准备好高亮
@@ -156,12 +153,15 @@ public class SimpleHighlighter {
         action(unimportantsList);
         transDefault();
     }
-    //先移除指定位置的高亮样式 - 解决了高亮短暂残留的问题
+    //先移除指定位置的高亮样式 - 解决了高亮短暂残留的问题 - 暂时解决了高亮报错问题
     public void highlight(int offset, int length){
         if(!hasPrepared())//没有准备或无设置就不高亮
             return;
         try{
-            styledDocument.setCharacterAttributes(offset, length, sys, true);
+
+            Thread.sleep(2);//这里高亮线程 “谦让一下”，不跟setText方法抢运行，就不报错了。但是文件越大sleep时间要越长
+
+            this.setCharacterAttributes(offset, length, sys, true);
         }catch (Exception e){
             System.out.println("Illegal cast to MutableAttributeSet");
         }
@@ -182,10 +182,10 @@ public class SimpleHighlighter {
                 len++;
             }else{
                 flag = true;
-                styledDocument.setCharacterAttributes(index, len, sys, true);
+                this.setCharacterAttributes(index, len, sys, true);
             }
         }
-        styledDocument.setCharacterAttributes(index, len, sys, true);//最后一次
+        this.setCharacterAttributes(index, len, sys, true);//最后一次
     }
 
     //这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下
@@ -286,14 +286,26 @@ public class SimpleHighlighter {
                     return false;
 
                 flag = true;
-                styledDocument.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);
+                this.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);
             }
         }
-        styledDocument.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);//最后一次
+        this.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);//最后一次
         return true;
     }
 
     private boolean hasHighlighted(int index){
         return highlighted[index] == 1;
     }
+
+    /**
+     * StyledDocument的方法，有可能有同步问题
+     * @param offset
+     * @param length
+     * @param s
+     * @param replace
+     */
+    private void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
+        styledDocument.setCharacterAttributes(offset, length, s, replace);
+    }
+
 }
