@@ -1,0 +1,164 @@
+公共区
+{.java .c .h .js .s .cpp
+[
+'[0-9]+\.?[0-9]*f*' : #ff4400;;
+'continue' : #3355cc bold;; 'break' : #3355cc bold;;'else' : #3355cc bold;;'return' : #3355cc bold;;'int' : #3355cc bold;;'for' : #3355cc bold;;'if' : #3355cc bold;;'while' : #3355cc bold;;'do' : #3355cc bold;;'void' : #3355cc bold;;'float' : #3355cc bold;;'double' : #3355cc bold;;'char' : #3355cc bold;; 'final' : #3355cc bold;; 'static' : #3355cc bold;; 'switch' : #3355cc bold;; 'case' : #3355cc bold;;
+'[A-Z0-9_]+' : #7E3D76 bold;;
+'<(>>>)|(>>)|(<<<)|(<<)>' : #DC143C;;
+]
+<
+'//' : #019858 !;;
+>
+(
+'/\*' '\*/' : #7373b9 !;;
+'\"' '\"' : #d26900 ~;;
+'\'' '\'' : #ff8000 ~;;
+)
+}
+{.c .cpp .java
+[
+'<[\?\:]>' : #DC143C;;
+]
+}
+笔记
+{.note
+[
+'<[0-9]+\.?[0-9]*>' : #ff4400;;
+'class' : #3355cc;;'private' : #3355cc;;'public' : #3355cc;;'else' : #3355cc;;'this' : #3355cc;;'return' : #3355cc;;'int' : #3355cc;;'for' : #3355cc;;'if' : #3355cc;;'while' : #3355cc;;'do' : #3355cc;;'int' : #3355cc;;'var' : #3355cc;;'new' : #3355cc;;'boolean' : #3355cc;;'void' : #3355cc;;'float' : #3355cc;;'double' : #3355cc;;'int' : #3355cc;;'char' : #3355cc;;
+'true' : #9f35ff;;'false' : #9f35ff;;'null' : #9f35ff;;'undefined' : #9f35ff;;'NaN' : #9f35ff;;'<&[a-z]+;>' : #9f35ff;;
+'<->|=>>' : #0000ff;;
+]
+<
+'//' : #00a677 !;;
+'!#' : #557cb5 italic underline "楷体" !;;
+'~#' : #557cb5 italic "楷体" !;;
+'#' : #005ab5 "楷体"  !;;
+>
+(
+'`' '`' : b#f9f2f4 #c7254e "Consolas" !;;
+'\'' '\'' : #bb3d00 !;;
+'\*\*\*' '\*\*\*' : #007979;;
+'\{.+\}\n' '\{end\}\n' : #ae8f00;;
+'\(' '\)' : #6e6e6e;;
+'（' '）' : #6e6e6e;; 
+'\"' '\"' : #0077ee !;;
+'\|“' '”\|' : #6c6c6c "楷体";;
+)
+}
+高亮
+{.highlights
+[
+'<#[0-9a-fA-F]{6}>' : #9f35ff;;'<[bB]#[0-9a-fA-F]{6}>' : #9f35ff b#dddddd !;;
+'<\;\;>' : #930000;;
+'bold' : #3355cc;;'italic' : #3355cc;;'underline' : #3355cc;;
+'<\.\w+\s+>' : #f75000;;
+'<[\!\?]>' : #000097 bold;;
+'<[\<\>\[\]\(\)\}\{]>' : #613030 bold 30 "微软雅黑";;
+]
+(
+'\'' '\'' : #007979 bold;;
+'\"' '\"' : #bb6655;;
+)
+}
+Java代码
+{.java
+[
+'instanceof' : #3355cc bold;;'finally' : #3355cc bold;;'super' : #3355cc bold;;'class' : #3355cc bold;; 'private' : #3355cc bold;; 'protected' : #3355cc bold;;'abstract' : #3355cc bold;;'implements' : #3355cc bold;;'extends' : #3355cc bold;;'public' : #3355cc bold;;'this' : #3355cc bold;;'new' : #3355cc bold;;'boolean' : #3355cc bold;;'void' : #3355cc bold;; 'try' : #3355cc bold;; 'catch' : #3355cc bold;; 'import' : #3355cc bold;; 'package' : #6c3365 bold;;
+'false' : #9F4D95 bold;;'null' : #9F4D95 bold;; 'true' : #6c3365 bold;;
+'<@\w+>' : #c6a300 bold;;
+]
+}
+C语言
+{.c .h .cpp
+[
+'(unsigned)|(signed)' : #3355cc bold;;'const' : #3355cc bold;;'typedef' : #3355cc bold;;'(enum)|(union)' : #3355cc bold;;
+'struct' : #3355cc bold;;'(long)|(short)' : #3355cc bold;;
+'<->>' : #842b00;;'register' : #3355cc bold;;'(extern|auto)' : #3355cc bold;;'default' : #3355cc bold;;'goto' : #3355cc bold;;
+'<#\w+>' : #484891 bold !;;
+'0[xX][0-9a-fA-F]+' : #ff0000;;
+'NULL' : #6c3365 bold;; 
+'sizeof' : #a23400;;
+]
+<
+'#include' : #467500;;
+>
+}
+JavaScript
+{.js .jsp
+[
+'var' : #3355cc bold;;'function' : #3355cc bold;;'in' : #3355cc bold;;'new' : #3355cc bold;;
+'document' : #6c3365 bold;;
+'this' : #9F4D95;;
+]
+}
+层叠样式表
+{.css
+[
+'<\.[a-zA-z0-9-_]+>' : #ae00ae;;
+'<#[a-zA-z0-9-_]+>' : #007979;;
+'<\{|\}>' : #9d9d9d;;
+'<[a-zA-Z0-9-]+\s*:>' : #ff4400;;
+'<([a-zA-Z0-9#-]|\s)+[;\n]>' : #b15bff;;
+'<:>' : #000000 !;;
+'<;>' : #000000 !;;
+'<\.>' : #9d9d9d !;;
+]
+(
+'/\*' '\*/' : #9d9d9d italic !;;
+'\'' '\'' : #984b4b !;;'\"' '\"' : #984b4b !;;
+)
+}
+JSP
+{.jsp
+[
+'<(<%)|(%>)|[@]>' :  #7b7b7b !;;
+'page' : #0080ff !;;
+]
+(
+'\"' '\"' : #d26900;;
+'<%@' '%>' : #bb00bb;;
+'<%' '%>' : #3c3c3c;;
+'<script.*>' '</script>' : #3c3c3c;;
+'<%--' '--%>' : #9d9d9d italic !;;
+)
+}
+超文本标记语言
+{.html .htm .xml .jsp .iml
+[
+'<.>' : #3c3c3c;;
+'<=>' : #3c3c3c !;;
+'<(</)|(/>)|(<\?)|(\?>)|[!<>]>' : #7b7b7b !;;
+'<<[a-zA-Z0-9/_\?\.-]+>' : #0055ca !;;
+'<=\s*"(.|\n)*?">' : #977c00 !;;
+'<&[a-z]+;>' : #9f35ff !;;
+]
+(
+'<!--' '-->' : #9d9d9d italic !;;
+'<' '>' : #4F94CD;;
+)
+}
+{.properties
+[
+'<=>' : #9d9d9d !;;
+]
+<
+'=' : #005757;;
+>
+}
+备忘录
+{.memo
+[
+'<[X|\+]>' : #ff0000;;
+'安装' : #7b7b7b !;;'下载' : #7b7b7b !;;
+'\d{4}-\d{1,2}-\d{1,2}' : #007979;;
+'<\|>' : #0000ff !;;
+]
+<
+'路径' : #977C00;;
+'#' : #ff8800;;
+>
+(
+'\(' '\)' : #FF359A ?;;
+'路' '径' : #7b7b7b !;;
+)
+}
