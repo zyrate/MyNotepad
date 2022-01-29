@@ -51,9 +51,9 @@ import java.util.List;
  *      - 选择高亮延迟问题优化
  *
  * >2.4 - 增加窗口快捷缩放移动功能
- *      # 统一版本号常量
- *      # 改变单双引号的自动跳过策略
- *      # 将删除方法改为选中某一行
+ *      - 统一版本号常量
+ *      - 改变单双引号的自动跳过策略
+ *      - 将删除方法改为选中某一行
  */
 
 /**
@@ -67,6 +67,11 @@ import java.util.List;
  * 2.3  高亮文件夹缺失时打不开 - 已解决
  * 2.3  修复点“无”时勾会消失的bug
  * 2.4  每次打开文件里面多余的空行会消失 ...
+ * 2.4  目前最严重的的问题就是在打开高亮的情况下，文本变动（尤其是长文本）经常会出现 Illegal cast to MutableAttributeSet
+ *      的报错。我估计原因就是setText的线程和highlighter线程冲突了。高亮应该永远在文本变动后开始，这里可能需要线程同步。
+ *      - 已部分解决：
+ *      我在SimpleHighlighter的部分highlight方法里添加了sleep(2)，不跟setTest抢，居然不报错了，就差这2ms，
+ *      目前测试打开100KB的java文件不报错，并且2ms的高亮延时用户也感觉不到，但这个方法终究不是长久之计，最优解还是线程同步。
  */
 public class AppFunc {
     public EditWin editWin;
