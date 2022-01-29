@@ -4,6 +4,7 @@ import view.EditWin;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Date;
 
 /**
  * 存储器
@@ -23,9 +24,9 @@ public class Saver {
             editWin.showStatus("就绪");
         }
         if(file != null){
-            editWin.showStatus("正在保存："+file.getName());
+            editWin.changeStatus("正在保存："+file.getName());
             save(1);
-            editWin.showStatus("已保存");
+            editWin.changeStatus(new Date().toLocaleString()+" 已保存");
         }
     }
     //另存为
@@ -35,9 +36,9 @@ public class Saver {
         file = select();
         editWin.showStatus("就绪");
         if(file != null){
-            editWin.showStatus("正在保存："+file.getName());
+            editWin.changeStatus("正在保存："+file.getName());
             save(2);
-            editWin.showStatus("已另存至："+file.getPath());
+            editWin.changeStatus(new Date().toLocaleString()+" 已另存至："+file.getPath());
         }
     }
 

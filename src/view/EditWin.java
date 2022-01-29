@@ -26,7 +26,8 @@ public class EditWin extends JFrame{
                         iFind, iReplace;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel footLabel;
-    private String footMessage = "就绪";//页脚信息
+    private String mainMessage = "就绪";//当前主要页脚信息
+    private String footMessage = mainMessage;//显示的页脚信息
     private String filePath = null;//打开某个文件的路径
     private String content = null;//打开某个文件的内容
 
@@ -205,7 +206,7 @@ public class EditWin extends JFrame{
     }
     //初始界面
     public void reBegin(){
-        footMessage = "就绪";
+        footMessage = mainMessage;
         content = null;
         filePath = null;
         textPane.setText("");
@@ -224,6 +225,11 @@ public class EditWin extends JFrame{
     //更新内容
     public void updateContent(){
         textPane.setText(content);
+    }
+    //更改主要状态信息
+    public void changeStatus(String mainMessage){
+        this.mainMessage = mainMessage;
+        showStatus(mainMessage);
     }
     //状态显示
     public void showStatus(String footMessage){
@@ -262,22 +268,22 @@ public class EditWin extends JFrame{
                     }
 
                     formattedText += ch;
-                    showStatus("格式化进度："+new DecimalFormat("#").format(i*1.0/length*100)+"%");
+                    changeStatus("格式化进度："+new DecimalFormat("#").format(i*1.0/length*100)+"%");
                 }
                 textPane.setText(formattedText);
-                showStatus("就绪");
+                changeStatus("就绪");
             }
         }.start();
     }
 
     /*为菜单等添加提示信息监听*/
     public void addListener(){
-//        textPane.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseEntered(MouseEvent e) {
-//                showStatus("就绪");
-//            }
-//        });
+        textPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                showStatus(mainMessage);
+            }
+        });
         mFile.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

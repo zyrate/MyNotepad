@@ -387,7 +387,7 @@ public class AppFunc {
     }
     //文本变动
     public void textChange(){
-        editWin.showStatus("就绪");
+        editWin.changeStatus("就绪");
         //是否改动
         if(editWin.getContent() != null){//content等于null代表目前没有打开任何已存在文件
             if(contentChange()){

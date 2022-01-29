@@ -21,10 +21,10 @@ public class Opener{
         this.file = file;
         this.charset = charset;
         if(file != null){
-            editWin.showStatus("正在打开："+file.getName());
+            editWin.changeStatus("正在打开："+file.getName());
             open();
         }
-        editWin.showStatus("就绪");
+        editWin.changeStatus("就绪");
     }
 
     public Opener(EditWin editWin, String charset){
@@ -33,10 +33,10 @@ public class Opener{
         editWin.showStatus("选择打开文件");
         file = select();
         if(file != null){
-            editWin.showStatus("正在打开："+file.getName());
+            editWin.changeStatus("正在打开："+file.getName());
             open();
         }
-        editWin.showStatus("就绪");
+        editWin.changeStatus("就绪");
     }
 
     public File select(){
