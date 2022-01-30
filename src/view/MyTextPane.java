@@ -524,6 +524,17 @@ public class MyTextPane extends JTextPane {
         for (end = pos; !getCharOfIndex(end).equals("\n"); end++);
         choose(start, end);
     }
+
+    /**
+     * 重写的setText方法，这个方法和高亮有线程冲突，要同步一下
+     * @param t
+     */
+    public void setText(String t){
+        //对Document对象进行同步
+        synchronized (this.getDocument()) {
+            super.setText(t);
+        }
+    }
     /*
      * 以下内部类全都用于实现自动强制折行 - 来源于网络
      */
