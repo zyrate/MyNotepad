@@ -159,7 +159,7 @@ public class SimpleHighlighter {
             return;
         try{
 
-            Thread.sleep(2);//这里高亮线程 “谦让一下”，不跟setText方法抢运行，就不报错了。但是文件越大sleep时间要越长
+            //Thread.sleep(2);//这里高亮线程 “谦让一下”，不跟setText方法抢运行，就不报错了。但是文件越大sleep时间要越长
 
             this.setCharacterAttributes(offset, length, sys, true);
         }catch (Exception e){
@@ -188,10 +188,11 @@ public class SimpleHighlighter {
         this.setCharacterAttributes(index, len, sys, true);//最后一次
     }
 
-    //这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下
+    //这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下 - 因为已改成了单线程，所以去掉了同步
     //添加了中断判断
-    private synchronized void action(ArrayList<Highlight> list) {
+    private void action(ArrayList<Highlight> list) {
         String text = textPane.getText().replaceAll("\\r", "");//这里还是需要把\r去掉
+        if(textPane == null) System.out.println(textPane);
         for (Highlight highlight : list)
             if (highlight.getType() == Highlight.KEYWORD) {//关键字
                 //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
@@ -305,7 +306,10 @@ public class SimpleHighlighter {
      * @param replace
      */
     private void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
-        styledDocument.setCharacterAttributes(offset, length, s, replace);
+        //这里对Document的修改进行同步（还有MyTextPane的setText方法
+        synchronized (this.styledDocument) {
+            styledDocument.setCharacterAttributes(offset, length, s, replace);
+        }
     }
 
 }
