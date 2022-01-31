@@ -51,7 +51,7 @@ public class EditWin extends JFrame{
         starAnimation();
     }
 
-    public void init(){
+    private void init(){
         pCenter = new JPanel();
         pFoot = new JPanel();
         menuBar = new JMenuBar();
@@ -80,7 +80,7 @@ public class EditWin extends JFrame{
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
         imEncoding = new JMenu("编码方式");
     }
-    public void set(){
+    private void set(){
         //从文件中读取窗口位置大小
         this.setBounds(DTUtil.getX()-50, DTUtil.getY(), DTUtil.getWidth(), DTUtil.getHeight());
         //设置最大最小化
@@ -107,7 +107,7 @@ public class EditWin extends JFrame{
         iCode.setState(DTUtil.getCodeMode());
         textPane.setCodeMode(DTUtil.getCodeMode());
     }
-    public void add(){
+    private void add(){
         menuBar.add(mFile);
         menuBar.add(mEdit);
         menuBar.add(mTools);
@@ -139,7 +139,7 @@ public class EditWin extends JFrame{
     }
 
     //初始化高亮菜单项
-    public void initHighlightMenu(){
+    private void initHighlightMenu(){
         File path = new File(SimpleHighlighter.PATH);
         if(!path.exists()){
             path.mkdir();
@@ -187,7 +187,7 @@ public class EditWin extends JFrame{
         textPane.highlight(offset, length);
     }
     //开始动画
-    public void starAnimation(){
+    private void starAnimation(){
         if(!DTUtil.getMaxFrame())//没有最大化才有动画
             for(int i = 50; i >= 0; i--){
                setLocation(DTUtil.getX()-i, DTUtil.getY());
@@ -277,139 +277,30 @@ public class EditWin extends JFrame{
     }
 
     /*为菜单等添加提示信息监听*/
-    public void addListener(){
-        textPane.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus(mainMessage);
-            }
-        });
-        mFile.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("打开、保存、恢复默认设置等");
-            }
-        });
-        mEdit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("关于文本的编辑、输入、显示等");
-            }
-        });
-        mHelp.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("有关该记事本的帮助信息");
-            }
-        });
-        mHighlight.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("设置是否启用高亮功能以及其样式");
-            }
-        });
-        mTools.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("实用小工具");
-            }
-        });
-        iCode.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("是否进入代码模式，Ctrl + \\");
-            }
-        });
-        iReplace.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("替换文本，Ctrl + R");
-            }
-        });
-        iFind.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("查找文本，Ctrl + F");
-            }
-        });
-        iAbout.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("关于记事本");
-            }
-        });
-        iCount.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("统计中英文字数、句数，F1");
-            }
-        });
-        iDate.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("追加当前日期，F2");
-            }
-        });
-        iFont.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("选择字体，Ctrl + T");
-            }
-        });
-        iLineWrap.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("是否自动换行");
-            }
-        });
-        iNew.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("新建未命名文件，Ctrl + N");
-            }
-        });
-        iNoHL.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("不高亮");
-            }
-        });
-        iNote.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("打开保存的笔记，F3");
-            }
-        });
-        iOpen.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("打开新文件，Ctrl + O");
-            }
-        });
-        iReset.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("恢复字体、界面大小、选择等默认设置");
-            }
-        });
-        iSave.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("保存本文件，Ctrl + S");
-            }
-        });
-        iSaveAnother.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("另存为本文件，Ctrl + P");
-            }
-        });
-        imEncoding.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                showStatus("设置编码方式以正确读取文件");
-            }
-        });
+    private void addListener(){
+        addFootTipListener(textPane, mainMessage);
+        addFootTipListener(mFile, "打开、保存、恢复默认设置等");
+        addFootTipListener(mEdit, "关于文本的编辑、输入、显示等");
+        addFootTipListener(mHelp, "有关该记事本的帮助信息");
+        addFootTipListener(mHighlight, "设置是否启用高亮功能以及其样式");
+        addFootTipListener(mTools, "实用小工具");
+        addFootTipListener(iCode, "是否进入代码模式，Ctrl + \\");
+        addFootTipListener(iReplace, "替换文本，Ctrl + R");
+        addFootTipListener(iFind, "查找文本，Ctrl + F");
+        addFootTipListener(iAbout, "关于记事本");
+        addFootTipListener(iCount, "统计中英文字数、句数，F1");
+        addFootTipListener(iDate, "追加当前日期，F2");
+        addFootTipListener(iFont, "选择字体，Ctrl + T");
+        addFootTipListener(iLineWrap, "是否自动换行");
+        addFootTipListener(iNew, "新建未命名文件，Ctrl + N");
+        addFootTipListener(iNoHL, "不高亮");
+        addFootTipListener(iNote, "打开保存的笔记，F3");
+        addFootTipListener(iOpen, "打开新文件，Ctrl + O");
+        addFootTipListener(iReset, "恢复字体、界面大小、选择等默认设置");
+        addFootTipListener(iSave, "保存本文件，Ctrl + S");
+        addFootTipListener(iSaveAnother, "另存为本文件，Ctrl + P");
+        addFootTipListener(imEncoding, "设置编码方式以正确读取文件");
+
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
             item.addMouseListener(new MouseAdapter() {
@@ -420,7 +311,19 @@ public class EditWin extends JFrame{
             });
         }
     }
+    /*为组件添加页脚提示监听器*/
+    private void addFootTipListener(JComponent comp, String tip){
+        comp.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                showStatus(tip);
+            }
+        });
+    }
 
+
+
+    //getter and setter
     public ArrayList<JCheckBoxMenuItem> getCharsetItems() {
         return charsetItems;
     }
