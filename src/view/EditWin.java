@@ -23,7 +23,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace;
+                        iFind, iReplace, iReOpen;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel footLabel;
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -79,6 +79,7 @@ public class EditWin extends JFrame{
         iReplace = new MyMenuItem("替换(R)");
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
         imEncoding = new JMenu("编码方式");
+        iReOpen = new MyMenuItem("重新载入(U)");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -119,6 +120,7 @@ public class EditWin extends JFrame{
         mFile.add(iOpen);
         mFile.add(iSave);
         mFile.add(iSaveAnother);
+        mFile.add(iReOpen);
         mFile.addSeparator();
         mFile.add(iReset);
         mEdit.add(iFont);
@@ -300,6 +302,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iSave, "保存本文件，Ctrl + S");
         addFootTipListener(iSaveAnother, "另存为本文件，Ctrl + P");
         addFootTipListener(imEncoding, "设置编码方式以正确读取文件");
+        addFootTipListener(iReOpen, "重新载入当前文件");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -324,6 +327,11 @@ public class EditWin extends JFrame{
 
 
     //getter and setter
+
+    public MyMenuItem getiReOpen() {
+        return iReOpen;
+    }
+
     public ArrayList<JCheckBoxMenuItem> getCharsetItems() {
         return charsetItems;
     }
@@ -332,48 +340,24 @@ public class EditWin extends JFrame{
         return pane;
     }
 
-    public void setPane(JScrollPane pane) {
-        this.pane = pane;
-    }
-
     public MyMenuItem getiNote() {
         return iNote;
-    }
-
-    public void setiNote(MyMenuItem iNote) {
-        this.iNote = iNote;
     }
 
     public MyMenuItem getiDate() {
         return iDate;
     }
 
-    public void setiDate(MyMenuItem iDate) {
-        this.iDate = iDate;
-    }
-
     public MyMenuItem getiNew() {
         return iNew;
-    }
-
-    public void setiNew(MyMenuItem iNew) {
-        this.iNew = iNew;
     }
 
     public MyMenuItem getiCount() {
         return iCount;
     }
 
-    public void setiCount(MyMenuItem iCount) {
-        this.iCount = iCount;
-    }
-
     public MyMenuItem getiAbout() {
         return iAbout;
-    }
-
-    public void setiAbout(MyMenuItem iAbout) {
-        this.iAbout = iAbout;
     }
 
     public JCheckBoxMenuItem getiLineWrap() {
@@ -384,20 +368,8 @@ public class EditWin extends JFrame{
         return iReset;
     }
 
-    public void setiReset(MyMenuItem iReset) {
-        this.iReset = iReset;
-    }
-
-    public void setiLineWrap(JCheckBoxMenuItem iLineWrap) {
-        this.iLineWrap = iLineWrap;
-    }
-
     public MyMenuItem getiFont() {
         return iFont;
-    }
-
-    public void setiFont(MyMenuItem iFont) {
-        this.iFont = iFont;
     }
 
     public String getContent() {
@@ -444,36 +416,12 @@ public class EditWin extends JFrame{
         return iOpen;
     }
 
-    public void setiOpen(MyMenuItem iOpen) {
-        this.iOpen = iOpen;
-    }
-
     public MyMenuItem getiSave() {
         return iSave;
     }
 
-    public void setiSave(MyMenuItem iSave) {
-        this.iSave = iSave;
-    }
-
     public MyMenuItem getiSaveAnother() {
         return iSaveAnother;
-    }
-
-    public void setiSaveAnother(MyMenuItem iSaveAnother) {
-        this.iSaveAnother = iSaveAnother;
-    }
-
-    public String getFootMessage() {
-        return footMessage;
-    }
-
-    public void setFootMessage(String footMessage) {
-        this.footMessage = footMessage;
-    }
-
-    public Font getTextFont() {
-        return textFont;
     }
 
     public void setTextFont(Font textFont) {
@@ -484,39 +432,22 @@ public class EditWin extends JFrame{
         return highlightItems;
     }
 
-    public void setHighlightItems(ArrayList<JCheckBoxMenuItem> highlightItems) {
-        this.highlightItems = highlightItems;
-    }
-
     public JCheckBoxMenuItem getiNoHL() {
         return iNoHL;
     }
 
-    public void setiNoHL(JCheckBoxMenuItem iNoHL) {
-        this.iNoHL = iNoHL;
-    }
 
     public MyMenuItem getiFind() {
         return iFind;
-    }
-
-    public void setiFind(MyMenuItem iFind) {
-        this.iFind = iFind;
     }
 
     public MyMenuItem getiReplace() {
         return iReplace;
     }
 
-    public void setiReplace(MyMenuItem iReplace) {
-        this.iReplace = iReplace;
-    }
 
     public JCheckBoxMenuItem getiCode() {
         return iCode;
     }
 
-    public void setiCode(JCheckBoxMenuItem iCode) {
-        this.iCode = iCode;
-    }
 }

@@ -54,6 +54,7 @@ import java.util.List;
  *      - 统一版本号常量
  *      - 改变单双引号的自动跳过策略
  *      - 将删除方法改为选中某一行
+ *      - 增加“重新载入”功能
  */
 
 /**
@@ -584,6 +585,14 @@ public class AppFunc {
             public void actionPerformed(ActionEvent e) {
                 //代码模式
                 onCodeModel();
+            }
+        });
+        editWin.getiReOpen().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nowPath = editWin.getFilePath();
+                if(nowPath != null)
+                    open(new File(nowPath));
             }
         });
         iCopy.addActionListener(new ActionListener() {
