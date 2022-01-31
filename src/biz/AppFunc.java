@@ -66,8 +66,8 @@ import java.util.List;
  * 2.2  背景高亮只会在有前景样式时显示 - 已解决
  * 2.3  高亮文件夹缺失时打不开 - 已解决
  * 2.3  修复点“无”时勾会消失的bug
- * 2.4  每次打开文件里面多余的空行会消失 ...
- * 2.4  目前最严重的的问题就是在打开高亮的情况下，文本变动（尤其是长文本）经常会出现 Illegal cast to MutableAttributeSet
+ * 2.4  每次打开文件里面多余的空行会消失 - 好像已经没了(2.42)
+ * 2.42 目前最严重的的问题就是在打开高亮的情况下，文本变动（尤其是长文本）经常会出现 Illegal cast to MutableAttributeSet
  *      的报错。我估计原因就是setText的线程和highlighter线程冲突了。高亮应该永远在文本变动后开始，这里可能需要线程同步。
  *      - 已部分解决：
  *      我在SimpleHighlighter的部分highlight方法里添加了sleep(2)，不跟setTest抢，居然不报错了，就差这2ms，
@@ -75,7 +75,7 @@ import java.util.List;
  *      - 已解决：
  *      归根结底是SimpleHighlighter和MyTextPane的高亮和setText方法在争夺Document对象，所以在这两个方法里加入了对这个对象的
  *      同步代码块，便不报错了。
- * 2.4  但发现一个新问题，就是生成一对符号的时候，有时候highlighter的action方法里会报空指针或ConcurrentModificationException
+ * 2.42 但发现一个新问题，就是生成一对符号的时候，有时候highlighter的action方法里会报空指针或ConcurrentModificationException
  */
 public class AppFunc {
     public EditWin editWin;

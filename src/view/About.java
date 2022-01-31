@@ -11,9 +11,9 @@ import java.awt.event.ActionListener;
 
 public class About extends JDialog{
     //统一版本号，只需修改这里
-    public static final String VERSION = "V2.4";
+    public static final String VERSION = "V2.42";
     //更新时间
-    public static final String UPDATE = "2019-"+"9-4";
+    public static final String UPDATE = "2022-"+"1-31";
 
     public About(EditWin editWin){
         setModal(true);

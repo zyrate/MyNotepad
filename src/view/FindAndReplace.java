@@ -1,6 +1,7 @@
 package view;
 import util.CompFactory;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ public class FindAndReplace extends JDialog{
             bPre = CompFactory.createButton("上一个"),
             bReplace = CompFactory.createButton("替换"),
             bReplaceAll = CompFactory.createButton("替换全部");
-    private JTextArea taTip = CompFactory.createTextArea(295, 32, 100, 50);
+    private JTextArea taTip = CompFactory.createTextArea(290, 32, 120, 50);
     private static final int WIDTH = 408, HEIGHT = 230;
     private int currIndex = 0;
     private String currContent = "";
@@ -68,7 +69,8 @@ public class FindAndReplace extends JDialog{
         bPre.setBounds(212, 150, 90, 35);
         bReplace.setBounds(8,150,90,35);
         bReplaceAll.setBounds(100, 150, 110, 35);
-        taTip.setText("支持正则\n以/开头，/结尾");
+        taTip.setText("支持正则\n以/开头,/结尾");
+        taTip.setFont(new Font("楷体",1, 15));
         add(lFind);
         add(tFind);
         add(bPre);
