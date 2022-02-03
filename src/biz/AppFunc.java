@@ -59,7 +59,7 @@ import java.util.List;
 
 /**
  * BUG
- * 2.0  在打开一个文件后，用输入法打字，进行撤销时会混乱甚至卡住。...
+ * 2.0  #在打开一个文件后，用输入法打字，进行撤销时会混乱甚至卡住。...
  * 2.1  不高亮问题 - 少了个!号 - 已解决
  * 2.2  修复了首次打开文件会每行多一个回车的bug，具体在Opener
  * 2.2  查找时焦点可以移到替换框内，并用快捷键进行替换 - 已解决
@@ -73,10 +73,13 @@ import java.util.List;
  *      - 已部分解决：
  *      我在SimpleHighlighter的部分highlight方法里添加了sleep(2)，不跟setTest抢，居然不报错了，就差这2ms，
  *      目前测试打开100KB的java文件不报错，并且2ms的高亮延时用户也感觉不到，但这个方法终究不是长久之计，最优解还是线程同步。
- *      - 已解决：
+ *      - 已解决：(线程同步)
  *      归根结底是SimpleHighlighter和MyTextPane的高亮和setText方法在争夺Document对象，所以在这两个方法里加入了对这个对象的
  *      同步代码块，便不报错了。
- * 2.42 但发现一个新问题，就是生成一对符号的时候，有时候highlighter的action方法里会报空指针或ConcurrentModificationException
+ * 2.42 #但发现一个新问题，就是生成一对符号的时候，有时候highlighter的action方法里会报空指针或ConcurrentModificationException
+ * 2.42 没有实现真正的不自动换行。 - 已解决
+ * 2.42 #在开启高亮的情况下新建文件，此时高亮器就会一直开启，点无也关不掉
+ * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决
  */
 public class AppFunc {
     public EditWin editWin;

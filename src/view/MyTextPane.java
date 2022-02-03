@@ -2,21 +2,22 @@ package view;
 import biz.SimpleHighlighter;
 import util.JavaUtil;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.security.Key;
 /**
  * 自定义的富文本框 - 为了封装一些功能
  * 有高亮方法可供外界调用
  */
 public class MyTextPane extends JTextPane {
-    private EditorKit def = this.getEditorKit();
-    private EditorKit wrap = new WrapEditorKit();
+    //从一开始就更改Kit
+    private EditorKit myKit = new MyStyledEditorKit();
     private AttributeSet defAttribute = this.getInputAttributes();
     private SimpleHighlighter highlighter;
     private boolean isCodeMode = true;//是否是代码模式
+    private boolean isWrap = false;//是否自动换行
     public MyTextPane(){
         this.setSelectionColor(new Color(89, 116, 171));
         this.setSelectedTextColor(new Color(247, 247, 247));
@@ -139,13 +140,16 @@ public class MyTextPane extends JTextPane {
      */
     private void backSpace(){
         int pos = this.getCaretPosition();
+        String preChar = getPreChar();
+        String nextChar = getNextChar();
         if(this.getSelectedText() != null){//选中了内容
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
-        }else if(getPreChar().equals("(") && getNextChar().equals(")") ||
-                getPreChar().equals("{") && getNextChar().equals("}")  ||
-                getPreChar().equals("[") && getNextChar().equals("]")  ||
-                getPreChar().equals("'") && getNextChar().equals("'")  ||
-                getPreChar().equals("\"") && getNextChar().equals("\"")){
+        }else if(//优化了效率(2.42)
+                preChar.equals("(") && nextChar.equals(")") ||
+                preChar.equals("{") && nextChar.equals("}")  ||
+                preChar.equals("[") && nextChar.equals("]")  ||
+                preChar.equals("'") && nextChar.equals("'")  ||
+                preChar.equals("\"") && nextChar.equals("\"")){
             replaceRange("", pos-1,pos+1);
         }else
             replaceRange("", pos-1,pos);
@@ -405,10 +409,9 @@ public class MyTextPane extends JTextPane {
     public void setLineWrap(boolean lineWrap){
         //这里换行改变之后原来的内容会丢失，所以要重新加文本
         String text = this.getText();
-        if(lineWrap)
-            this.setEditorKit(wrap);
-        else
-            this.setEditorKit(def);
+        //这里有改动(2.42)
+        this.isWrap = lineWrap;
+        this.setEditorKit(myKit);
         this.setText(text);
     }
     //插入文本
@@ -535,24 +538,46 @@ public class MyTextPane extends JTextPane {
             super.setText(t);
         }
     }
-    /*
-     * 以下内部类全都用于实现自动强制折行 - 来源于网络
+
+    /**
+     * 以下两方法用于实现不换行
+     * @return
      */
-    private class WrapEditorKit extends StyledEditorKit {
-        private ViewFactory defaultFactory = new WarpColumnFactory();
-        @Override
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        if(isWrap) return super.getScrollableTracksViewportWidth();
+        return getUI().getPreferredSize(this).width
+                <= getParent().getSize().width;
+    };
+
+    @Override
+    public Dimension getPreferredSize() {
+        if(isWrap) return super.getPreferredSize();
+        return getUI().getPreferredSize(this);
+    };
+
+    /**
+     * 以下类用于解决JTextPane奇怪的换行问题
+     */
+    class MyStyledEditorKit extends StyledEditorKit {
+        private MyFactory factory;
+
         public ViewFactory getViewFactory() {
-            return defaultFactory;
+            if (factory == null) {
+                factory = new MyFactory();
+            }
+            return factory;
         }
     }
-    private class WarpColumnFactory implements ViewFactory {
+
+    class MyFactory implements ViewFactory {
         public View create(Element elem) {
             String kind = elem.getName();
             if (kind != null) {
                 if (kind.equals(AbstractDocument.ContentElementName)) {
-                    return new WrapLabelView(elem);
+                    return new MyLabelView(elem);
                 } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
-                    return new ParagraphView(elem);
+                    return new MyParagraphView(elem);
                 } else if (kind.equals(AbstractDocument.SectionElementName)) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals(StyleConstants.ComponentElementName)) {
@@ -561,16 +586,48 @@ public class MyTextPane extends JTextPane {
                     return new IconView(elem);
                 }
             }
+
             // default to text display
             return new LabelView(elem);
         }
     }
-    private class WrapLabelView extends LabelView {
-        public WrapLabelView(Element elem) {
+
+    class MyParagraphView extends ParagraphView {
+
+        public MyParagraphView(Element elem) {
             super(elem);
         }
+        public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+            super.removeUpdate(e, a, f);
+            resetBreakSpots();
+        }
+        public void insertUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+            super.insertUpdate(e, a, f);
+            resetBreakSpots();
+        }
+
+        private void resetBreakSpots() {
+            for (int i=0; i<layoutPool.getViewCount(); i++) {
+                View v=layoutPool.getView(i);
+                if (v instanceof MyLabelView) {
+                    ((MyLabelView)v).resetBreakSpots();
+                }
+            }
+        }
+
+    }
+
+    class MyLabelView extends LabelView {
+
+        boolean isResetBreakSpots=false;
+
+        public MyLabelView(Element elem) {
+            super(elem);
+        }
+        //强制折行
         @Override
         public float getMinimumSpan(int axis) {
+            if(!isWrap) return super.getMinimumSpan(axis);
             switch (axis) {
                 case View.X_AXIS:
                     return 0;
@@ -578,6 +635,29 @@ public class MyTextPane extends JTextPane {
                     return super.getMinimumSpan(axis);
                 default:
                     throw new IllegalArgumentException("Invalid axis: " + axis);
+            }
+        }
+
+        public View breakView(int axis, int p0, float pos, float len) {
+            if (axis == View.X_AXIS) {
+                resetBreakSpots();
+            }
+            return super.breakView(axis, p0, pos, len);
+        }
+
+        public void resetBreakSpots() {
+            isResetBreakSpots=true;
+            removeUpdate(null, null, null);
+            isResetBreakSpots=false;
+        }
+
+        public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+            super.removeUpdate(e, a, f);
+        }
+
+        public void preferenceChanged(View child, boolean width, boolean height) {
+            if (!isResetBreakSpots) {
+                super.preferenceChanged(child, width, height);
             }
         }
     }

@@ -299,7 +299,8 @@ public class SimpleHighlighter {
     }
 
     /**
-     * StyledDocument的方法，有可能有同步问题
+     * StyledDocument的方法，有可能有同步问题 - 已同步
+     * 多空格的问题出在这个原生方法
      * @param offset
      * @param length
      * @param s
