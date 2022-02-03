@@ -78,7 +78,7 @@ import java.util.List;
  *      同步代码块，便不报错了。
  * 2.42 #但发现一个新问题，就是生成一对符号的时候，有时候highlighter的action方法里会报空指针或ConcurrentModificationException
  * 2.42 没有实现真正的不自动换行。 - 已解决
- * 2.42 #在开启高亮的情况下新建文件，此时高亮器就会一直开启，点无也关不掉
+ * 2.42 在开启高亮的情况下新建文件，此时高亮器就会一直开启，点无也关不掉 - 已解决(pauseHlt)
  * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决
  */
 public class AppFunc {
@@ -302,6 +302,9 @@ public class AppFunc {
                 return;
             }
         }
+        //暂停高亮响应
+        pauseHlt = true;
+
         //新建界面
         editWin.reBegin();
 
@@ -332,6 +335,8 @@ public class AppFunc {
     }
     //打开之后的操作
     public void afterOpen(){
+        //开启高亮响应
+        pauseHlt = false;
         //准备高亮
         prepareHighlight();
         //高亮
@@ -342,12 +347,16 @@ public class AppFunc {
     //保存
     public void save(){
         new Saver(editWin);
+        //开启高亮响应
+        pauseHlt = false;
         prepareHighlight();
         highlight();
     }
     //另存为
     public void saveAnother(){
         new Saver(editWin, null);
+        //开启高亮响应
+        pauseHlt = false;
         prepareHighlight();
     }
     //选择字体
@@ -798,7 +807,6 @@ public class AppFunc {
                             public void run() {
                                 pauseHlt = true;//高亮先暂停
                                 open(new File(editWin.getFilePath()));
-                                pauseHlt = false;
                                 highlight();
                             }
                         }.start();
