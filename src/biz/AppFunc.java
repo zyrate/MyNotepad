@@ -80,6 +80,7 @@ import java.util.List;
  * 2.42 没有实现真正的不自动换行。 - 已解决
  * 2.42 在开启高亮的情况下新建文件，此时高亮器就会一直开启，点无也关不掉 - 已解决(pauseHlt)
  * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决
+ * 2.42 #在较大文件中，开启高亮时，使用注释快捷键反应较慢，并且若长按快捷键会报错崩溃 - 已部分解决
  */
 public class AppFunc {
     public EditWin editWin;
@@ -218,15 +219,18 @@ public class AppFunc {
                 !editWin.getTextPane().getSHighlighter().hasPrepared()){
             return;
         }
-        if(t_highlight != null && t_highlight.isAlive())
-            t_highlight.stop();
-        t_highlight = new Thread(){
-            @Override
-            public void run() {
-                highlight(offset, length);
-            }
-        };
-        t_highlight.start();
+        //在这里进行了文本变动与高亮的同步
+        synchronized (editWin.getTextPane().getDocument()) {
+            if (t_highlight != null && t_highlight.isAlive())
+                t_highlight.stop();
+            t_highlight = new Thread() {
+                @Override
+                public void run() {
+                    highlight(offset, length);
+                }
+            };
+            t_highlight.start();
+        }
     }
     //复制
     public void copy(){

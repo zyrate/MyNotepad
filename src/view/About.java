@@ -13,7 +13,7 @@ public class About extends JDialog{
     //统一版本号，只需修改这里
     public static final String VERSION = "V2.42";
     //更新时间
-    public static final String UPDATE = "2022-"+"1-31";
+    public static final String UPDATE = "2022-"+"2-3";
 
     public About(EditWin editWin){
         setModal(true);

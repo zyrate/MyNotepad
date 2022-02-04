@@ -419,22 +419,14 @@ public class MyTextPane extends JTextPane {
         if(this.getSelectedText() != null) {//选中了内容
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
         }
-        try {
-            this.getDocument().insertString(offset, content, defAttribute);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        this.insertString(offset, content, defAttribute);
     }
     //在当前光标位置插入文本
     public void insert(String content){
         if(this.getSelectedText() != null) {//选中了内容
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
         }
-        try {
-            this.getDocument().insertString(this.getCaretPosition(), content, defAttribute);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        this.insertString(this.getCaretPosition(), content, defAttribute);
     }
     //异步插入 - 在当前光标位置插入文本，但不改变光标位置
     public void asynInsert(String content){
@@ -451,11 +443,7 @@ public class MyTextPane extends JTextPane {
     }
     //不管选中的插入
     public void justInsert(String content, int offset){
-        try {
-            this.getDocument().insertString(offset, content, defAttribute);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        this.insertString(offset, content, defAttribute);
     }
     //从当前位置偏移
     public void offsetFromCare(int offset){
@@ -492,21 +480,13 @@ public class MyTextPane extends JTextPane {
     }
     //替换文本
     public void replaceRange(String replaceText, int start, int end){
-        try {
-            this.getDocument().remove(start, end-start);
-            insert(replaceText, start);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        this.removeString(start, end-start);
+        insert(replaceText, start);
     }
     //替换文本 - 不管选中
     public void justReplaceRange(String replaceText, int start, int end){
-        try {
-            this.getDocument().remove(start, end-start);
-            justInsert(replaceText, start);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        this.removeString(start, end-start);
+        justInsert(replaceText, start);
     }
     //追加文本
     public void append(String content){
@@ -536,6 +516,21 @@ public class MyTextPane extends JTextPane {
         //对Document对象进行同步
         synchronized (this.getDocument()) {
             super.setText(t);
+        }
+    }
+    //以下解决由于文本变动导致的同步问题 (转移到了在AppFunc的onHighlight里添加)
+    public void insertString(int offset, String str, AttributeSet a){
+        try {
+            this.getDocument().insertString(offset, str, defAttribute);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+    public void removeString(int offs, int len){
+        try {
+            this.getDocument().remove(offs, len);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
         }
     }
 
