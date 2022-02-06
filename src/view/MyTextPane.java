@@ -308,6 +308,35 @@ public class MyTextPane extends JTextPane {
             }
         }
     }
+
+    /**
+     * 得到光标所在行数，从1计数
+     * @return
+     */
+    public int getCursorLine(){
+        String text = this.getText().replaceAll("\\r", "");;
+        int pos = getCaretPosition();
+        int line = 0;
+        for(int i=0; i<pos; i++){
+            if(text.charAt(i) == '\n') line++;
+        }
+        return line+1;
+    }
+
+    /**
+     * 得到光标所在列数，从1计数
+     * @return
+     */
+    public int getCursorColumn(){
+        String text = this.getText().replaceAll("\\r", "");;
+        int pos = getCaretPosition();
+        int column = 0;
+        for(int i=pos-1; i>=0 && text.charAt(i)!='\n'; i--){
+            column++;
+        }
+        return column+1;
+    }
+
     /**
      * 用于特殊键盘事件的监听
      * 都是屏蔽系统的监听器（或者系统不响应），自己处理

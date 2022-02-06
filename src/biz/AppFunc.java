@@ -1,8 +1,6 @@
 package biz;
-
 import util.DTUtil;
 import view.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.Document;
@@ -55,8 +53,8 @@ import java.util.List;
  *      - 改变单双引号的自动跳过策略
  *      - 将删除方法改为选中某一行
  *      - 增加“重新载入”功能
+ *      - 增加底部行列计数和编码显示
  */
-
 /**
  * BUG
  * 2.0  #在打开一个文件后，用输入法打字，进行撤销时会混乱甚至卡住。...
@@ -81,6 +79,7 @@ import java.util.List;
  * 2.42 在开启高亮的情况下新建文件，此时高亮器就会一直开启，点无也关不掉 - 已解决(pauseHlt)
  * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决
  * 2.42 #在较大文件中，开启高亮时，使用注释快捷键反应较慢，并且若长按快捷键会报错崩溃 - 已部分解决
+ * 2.42 #现在还会有关于高亮的BUG，是因为目前只是实现了对Document的互斥操作，而没有实现优先文本变动，随后再高亮的同步逻辑
  */
 public class AppFunc {
     public EditWin editWin;
@@ -93,7 +92,6 @@ public class AppFunc {
     private String highlightSettingName = DTUtil.getHighlightName();
     //暂停高亮响应
     private boolean pauseHlt = false;
-
     //右键菜单
     private JPopupMenu popup;
     private MyMenuItem iCopy, iPaste, iCut, iDelete, iSelectAll, iFomart;
@@ -108,10 +106,8 @@ public class AppFunc {
     public static final int NOTES = 8;
     public static final int FIND = 9;
     public static final int REPLACE = 10;
-
     public AppFunc(EditWin editWin){
         this.editWin = editWin;
-
         undo = new UndoManager();
         iCopy = new MyMenuItem("复制(C)");
         iPaste = new MyMenuItem("粘贴(V)");
@@ -129,12 +125,9 @@ public class AppFunc {
         popup.add(iFomart);
         //这里必须要是area去add
         editWin.getTextPane().add(popup);
-
         addHandler();
         addListener();
-
     }
-
     //处理菜单事件
     public void menuDeal(int event){
         /* 才发现多线程会让同一个方法效果不一样！
@@ -163,11 +156,9 @@ public class AppFunc {
                     find();
                 else if(event == REPLACE)
                     replace();
-
             }
         }.start();
     }
-
     //代码模式
     private void onCodeModel(){
         if(!editWin.getTextPane().getCodeMode()){
@@ -182,7 +173,6 @@ public class AppFunc {
             editWin.showStatus("退出代码模式");
         }
     }
-
     //查找
     private void find(){
         FindAndReplace.getInstance("find", editWin);
@@ -191,7 +181,6 @@ public class AppFunc {
     private void replace(){
         FindAndReplace.getInstance("replace", editWin);
     }
-
     //准备高亮
     public void prepareHighlight(){
         if(editWin.getFilePath() == null)
@@ -282,7 +271,6 @@ public class AppFunc {
     public void choose(){
         editWin.getTextPane().chooseLine();
     }
-
     //笔记
     public void notes(){
         new Notes(this);
@@ -308,10 +296,8 @@ public class AppFunc {
         }
         //暂停高亮响应
         pauseHlt = true;
-
         //新建界面
         editWin.reBegin();
-
         //撤销器重置
         undo.discardAllEdits();
     }
@@ -335,7 +321,6 @@ public class AppFunc {
         //自选文件
         new Opener(editWin, DTUtil.getCharset());
         afterOpen();
-
     }
     //打开之后的操作
     public void afterOpen(){
@@ -389,7 +374,6 @@ public class AppFunc {
                 DTUtil.setMaxFrame(true);
             }else{
                 DTUtil.setMaxFrame(false);
-
                 DTUtil.setX(editWin.getX());
                 DTUtil.setY(editWin.getY());
                 DTUtil.setWidth(editWin.getWidth());
@@ -399,8 +383,6 @@ public class AppFunc {
         editWin.closeAnimation();
         System.exit(0);
     }
-
-
     //重置
     public void reset(){
         editWin.getTextPane().setFont(new Font(FontChooser.fontsName[DTUtil.getFontIndex()], DTUtil.getStyleIndex(), DTUtil.getFontSize()+10));//加数字
@@ -417,7 +399,6 @@ public class AppFunc {
                 editWin.setTitle(editWin.getFilePath()+" - 记事本");
             }
         }
-
     }
     //内容是否变动
     public boolean contentChange(){
@@ -443,7 +424,6 @@ public class AppFunc {
         }
         return true;
     }
-
     public void addHandler(){
         //为文本框添加数据传输器（拖拽功能）
         //实现后，swing原有的支持剪切、复制和粘贴的键盘绑定的功能会失效，只需自己监听即可
@@ -475,10 +455,10 @@ public class AppFunc {
             }
         });
     }
-
     //文本监听，之所以单独列出来是因为换行策略更改后document会随之变化，之前的监听器将失效，需要再次注册
     //这里每次开始新的高亮线程之前都停止之前的线程，保证了同一时间内只有一个高亮线程
     public void docListen(){
+        editWin.cursorChange();
         document = editWin.getTextPane().getDocument();
         document.addDocumentListener(new DocumentListener() {
             @Override
@@ -486,21 +466,17 @@ public class AppFunc {
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 //这个bug让我找了好长时间，尽量不用这个方法，否则有可能无限循环
             }
         });
     }
-
-
     public void addListener(){
         //文本监听
         docListen();
@@ -647,8 +623,6 @@ public class AppFunc {
                 editWin.format();
             }
         });
-
-
         //窗口监听
         editWin.addWindowListener(new WindowAdapter() {
             @Override
@@ -736,12 +710,20 @@ public class AppFunc {
                 }else if(alt && e.getKeyCode() == KeyEvent.VK_RIGHT){
                     editWin.setLocation(editWin.getX()+10, editWin.getY());
                 }
+
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //这里调用不会有先后问题
+                editWin.cursorChange();
+
             }
         });
         //鼠标监听
         editWin.getTextPane().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                editWin.cursorChange();
                 //右键
                 if(e.getButton() == MouseEvent.BUTTON3){
                     popup.show(editWin.getTextPane(), e.getX(), e.getY());
@@ -754,10 +736,8 @@ public class AppFunc {
             public void focusGained(FocusEvent e) {
                 highlight();
             }
-
             @Override
             public void focusLost(FocusEvent e) {
-
             }
         });
         //高亮菜单监听
@@ -804,7 +784,6 @@ public class AppFunc {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     DTUtil.setCharset(item.getLabel());
-
                     if(editWin.getFilePath() != null) {
                         new Thread(){
                             @Override

@@ -4,6 +4,7 @@ import biz.SimpleHighlighter;
 import util.DTUtil;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  */
 
 public class EditWin extends JFrame{
-    private JPanel pCenter, pFoot;
+    private JPanel pCenter, pFoot, pFootLeft, pFootRight;
     private MyTextPane textPane;//改 - 富文本
     private JScrollPane pane;
     private JMenuBar menuBar;
@@ -25,7 +26,7 @@ public class EditWin extends JFrame{
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
-    private JLabel footLabel;
+    private JLabel lFoot1, lFoot2, lFoot3; //底部的各个信息标签，1-介绍，2-编码，3-位置
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
     private String filePath = null;//打开某个文件的路径
@@ -54,6 +55,8 @@ public class EditWin extends JFrame{
     private void init(){
         pCenter = new JPanel();
         pFoot = new JPanel();
+        pFootRight = new JPanel();
+        pFootLeft = new JPanel();
         menuBar = new JMenuBar();
         mFile = new JMenu("文件(F)");
         mEdit = new JMenu("编辑(E)");
@@ -62,7 +65,9 @@ public class EditWin extends JFrame{
         mHighlight = new JMenu("高亮(L)");
         textPane = new MyTextPane();
         pane = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        footLabel = new JLabel(footMessage);
+        lFoot1 = new JLabel(footMessage);
+        lFoot2 = new JLabel("UTF8");
+        lFoot3 = new JLabel("第 0 行，第 0 列");
         iOpen = new MyMenuItem("打开(O)");
         iSave = new MyMenuItem("保存(S)");
         iSaveAnother = new MyMenuItem("另存为(P)");
@@ -91,8 +96,13 @@ public class EditWin extends JFrame{
         ImageIcon imageIcon = new ImageIcon(EditWin.class.getResource("/icons/notepad.png"));
         this.setIconImage(imageIcon.getImage());
         pCenter.setLayout(new BorderLayout());
-        pFoot.setLayout(new FlowLayout(FlowLayout.LEFT));
+        pFoot.setLayout(new BorderLayout());
         pFoot.setPreferredSize(new Dimension(1, 22));
+        pFootLeft.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));//这句话是流式布局的垂直居中和水平边距
+        pFootRight.setLayout(new FlowLayout(FlowLayout.RIGHT, 30, 0));
+        lFoot1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+        lFoot2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+        lFoot3.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         menuBar.setBackground(Color.WHITE);
         textPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         mFile.setFont(menuFont);
@@ -102,6 +112,7 @@ public class EditWin extends JFrame{
         mHighlight.setFont(menuFont);
         textPane.setFont(textFont);
         iNoHL.setState(true);
+
         //文件读取
         textPane.setLineWrap(DTUtil.getLineWrap());
         iLineWrap.setState(DTUtil.getLineWrap());
@@ -115,7 +126,13 @@ public class EditWin extends JFrame{
         menuBar.add(mHighlight);
         menuBar.add(mHelp);
         pCenter.add(pane);//滚动条
-        pFoot.add(footLabel);
+
+        pFoot.add(pFootLeft, BorderLayout.WEST);
+        pFoot.add(pFootRight, BorderLayout.EAST);
+        pFootLeft.add(lFoot1);
+        pFootRight.add(lFoot3);
+        pFootRight.add(lFoot2);
+
         mFile.add(iNew);
         mFile.add(iOpen);
         mFile.add(iSave);
@@ -221,12 +238,17 @@ public class EditWin extends JFrame{
         else
             setTitle(filePath+" - 记事本");
         textPane.setFont(textFont);
-        footLabel.setText(footMessage);
+        lFoot1.setText(footMessage);
+        lFoot2.setText(DTUtil.getCharset());
     }
     //这两个更新分开写是因为更新文本好像会让光标移动，有时不想这样
     //更新内容
     public void updateContent(){
         textPane.setText(content);
+    }
+    //光标变动后，需要更新的内容 - 需要在文本、键盘和鼠标监听器调用
+    public void cursorChange(){
+        lFoot3.setText("第 "+textPane.getCursorLine()+" 行，第 "+textPane.getCursorColumn()+" 列");
     }
     //更改主要状态信息
     public void changeStatus(String mainMessage){
@@ -236,7 +258,7 @@ public class EditWin extends JFrame{
     //状态显示
     public void showStatus(String footMessage){
         this.footMessage = footMessage;
-        footLabel.setText(footMessage);
+        lFoot1.setText(footMessage);
     }
     //快速换行
     public void quickWrap(){
