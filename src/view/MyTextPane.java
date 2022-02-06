@@ -76,7 +76,7 @@ public class MyTextPane extends JTextPane {
      * @param offset =-1代表从光标所在位置
      * @param isAnother =true代表第一个非空白字符是{的话就再缩进一个TAB
      */
-    private void autoIndent(int offset, boolean isAnother){
+    public void autoIndent(int offset, boolean isAnother){
         int pos = offset>0 ? offset : this.getCaretPosition();
         String text = this.getText().replaceAll("\\r", "");//一定要去\r
         String indent = "";
@@ -138,7 +138,7 @@ public class MyTextPane extends JTextPane {
     /**
      * 自定义的退格
      */
-    private void backSpace(){
+    public void backSpace(){
         int pos = this.getCaretPosition();
         String preChar = getPreChar();
         String nextChar = getNextChar();
@@ -158,7 +158,7 @@ public class MyTextPane extends JTextPane {
      * 自动退格 - 如果光标前面一行都空白的话，就删到缩进处
      *         - 如果是成对的中间的话，就都删除 如[]
      */
-    private void autoBackspace(){
+    public void autoBackspace(){
         if(this.getSelectedText() != null) {//选中了内容
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
             return;
@@ -269,7 +269,7 @@ public class MyTextPane extends JTextPane {
     /**
      * 自动注释
      */
-    private void autoComment(){
+    public void autoComment(){
         if(this.getSelectedText() == null){//无选中
             boolean removed = rmAtBeginOfLine("//", -1);
             if(!removed)//没有//就加上
