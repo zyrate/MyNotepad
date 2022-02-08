@@ -302,7 +302,7 @@ public class EditWin extends JFrame{
 
     /*为菜单等添加提示信息监听*/
     private void addListener(){
-        addFootTipListener(textPane, mainMessage);
+        addFootTipListener(textPane, null);
         addFootTipListener(mFile, "打开、保存、恢复默认设置等");
         addFootTipListener(mEdit, "关于文本的编辑、输入、显示等");
         addFootTipListener(mHelp, "有关该记事本的帮助信息");
@@ -341,7 +341,7 @@ public class EditWin extends JFrame{
         comp.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                showStatus(tip);
+                showStatus(tip==null?mainMessage:tip);//如果tip是null就显示mainMessage
             }
         });
     }

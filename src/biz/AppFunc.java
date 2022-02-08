@@ -165,12 +165,12 @@ public class AppFunc {
             editWin.getTextPane().setCodeMode(true);
             DTUtil.setCodeMode(true);
             editWin.getiCode().setState(true);
-            editWin.showStatus("代码模式");
+            editWin.changeStatus("代码模式");
         }else{
             editWin.getTextPane().setCodeMode(false);
             DTUtil.setCodeMode(false);
             editWin.getiCode().setState(false);
-            editWin.showStatus("退出代码模式");
+            editWin.changeStatus("退出代码模式");
         }
     }
     //查找
@@ -233,7 +233,7 @@ public class AppFunc {
         Transferable trans = new StringSelection(editWin.getTextPane().getSelectedText());
         // 把文本内容设置到系统剪贴板
         clipboard.setContents(trans, null);
-        editWin.showStatus("已复制");
+        editWin.changeStatus("已复制");
     }
     //粘贴
     public void paste(){
@@ -265,7 +265,7 @@ public class AppFunc {
         }
         copy();
         editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
-        editWin.showStatus("已剪切");
+        editWin.changeStatus("已剪切");
     }
     //选中某一行
     public void choose(){
@@ -390,7 +390,7 @@ public class AppFunc {
     }
     //文本变动
     public void textChange(){
-        editWin.changeStatus("就绪");
+        //editWin.changeStatus("就绪");
         //是否改动
         if(editWin.getContent() != null){//content等于null代表目前没有打开任何已存在文件
             if(contentChange()){
