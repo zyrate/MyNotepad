@@ -11,6 +11,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,8 +54,10 @@ import java.util.List;
  *      - 改变单双引号的自动跳过策略
  *      - 将删除方法改为选中某一行
  *      - 增加“重新载入”功能
+ *      (2.43)
  *      - 增加底部行列计数和编码显示
  *      - 增加底部字数显示
+ *      - 增加打印接口 Ctrl+P
  */
 /**
  * BUG
@@ -66,7 +69,7 @@ import java.util.List;
  * 2.2  背景高亮只会在有前景样式时显示 - 已解决
  * 2.3  高亮文件夹缺失时打不开 - 已解决
  * 2.3  修复点“无”时勾会消失的bug
- * 2.4  每次打开文件里面多余的空行会消失 - 某种回车方式无法读取 - 已解决(2.42)
+ * 2.4  每次打开文件里面多余的空行会消失 - 某种回车方式无法读取 - 已解决(2.43)
  * 2.42 目前最严重的的问题就是在打开高亮的情况下，文本变动（尤其是长文本）经常会出现 Illegal cast to MutableAttributeSet
  *      的报错。我估计原因就是setText的线程和highlighter线程冲突了。高亮应该永远在文本变动后开始，这里可能需要线程同步。
  *      - 已部分解决：
@@ -107,6 +110,7 @@ public class AppFunc {
     public static final int NOTES = 8;
     public static final int FIND = 9;
     public static final int REPLACE = 10;
+    public static final int PRINT = 11;
     public AppFunc(EditWin editWin){
         this.editWin = editWin;
         undo = new UndoManager();
@@ -157,9 +161,21 @@ public class AppFunc {
                     find();
                 else if(event == REPLACE)
                     replace();
+                else if(event == PRINT)
+                    print();
             }
         }.start();
     }
+
+    //打印
+    private void print(){
+        try {
+            editWin.getTextPane().print();
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
+    }
+
     //代码模式
     private void onCodeModel(){
         if(!editWin.getTextPane().getCodeMode()){
@@ -589,6 +605,12 @@ public class AppFunc {
                     open(new File(nowPath));
             }
         });
+        editWin.getiPrint().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuDeal(PRINT);
+            }
+        });
         iCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -644,7 +666,7 @@ public class AppFunc {
                     save();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_O) {
                     open(null);
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_P) {
+                }else if(ctrl && shift && e.getKeyCode() == KeyEvent.VK_A) { //ctrl+shift+A
                     saveAnother();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_T) {
                     chooseFont();
@@ -680,13 +702,15 @@ public class AppFunc {
                     notes();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_F12){
                     //测试键
-                    editWin.getTextPane().text();
+                    editWin.getTextPane().test();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_F){
                     find();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_R) {
                     replace();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
                     onCodeModel();
+                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_P) {
+                    print();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_UP){
                     e.consume();
                     editWin.setSize(editWin.getWidth(), editWin.getHeight()+12);

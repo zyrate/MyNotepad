@@ -7,6 +7,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.print.PrinterException;
+
 /**
  * 自定义的富文本框 - 为了封装一些功能
  * 有高亮方法可供外界调用
@@ -23,10 +25,12 @@ public class MyTextPane extends JTextPane {
         this.setSelectedTextColor(new Color(247, 247, 247));
         addKeyLisener();
     }
-    public void text(){
-//        insert(")", getCaretPosition());
-//        System.out.println(getCaretPosition());
+
+    //Ctrl + F12 测试
+    public void test(){
+
     }
+
     //设置代码模式
     public void setCodeMode(boolean isCodeMode){
         this.isCodeMode = isCodeMode;

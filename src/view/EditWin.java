@@ -24,7 +24,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen;
+                        iFind, iReplace, iReOpen, iPrint;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -69,10 +69,10 @@ public class EditWin extends JFrame{
         lFoot2 = new JLabel("UTF8");
         lFoot3 = new JLabel("第 0 行，第 0 列");
         lFoot4 = new JLabel("共 0 字");
-        iOpen = new MyMenuItem("打开(O)");
+        iOpen = new MyMenuItem("打开(O)...");
         iSave = new MyMenuItem("保存(S)");
-        iSaveAnother = new MyMenuItem("另存为(P)");
-        iFont = new MyMenuItem("字体(T)");
+        iSaveAnother = new MyMenuItem("另存为(A)...");
+        iFont = new MyMenuItem("字体(T)...");
         iReset = new MyMenuItem("恢复默认设置");
         iAbout = new MyMenuItem("关于记事本");
         iCount = new MyMenuItem("F1 字数统计");
@@ -81,11 +81,12 @@ public class EditWin extends JFrame{
         iNote = new MyMenuItem("F3 笔记");
         iLineWrap = new JCheckBoxMenuItem("自动换行");
         iNoHL = new JCheckBoxMenuItem("无");
-        iFind = new MyMenuItem("查找(F)");
-        iReplace = new MyMenuItem("替换(R)");
+        iFind = new MyMenuItem("查找(F)...");
+        iReplace = new MyMenuItem("替换(R)...");
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
         imEncoding = new JMenu("编码方式");
         iReOpen = new MyMenuItem("重新载入(U)");
+        iPrint = new MyMenuItem("打印(P)...");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -141,6 +142,8 @@ public class EditWin extends JFrame{
         mFile.add(iSave);
         mFile.add(iSaveAnother);
         mFile.add(iReOpen);
+        mFile.addSeparator();
+        mFile.add(iPrint);
         mFile.addSeparator();
         mFile.add(iReset);
         mEdit.add(iFont);
@@ -329,9 +332,10 @@ public class EditWin extends JFrame{
         addFootTipListener(iOpen, "打开新文件，Ctrl + O");
         addFootTipListener(iReset, "恢复字体、界面大小、选择等默认设置");
         addFootTipListener(iSave, "保存本文件，Ctrl + S");
-        addFootTipListener(iSaveAnother, "另存为本文件，Ctrl + P");
+        addFootTipListener(iSaveAnother, "另存为本文件，Ctrl + Shift + A");
         addFootTipListener(imEncoding, "设置编码方式以正确读取文件");
         addFootTipListener(iReOpen, "重新载入当前文件");
+        addFootTipListener(iPrint, "打印当前文件内容，Ctrl + P");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -356,6 +360,10 @@ public class EditWin extends JFrame{
 
 
     //getter and setter
+
+    public MyMenuItem getiPrint() {
+        return iPrint;
+    }
 
     public MyMenuItem getiReOpen() {
         return iReOpen;
