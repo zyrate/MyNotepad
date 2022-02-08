@@ -62,13 +62,15 @@ public class Opener{
                 reader = new BufferedReader(new FileReader(file));//默认字符集
 
             //readLine方法不读\n
+            boolean firstLine = true; //第一行
             while((line=reader.readLine()) != null){
-                if(line.equals(""))//这里的莫名其妙的空字符串会让首次打开的文件每行多一个回车\n，要忽略
+                if(firstLine){
+                    buff += line;
+                    firstLine = false;
                     continue;
-                buff += line;
+                }
                 buff += "\n";
-                //这里有个bug，就是不管原文末尾有没有回车，打开后都会至少有一个回车。
-                //原来的空行会消失
+                buff += line;
             }
             reader.close();
         } catch (FileNotFoundException e) {
