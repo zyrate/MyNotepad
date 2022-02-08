@@ -26,7 +26,7 @@ public class EditWin extends JFrame{
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
-    private JLabel lFoot1, lFoot2, lFoot3; //底部的各个信息标签，1-介绍，2-编码，3-位置
+    private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
     private String filePath = null;//打开某个文件的路径
@@ -68,6 +68,7 @@ public class EditWin extends JFrame{
         lFoot1 = new JLabel(footMessage);
         lFoot2 = new JLabel("UTF8");
         lFoot3 = new JLabel("第 0 行，第 0 列");
+        lFoot4 = new JLabel("共 0 字");
         iOpen = new MyMenuItem("打开(O)");
         iSave = new MyMenuItem("保存(S)");
         iSaveAnother = new MyMenuItem("另存为(P)");
@@ -103,6 +104,7 @@ public class EditWin extends JFrame{
         lFoot1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         lFoot2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         lFoot3.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+        lFoot4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         menuBar.setBackground(Color.WHITE);
         textPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         mFile.setFont(menuFont);
@@ -130,6 +132,7 @@ public class EditWin extends JFrame{
         pFoot.add(pFootLeft, BorderLayout.WEST);
         pFoot.add(pFootRight, BorderLayout.EAST);
         pFootLeft.add(lFoot1);
+        pFootRight.add(lFoot4);
         pFootRight.add(lFoot3);
         pFootRight.add(lFoot2);
 
@@ -249,6 +252,10 @@ public class EditWin extends JFrame{
     //光标变动后，需要更新的内容 - 需要在文本、键盘和鼠标监听器调用
     public void cursorChange(){
         lFoot3.setText("第 "+textPane.getCursorLine()+" 行，第 "+textPane.getCursorColumn()+" 列");
+    }
+    //文本变动后，需要更新的内容
+    public void textChange(){
+        lFoot4.setText("共 "+textPane.getCharCount()+" 字");
     }
     //更改主要状态信息
     public void changeStatus(String mainMessage){

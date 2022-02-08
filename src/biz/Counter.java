@@ -1,5 +1,6 @@
 package biz;
 
+import util.JavaUtil;
 import view.EditWin;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class Counter extends JDialog{
         for(int i = 0; i < text.length(); i++){
             char ch = text.charAt(i);
             //空白
-            if(ch == ' ' || ch == '\n' || ch == '\t') {
+            if(JavaUtil.isBlank(ch)) {
                 isNum = false;
                 isWord = false;
                 continue;

@@ -54,6 +54,7 @@ import java.util.List;
  *      - 将删除方法改为选中某一行
  *      - 增加“重新载入”功能
  *      - 增加底部行列计数和编码显示
+ *      - 增加底部字数显示
  */
 /**
  * BUG
@@ -399,6 +400,7 @@ public class AppFunc {
                 editWin.setTitle(editWin.getFilePath()+" - 记事本");
             }
         }
+        editWin.textChange();
     }
     //内容是否变动
     public boolean contentChange(){

@@ -338,6 +338,17 @@ public class MyTextPane extends JTextPane {
     }
 
     /**
+     * 得到总字数(不含空白）
+     * @return
+     */
+    public int getCharCount(){
+        return getText().replaceAll("\\s+", "").length();
+    }
+
+
+
+
+    /************************************
      * 用于特殊键盘事件的监听
      * 都是屏蔽系统的监听器（或者系统不响应），自己处理
      * 代码模式时生效
