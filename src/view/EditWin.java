@@ -24,7 +24,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -87,6 +87,7 @@ public class EditWin extends JFrame{
         imEncoding = new JMenu("编码方式");
         iReOpen = new MyMenuItem("重新载入(U)");
         iPrint = new MyMenuItem("打印(P)...");
+        iBaidu = new MyMenuItem("使用百度搜索(E)");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -150,6 +151,7 @@ public class EditWin extends JFrame{
         mEdit.add(iLineWrap);
         mEdit.addSeparator();
         mEdit.add(iCode);
+        mEdit.add(iBaidu);
         mEdit.add(imEncoding);
         mEdit.add(iFind);
         mEdit.add(iReplace);
@@ -336,6 +338,7 @@ public class EditWin extends JFrame{
         addFootTipListener(imEncoding, "设置编码方式以正确读取文件");
         addFootTipListener(iReOpen, "重新载入当前文件");
         addFootTipListener(iPrint, "打印当前文件内容，Ctrl + P");
+        addFootTipListener(iBaidu, "使用百度搜索当前内容或选中内容，Ctrl + E");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -482,6 +485,9 @@ public class EditWin extends JFrame{
         return iReplace;
     }
 
+    public MyMenuItem getiBaidu() {
+        return iBaidu;
+    }
 
     public JCheckBoxMenuItem getiCode() {
         return iCode;

@@ -13,6 +13,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,7 @@ import java.util.List;
  *      - 增加底部行列计数和编码显示
  *      - 增加底部字数显示
  *      - 增加打印接口 Ctrl+P
+ *      - 增加使用百度搜索
  */
 /**
  * BUG
@@ -165,6 +168,23 @@ public class AppFunc {
                     print();
             }
         }.start();
+    }
+
+    //使用百度搜索
+    private void searchBaidu(){
+        String search;
+        String seleted = editWin.getTextPane().getSelectedText();
+        if(seleted != null){
+            search = seleted;
+        }else{
+            search = editWin.getTextPane().getText();
+        }
+
+        try {
+            Desktop.getDesktop().browse(URI.create("https://baidu.com/s?wd="+search));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //打印
@@ -611,6 +631,12 @@ public class AppFunc {
                 menuDeal(PRINT);
             }
         });
+        editWin.getiBaidu().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchBaidu();
+            }
+        });
         iCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -711,6 +737,8 @@ public class AppFunc {
                     onCodeModel();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_P) {
                     print();
+                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_E) {
+                    searchBaidu();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_UP){
                     e.consume();
                     editWin.setSize(editWin.getWidth(), editWin.getHeight()+12);
