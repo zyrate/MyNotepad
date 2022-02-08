@@ -262,6 +262,19 @@ public class EditWin extends JFrame{
     public void textChange(){
         lFoot4.setText("共 "+textPane.getCharCount()+" 字");
     }
+    //选中内容变动后，需要更新的内容
+    private String nowSelected = null;
+    private String lastSelected = null;
+    public void selectedChange(){
+        //选中后显示选中的字数，不选中时复原
+        nowSelected = textPane.getSelectedText();
+        if(nowSelected != null){
+            lFoot4.setText("选中 "+textPane.getSelectedCharCount()+" 字");
+        }else if(lastSelected != null){
+            lFoot4.setText("共 "+textPane.getCharCount()+" 字");
+        }
+        lastSelected = nowSelected;
+    }
     //更改主要状态信息
     public void changeStatus(String mainMessage){
         this.mainMessage = mainMessage;

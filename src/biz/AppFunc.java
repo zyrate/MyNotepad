@@ -770,7 +770,7 @@ public class AppFunc {
             public void keyReleased(KeyEvent e) {
                 //这里调用不会有先后问题
                 editWin.cursorChange();
-
+                editWin.selectedChange();
             }
         });
         //鼠标监听
@@ -783,6 +783,12 @@ public class AppFunc {
                     popup.show(editWin.getTextPane(), e.getX(), e.getY());
                 }
             }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                editWin.selectedChange();
+            }
+
         });
         //焦点监听
         editWin.getTextPane().addFocusListener(new FocusListener() {

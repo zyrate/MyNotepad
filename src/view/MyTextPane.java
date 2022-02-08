@@ -349,6 +349,13 @@ public class MyTextPane extends JTextPane {
         return getText().replaceAll("\\s+", "").length();
     }
 
+    /**
+     * 得到选中内容的总字数
+     * @return
+     */
+    public int getSelectedCharCount(){
+        return getSelectedText().replaceAll("\\s+", "").length();
+    }
 
 
 
