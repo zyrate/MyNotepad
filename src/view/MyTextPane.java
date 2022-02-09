@@ -484,13 +484,10 @@ public class MyTextPane extends JTextPane {
         if(this.getSelectedText() != null) {//选中了内容
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
         }
-        try {
-            int pos = this.getCaretPosition();
-            this.getDocument().insertString(this.getCaretPosition(), content, defAttribute);
-            this.setCaretPosition(pos);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        int pos = this.getCaretPosition();
+        this.insertString(this.getCaretPosition(), content, defAttribute);
+        this.setCaretPosition(pos);
+
     }
     //不管选中的插入
     public void justInsert(String content, int offset){
