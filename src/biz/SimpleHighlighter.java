@@ -25,9 +25,9 @@ public class SimpleHighlighter {
     StyledDocument styledDocument;
     MyTextPane textPane;
     public static final String PATH= "C:\\NotepadData\\highlights";
-    private ArrayList<Highlight> highlightsList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
-    private ArrayList<Highlight> importantsList = new ArrayList();//优先级高的高亮
-    private ArrayList<Highlight> unimportantsList = new ArrayList();//优先级低的高亮
+    private ArrayList<Highlight> normalList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
+    private ArrayList<Highlight> importantList = new ArrayList();//优先级高的高亮
+    private ArrayList<Highlight> unimportantList = new ArrayList();//优先级低的高亮
 
     private int[] highlighted;//已经高亮过的 - 记为1
     Style sys = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
@@ -38,100 +38,15 @@ public class SimpleHighlighter {
     }
 
     //准备 - 把配置文件中的高亮设置读取到列表之中
-    //正则一定不能有歧义！
     public void prepare(String settingName, String fileType){
         this.settingName = settingName;
         this.fileType = fileType.toLowerCase();//不管大小写
-
-        File file = new File(PATH+"\\"+settingName+".highlights");
-        if(file.exists()){//如果文件存在
-            String buff = read(file);
-            Matcher m = Pattern.compile("\\{[\\s\\S]*?\\}\\n").matcher(buff);//大括号{} 这里正则有待改进
-            //这里第二次find时会报栈溢出异常，或跟.|\\n有关，但暂不影响运行 - 已解决(用[\s\S]*匹配所有字符)
-            while(m.find()){
-                String head = findOne("\\{[a-z0-9. ]+", m.group());//找到{头部
-                if(head == null)
-                    continue;
-                //取出文件类型
-                head = head.replaceAll("\\{", "");//先去除{，剩下的是文件后缀
-                if(!contains(head.split("\\s+"), this.fileType)){
-                    //不存在此后缀
-                    continue;
-                }
-                Matcher m1 = Pattern.compile("\\(\\n[\\s\\S]*?\\)\\n").matcher(m.group());//括号()
-                while(m1.find()){
-                    String content = m1.group();
-                    content = content.replaceAll("^(\\()|(\\))$", "");//去除()
-                    String[] highlights = content.split(";;");//拆分
-                    addHighlights(highlights, Highlight.PART);
-                }
-                Matcher m2 = Pattern.compile("\\<\\n[\\s\\S]*?\\>\\n").matcher(m.group());//<>
-                while(m2.find()){
-                    String content = m2.group();
-                    content = content.replaceAll("^(\\<)|(\\>)$", "");//去除<>
-                    String[] highlights = content.split(";;");//拆分
-                    addHighlights(highlights, Highlight.ALL_LINE);
-                }
-                Matcher m3 = Pattern.compile("\\[\\n[\\s\\S]*?\\]\\n").matcher(m.group());//中括号[]
-                while(m3.find()){
-                    String content = m3.group();
-                    content = content.replaceAll("^(\\[)|(\\])$", "");//去除[]
-                    String[] highlights = content.split(";;");//拆分 - 用双分号不容易引起歧义
-                    addHighlights(highlights, Highlight.KEYWORD);
-                }
-            }
-        }
-    }
-    //向列表中添加属性
-    private void addHighlights(String[] highlights, int type){
-        for (String s:highlights) {
-            int index = s.indexOf(" : ");
-            if(index == -1)
-                continue;
-            //把键和值提取到数组中
-            String[] keys = s.substring(0, index).trim().split("\\s+");
-            String[] values = s.substring(index+3, s.length()).trim().split("\\s+");
-            if(values[values.length-1].equals("!")){//重要
-                importantsList.add(new Highlight(type, keys, values));
-            }else if(values[values.length-1].equals("?")){//不重要
-                unimportantsList.add(new Highlight(type, keys, values));
-            }else{//正常
-                highlightsList.add(new Highlight(type, keys, values));
-            }
-        }
+        HltConfReader conf = new HltDefaltReader(PATH+"\\"+settingName, fileType);
+        this.normalList = conf.getNormalList();
+        this.importantList = conf.getImportantList();
+        this.unimportantList = conf.getUnimportantList();
     }
 
-    //查找一次
-    private String findOne(String regex, String text){
-        Matcher m = Pattern.compile(regex).matcher(text);
-        if(m.find()){
-            return m.group();
-        }
-        return null;
-    }
-    private boolean contains(String[] arr, String str){
-        for(int i = 0; i < arr.length; i++){
-            if(arr[i].equals(str))
-                return true;
-        }
-        return false;
-    }
-    private String read(File file){
-        BufferedReader reader;
-        String line, buff = "";
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            while((line=reader.readLine()) != null){
-                buff += line;
-                buff += "\n";
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return buff;
-    }
     //设置默认样式
     public void defaultSetting(){
         this.setCharacterAttributes(0, textPane.getText().length(), sys, true);
@@ -148,9 +63,9 @@ public class SimpleHighlighter {
 
         highlighted = new int[textPane.getText().length()];
         //在前面的优先级高
-        action(importantsList);
-        action(highlightsList);
-        action(unimportantsList);
+        action(importantList);
+        action(normalList);
+        action(unimportantList);
         transDefault();
     }
     //先移除指定位置的高亮样式 - 解决了高亮短暂残留的问题 - 暂时解决了高亮报错问题
