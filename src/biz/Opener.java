@@ -24,7 +24,6 @@ public class Opener{
             editWin.changeStatus("正在打开："+file.getName());
             open();
         }
-        editWin.changeStatus("就绪");
     }
 
     public Opener(EditWin editWin, String charset){
@@ -36,7 +35,6 @@ public class Opener{
             editWin.changeStatus("正在打开："+file.getName());
             open();
         }
-        editWin.changeStatus("就绪");
     }
 
     public File select(){
@@ -51,42 +49,52 @@ public class Opener{
             return null;
     }
 
+    /**
+     * 这里要用另一个线程打开，否则页脚不更新
+     */
     public void open(){
-        String buff = "";
-        String line;
-        try {
-            BufferedReader reader;
-            if(charset != null)
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));//按照指定字符集解码
-            else
-                reader = new BufferedReader(new FileReader(file));//默认字符集
-
-            //readLine方法不读\n
-            boolean firstLine = true; //第一行
-            while((line=reader.readLine()) != null){
-                if(firstLine){
-                    buff += line;
-                    firstLine = false;
-                    continue;
+        new Thread(){
+            @Override
+            public void run() {
+                String buff = "";
+                String line;
+                try {
+                    BufferedReader reader;
+                    if(charset != null)
+                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));//按照指定字符集解码
+                    else
+                        reader = new BufferedReader(new FileReader(file));//默认字符集
+                    //readLine方法不读\n
+                    boolean firstLine = true; //第一行
+                    while((line=reader.readLine()) != null){
+                        if(firstLine){
+                            buff += line;
+                            firstLine = false;
+                            continue;
+                        }
+                        buff += "\n";
+                        buff += line;
+                    }
+                    reader.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "找不到指定文件！可能文件名错误或者已经被移除！", "错误", JOptionPane.OK_OPTION);
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                buff += "\n";
-                buff += line;
+                editWin.setContent(buff);
+                editWin.setFilePath(file.getPath());
+                editWin.update();
+                editWin.updateContent();
+                //打开后，光标、滚动条置前
+                editWin.getTextPane().setCaretPosition(0);
+                editWin.getPane().getVerticalScrollBar().setValue(0);
+                editWin.changeStatus("就绪");
+
             }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "找不到指定文件！可能文件名错误或者已经被移除！", "错误", JOptionPane.OK_OPTION);
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        editWin.setContent(buff);
-        editWin.setFilePath(file.getPath());
-        editWin.update();
-        editWin.updateContent();
-        //打开后，光标、滚动条置前
-        editWin.getTextPane().setCaretPosition(0);
-        editWin.getPane().getVerticalScrollBar().setValue(0);
+        }.start();
+
     }
 
 }
