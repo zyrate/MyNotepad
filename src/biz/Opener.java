@@ -50,12 +50,16 @@ public class Opener{
         if(file == null){
             return null;
         }
-        editWin.changeStatus("正在打开："+file.getName());
+        //加锁
         downLatch = new CountDownLatch(1);
 
         new Thread(){
             @Override
             public void run() {
+                //显示打开进度
+                long length = file.length();
+                long buffered = 3;//已读的 (每次都差3到不了100%)
+
                 String buff = "";
                 String line;
                 try {
@@ -64,6 +68,7 @@ public class Opener{
                         reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));//按照指定字符集解码
                     else
                         reader = new BufferedReader(new FileReader(file));//默认字符集
+                    file.length();
                     //readLine方法不读\n
                     boolean firstLine = true; //第一行
                     while((line=reader.readLine()) != null){
@@ -74,6 +79,8 @@ public class Opener{
                         }
                         buff += "\n";
                         buff += line;
+                        buffered += line.getBytes().length+1;
+                        editWin.changeStatus("正在打开："+file.getName()+"  ("+buffered*100/length+"%)");
                     }
                     reader.close();
                 } catch (FileNotFoundException e) {
