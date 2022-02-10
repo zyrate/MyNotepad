@@ -87,6 +87,8 @@ import java.util.List;
  * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决(2.43)
  * 2.42 #在较大文件中，开启高亮时，使用注释快捷键反应较慢，并且若长按快捷键会报错崩溃 - 已部分解决(2.43)
  * 2.42 #现在还会有关于高亮的BUG，是因为目前只是实现了对Document的互斥操作，而没有实现优先文本变动，随后再高亮的同步逻辑
+ * 2.43 复制一段文字后，选中内容直接粘贴替换，这时又复制了被替换的内容 - 已解决
+ * 2.43 #打开文件后不高亮或高亮不完全
  */
 public class AppFunc {
     public EditWin editWin;
@@ -285,7 +287,7 @@ public class AppFunc {
                     // 获取剪贴板中的文本内容
                     String text = (String) trans.getTransferData(DataFlavor.stringFlavor);
                     //这里要先删除选中内容
-                    cut();
+                    delete();
                     //插入
                     editWin.getTextPane().insert(text, editWin.getTextPane().getCaretPosition());
                 } catch (Exception e) {
@@ -303,6 +305,13 @@ public class AppFunc {
         copy();
         editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
         editWin.changeStatus("已剪切");
+    }
+    //删除
+    private void delete(){
+        if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
+            return;
+        }
+        editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
     }
     //选中某一行
     public void choose(){
