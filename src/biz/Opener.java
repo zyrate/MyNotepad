@@ -6,6 +6,7 @@ import view.EditWin;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 文件打开器
@@ -15,15 +16,12 @@ public class Opener{
     private File file;
     EditWin editWin;
     private String charset;//按指定字符集读取文件 - null为默认
+    private CountDownLatch downLatch;//同步辅助
 
     public Opener(EditWin editWin, File file, String charset){
         this.editWin = editWin;
         this.file = file;
         this.charset = charset;
-        if(file != null){
-            editWin.changeStatus("正在打开："+file.getName());
-            open();
-        }
     }
 
     public Opener(EditWin editWin, String charset){
@@ -31,10 +29,6 @@ public class Opener{
         this.charset = charset;
         editWin.showStatus("选择打开文件");
         file = select();
-        if(file != null){
-            editWin.changeStatus("正在打开："+file.getName());
-            open();
-        }
     }
 
     public File select(){
@@ -52,7 +46,13 @@ public class Opener{
     /**
      * 这里要用另一个线程打开，否则页脚不更新
      */
-    public void open(){
+    public CountDownLatch open(){
+        if(file == null){
+            return null;
+        }
+        editWin.changeStatus("正在打开："+file.getName());
+        downLatch = new CountDownLatch(1);
+
         new Thread(){
             @Override
             public void run() {
@@ -91,10 +91,11 @@ public class Opener{
                 editWin.getTextPane().setCaretPosition(0);
                 editWin.getPane().getVerticalScrollBar().setValue(0);
                 editWin.changeStatus("就绪");
-
+                downLatch.countDown();
             }
         }.start();
 
+        return downLatch;
     }
 
 }

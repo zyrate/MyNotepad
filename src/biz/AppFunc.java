@@ -18,6 +18,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 /*本项目以UTF-8编码*/
 /**
  * 应用功能
@@ -348,6 +349,7 @@ public class AppFunc {
         undo.discardAllEdits();
     }
     //打开
+    private CountDownLatch downLatch;
     public void open(File file){
         if(contentChange()){
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
@@ -360,24 +362,35 @@ public class AppFunc {
         }
         //传进了文件
         if(file != null){
-            new Opener(editWin, file, DTUtil.getCharset());
+            downLatch = new Opener(editWin, file, DTUtil.getCharset()).open();
             afterOpen();
             return;
         }
         //自选文件
-        new Opener(editWin, DTUtil.getCharset());
+        downLatch = new Opener(editWin, DTUtil.getCharset()).open();
         afterOpen();
     }
-    //打开之后的操作
+    //打开之后的操作 - 多线程同步真的烦死了
     public void afterOpen(){
-        //开启高亮响应
-        pauseHlt = false;
-        //准备高亮
-        prepareHighlight();
-        //高亮
-        highlight();
-        //撤销器重置
-        undo.discardAllEdits();
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    downLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("done");
+                //开启高亮响应
+                pauseHlt = false;
+                //准备高亮
+                prepareHighlight();
+                //高亮
+                highlight();
+                //撤销器重置
+                undo.discardAllEdits();
+            }
+        }.start();
     }
     //保存
     public void save(){

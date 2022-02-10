@@ -566,7 +566,6 @@ public class MyTextPane extends JTextPane {
         //对Document对象进行同步
         synchronized (this.getDocument()) {
             super.setText(t);
-            System.out.println("done");
         }
     }
     //以下解决由于文本变动导致的同步问题 (转移到了在AppFunc的onHighlight里添加)
