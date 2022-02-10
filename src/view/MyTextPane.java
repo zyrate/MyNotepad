@@ -1,5 +1,5 @@
 package view;
-import biz.SimpleHighlighter;
+import biz.hlt.SimpleHighlighter;
 import util.JavaUtil;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -7,7 +7,6 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.print.PrinterException;
 
 /**
  * 自定义的富文本框 - 为了封装一些功能
@@ -31,16 +30,9 @@ public class MyTextPane extends JTextPane {
 
     }
 
-    //设置代码模式
-    public void setCodeMode(boolean isCodeMode){
-        this.isCodeMode = isCodeMode;
-    }
-    public boolean getCodeMode(){
-        return this.isCodeMode;
-    }
     //高亮前的准备 - 把设置从文件中读出来以提高效率
     public void prepareHighlight(String settingName, String fileType){
-        highlighter = new SimpleHighlighter(this, this.getStyledDocument());//每次打开新文件、自动换行后都要重新
+        highlighter = new SimpleHighlighter(this);//每次打开新文件、自动换行后都要重新
         highlighter.prepare(settingName, fileType);
     }
     //高亮
@@ -56,6 +48,16 @@ public class MyTextPane extends JTextPane {
         if(highlighter != null)
             highlighter.defaultSetting();
     }
+
+
+    //设置代码模式
+    public void setCodeMode(boolean isCodeMode){
+        this.isCodeMode = isCodeMode;
+    }
+    public boolean getCodeMode(){
+        return this.isCodeMode;
+    }
+
     /**
      * 快速换行
      */
@@ -564,6 +566,7 @@ public class MyTextPane extends JTextPane {
         //对Document对象进行同步
         synchronized (this.getDocument()) {
             super.setText(t);
+            System.out.println("done");
         }
     }
     //以下解决由于文本变动导致的同步问题 (转移到了在AppFunc的onHighlight里添加)
