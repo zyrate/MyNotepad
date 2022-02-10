@@ -1,4 +1,4 @@
-package biz;
+package biz.hlt;
 
 import entity.Highlight;
 

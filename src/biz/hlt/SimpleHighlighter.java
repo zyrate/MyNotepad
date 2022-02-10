@@ -1,11 +1,11 @@
-package biz;
+package biz.hlt;
 
 import entity.Highlight;
 import view.MyTextPane;
 
+import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +23,7 @@ public class SimpleHighlighter {
     String settingName;
     String fileType;
     StyledDocument styledDocument;
-    MyTextPane textPane;
+    JTextPane textPane; // 这里改回了JTextPane
     public static final String PATH= "C:\\NotepadData\\highlights";
     private ArrayList<Highlight> normalList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> importantList = new ArrayList();//优先级高的高亮
@@ -32,9 +32,9 @@ public class SimpleHighlighter {
     private int[] highlighted;//已经高亮过的 - 记为1
     Style sys = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 
-    public SimpleHighlighter(MyTextPane textPane, StyledDocument styledDocument){
+    public SimpleHighlighter(MyTextPane textPane){
         this.textPane = textPane;
-        this.styledDocument = styledDocument;
+        this.styledDocument = textPane.getStyledDocument();
     }
 
     //准备 - 把配置文件中的高亮设置读取到列表之中
@@ -107,7 +107,6 @@ public class SimpleHighlighter {
     //添加了中断判断
     private void action(ArrayList<Highlight> list) {
         String text = textPane.getText().replaceAll("\\r", "");//这里还是需要把\r去掉
-        if(textPane == null) System.out.println(textPane);
         for (Highlight highlight : list)
             if (highlight.getType() == Highlight.KEYWORD) {//关键字
                 //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
