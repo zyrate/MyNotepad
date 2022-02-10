@@ -7,6 +7,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 自定义的富文本框 - 为了封装一些功能
@@ -37,14 +38,17 @@ public class MyTextPane extends JTextPane {
     }
     //高亮
     public void highlight(){
+        System.out.println("highligt1: "+Thread.currentThread());
         if(highlighter != null)
             highlighter.highlight();
     }
     public void highlight(int offset, int length){
+        System.out.println("highligt2: "+Thread.currentThread());
         if(highlighter != null)
             highlighter.highlight(offset, length);
     }
     public void defaultView(){
+        System.out.println("highligt3: "+Thread.currentThread());
         if(highlighter != null)
             highlighter.defaultSetting();
     }
@@ -559,14 +563,15 @@ public class MyTextPane extends JTextPane {
     }
 
     /**
-     * 重写的setText方法，这个方法和高亮有线程冲突，要同步一下
+     * 重写的setText方法，这个方法和高亮有线程冲突，加了个锁
      * @param t
      */
     public void setText(String t){
-        //对Document对象进行同步
-        synchronized (this.getDocument()) {
-            super.setText(t);
-        }
+        System.out.println("setText: "+Thread.currentThread());
+        JavaUtil.setTextLatch = new CountDownLatch(1);
+        super.setText(t);
+        JavaUtil.setTextLatch.countDown();
+        System.out.println("seted");
     }
     //以下解决由于文本变动导致的同步问题 (转移到了在AppFunc的onHighlight里添加)
     public void insertString(int offset, String str, AttributeSet a){

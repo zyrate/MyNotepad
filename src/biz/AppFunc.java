@@ -1,5 +1,6 @@
 package biz;
 import util.DTUtil;
+import util.JavaUtil;
 import view.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -88,8 +89,13 @@ import java.util.concurrent.CountDownLatch;
  * 2.42 在开启高亮的情况下，不论是否有高亮内容，不论是否强制折行，只要一行的内容超出长度了，此时在这行的上面打字，下面会莫名地多空格 - 已解决(2.43)
  * 2.42 #在较大文件中，开启高亮时，使用注释快捷键反应较慢，并且若长按快捷键会报错崩溃 - 已部分解决(2.43)
  * 2.42 #现在还会有关于高亮的BUG，是因为目前只是实现了对Document的互斥操作，而没有实现优先文本变动，随后再高亮的同步逻辑
+ *       对于这个问题，我目前已经解决了打开文件时高亮BUG，用的是Count锁。之前打开文件(尤其是换文件打开)时会出错是因为，setText()
+ *       方法内部会调用多次insertString的方法，导致document变动后启动高亮，导致冲突，用了Count锁之后，会让所有在未打开文件时就
+ *       开启的高亮线程阻塞或取消，便不会冲突了。
+ *       现在还剩文本变动与高亮的冲突没解决，设想将键盘事件全部阻隔，由自己调用insertString方法，这样就知道什么时候插入完成 - 行不通
+ *       目前还是在用 synchronized ()
  * 2.43 复制一段文字后，选中内容直接粘贴替换，这时又复制了被替换的内容 - 已解决
- * 2.43 #打开文件后不高亮或高亮不完全
+ * 2.43 打开文件后不高亮或高亮不完全 - BUG在焦点监听部分，两个高亮线程冲突 - 已解决(去掉了焦点监听，只会添乱)
  */
 public class AppFunc {
     public EditWin editWin;
@@ -233,33 +239,43 @@ public class AppFunc {
     }
     //高亮
     public void highlight(){
-        if(!pauseHlt)
+        if(!pauseHlt) {
+            try {
+                JavaUtil.setTextLatch.await();//等待文本变动结束
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             editWin.highlight();
+        }
     }
     //先消除样式的高亮
     public void highlight(int offset, int length){
-        if(!pauseHlt)
+        if(!pauseHlt) {
+            try {
+                JavaUtil.setTextLatch.await();//等待文本变动结束
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             editWin.highlight(offset, length);
+        }
     }
     //高亮线程工作
     public void onHighlight(int offset, int length){
+        System.out.println("onHighlight: "+Thread.currentThread());
         //滤掉冗余的情况
         if(editWin.getTextPane().getSHighlighter() == null  ||
                 !editWin.getTextPane().getSHighlighter().hasPrepared()){
             return;
         }
-        //在这里进行了文本变动与高亮的同步
-        synchronized (editWin.getTextPane().getDocument()) {
-            if (t_highlight != null && t_highlight.isAlive())
-                t_highlight.stop();
-            t_highlight = new Thread() {
-                @Override
-                public void run() {
-                    highlight(offset, length);
-                }
-            };
-            t_highlight.start();
-        }
+        if (t_highlight != null && t_highlight.isAlive())
+            t_highlight.stop();
+        t_highlight = new Thread() {
+            @Override
+            public void run() {
+                highlight(offset, length);
+            }
+        };
+        t_highlight.start();
     }
     //复制
     public void copy(){
@@ -380,7 +396,6 @@ public class AppFunc {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("done");
                 //开启高亮响应
                 pauseHlt = false;
                 //准备高亮
@@ -523,11 +538,13 @@ public class AppFunc {
         document.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
+                System.out.println("insert: "+Thread.currentThread());
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
+                System.out.println("remove: "+Thread.currentThread());
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }
@@ -787,6 +804,7 @@ public class AppFunc {
                     editWin.setLocation(editWin.getX()+10, editWin.getY());
                 }
 
+
             }
             @Override
             public void keyReleased(KeyEvent e) {
@@ -812,16 +830,7 @@ public class AppFunc {
             }
 
         });
-        //焦点监听
-        editWin.getTextPane().addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                highlight();
-            }
-            @Override
-            public void focusLost(FocusEvent e) {
-            }
-        });
+
         //高亮菜单监听
         for(JCheckBoxMenuItem item : editWin.getHighlightItems()){
             item.addActionListener(new ActionListener() {

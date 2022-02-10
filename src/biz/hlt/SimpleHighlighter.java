@@ -221,7 +221,7 @@ public class SimpleHighlighter {
      * @param replace
      */
     private void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
-        //这里对Document的修改进行同步（还有MyTextPane的setText方法
+        //这里对Document的修改进行同步
         synchronized (this.styledDocument) {
             styledDocument.setCharacterAttributes(offset, length, s, replace);
         }
