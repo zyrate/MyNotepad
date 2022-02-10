@@ -261,7 +261,6 @@ public class AppFunc {
     }
     //高亮线程工作
     public void onHighlight(int offset, int length){
-        System.out.println("onHighlight: "+Thread.currentThread());
         //滤掉冗余的情况
         if(editWin.getTextPane().getSHighlighter() == null  ||
                 !editWin.getTextPane().getSHighlighter().hasPrepared()){
@@ -538,13 +537,11 @@ public class AppFunc {
         document.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                System.out.println("insert: "+Thread.currentThread());
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
-                System.out.println("remove: "+Thread.currentThread());
                 textChange();
                 onHighlight(e.getOffset(), e.getLength());
             }

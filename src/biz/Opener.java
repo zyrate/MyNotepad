@@ -91,7 +91,6 @@ public class Opener{
                 editWin.getTextPane().setCaretPosition(0);
                 editWin.getPane().getVerticalScrollBar().setValue(0);
                 editWin.changeStatus("就绪");
-                System.out.println("down");
                 downLatch.countDown();
             }
         }.start();
