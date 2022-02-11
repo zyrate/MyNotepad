@@ -25,6 +25,7 @@ public class SimpleHighlighter {
     StyledDocument styledDocument;
     JTextPane textPane; // 这里改回了JTextPane
     public static final String PATH= "C:\\NotepadData\\highlights";
+    public static final String CONF_TYPE = ".hlts";//当前使用的配置文件类型 .xml 或 .hlts
     private ArrayList<Highlight> normalList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> importantList = new ArrayList();//优先级高的高亮
     private ArrayList<Highlight> unimportantList = new ArrayList();//优先级低的高亮

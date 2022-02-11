@@ -173,11 +173,11 @@ public class EditWin extends JFrame{
         String[] filesName = path.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.matches(".+\\.highlights");//指定的文件名
+                return name.matches(".+"+SimpleHighlighter.CONF_TYPE);//指定的文件名
             }
         });
         for(String name : filesName){
-            String settingName = name.replaceAll("\\.highlights", "");
+            String settingName = name.replaceAll(SimpleHighlighter.CONF_TYPE, "");
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(settingName);
             mHighlight.add(item);
             highlightItems.add(item);
