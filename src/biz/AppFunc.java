@@ -96,6 +96,7 @@ import java.util.concurrent.CountDownLatch;
  *       目前还是在用 synchronized ()
  * 2.43 复制一段文字后，选中内容直接粘贴替换，这时又复制了被替换的内容 - 已解决
  * 2.43 打开文件后不高亮或高亮不完全 - BUG在焦点监听部分，两个高亮线程冲突 - 已解决(去掉了焦点监听，只会添乱)
+ * 2.43 自动换行打开/取消的时候没有重新高亮 - 已解决
  */
 public class AppFunc {
     public EditWin editWin;
@@ -146,7 +147,7 @@ public class AppFunc {
         addListener();
     }
     //处理菜单事件
-    public void menuDeal(int event){
+    private void menuDeal(int event){
         /* 才发现多线程会让同一个方法效果不一样！
          * 在另一个线程中执行open，如果open中只有光标置前的方法话，主线程的滚动条并不会跟着光标走，所以需要设置滚动条
          */
@@ -323,7 +324,7 @@ public class AppFunc {
         editWin.changeStatus("已剪切");
     }
     //删除
-    private void delete(){
+    public void delete(){
         if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
             return;
         }
@@ -462,7 +463,7 @@ public class AppFunc {
         editWin.getiLineWrap().setState(DTUtil.getLineWrap());
     }
     //文本变动
-    public void textChange(){
+    private void textChange(){
         //editWin.changeStatus("就绪");
         //是否改动
         if(editWin.getContent() != null){//content等于null代表目前没有打开任何已存在文件
@@ -475,7 +476,7 @@ public class AppFunc {
         editWin.textChange();
     }
     //内容是否变动
-    public boolean contentChange(){
+    private boolean contentChange(){
         //这里如果按以前的代码的话，一样的内容getText()和content里的竟然不一样，好像是因为textPane里的回车是\r\n
         if(editWin.getContent()==null && !editWin.getTextPane().getText().equals("") ||
                 editWin.getContent()!=null && !deREquals(editWin.getContent(), editWin.getTextPane().getText())){//这里忽略了\r
@@ -484,7 +485,7 @@ public class AppFunc {
         return false;
     }
     //忽略\r的判等
-    public boolean deREquals(String str1, String str2){
+    private boolean deREquals(String str1, String str2){
         //先把\r都去掉
         str1 = str1.replaceAll("\r", "");
         str2 = str2.replaceAll("\r", "");
@@ -498,7 +499,7 @@ public class AppFunc {
         }
         return true;
     }
-    public void addHandler(){
+    private void addHandler(){
         //为文本框添加数据传输器（拖拽功能）
         //实现后，swing原有的支持剪切、复制和粘贴的键盘绑定的功能会失效，只需自己监听即可
         editWin.getTextPane().setTransferHandler(new TransferHandler(){
@@ -531,7 +532,7 @@ public class AppFunc {
     }
     //文本监听，之所以单独列出来是因为换行策略更改后document会随之变化，之前的监听器将失效，需要再次注册
     //这里每次开始新的高亮线程之前都停止之前的线程，保证了同一时间内只有一个高亮线程
-    public void docListen(){
+    private void docListen(){
         editWin.cursorChange();
         document = editWin.getTextPane().getDocument();
         document.addDocumentListener(new DocumentListener() {
@@ -551,7 +552,7 @@ public class AppFunc {
             }
         });
     }
-    public void addListener(){
+    private void addListener(){
         //文本监听
         docListen();
         //菜单监听
@@ -593,6 +594,8 @@ public class AppFunc {
                 docListen();
                 //准备高亮
                 prepareHighlight();
+                //高亮
+                highlight();
             }
         });
         editWin.getiReset().addActionListener(new ActionListener() {
@@ -694,7 +697,7 @@ public class AppFunc {
         iDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                choose();
+                delete();
             }
         });
         iSelectAll.addActionListener(new ActionListener() {
