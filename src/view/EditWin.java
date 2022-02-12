@@ -21,15 +21,17 @@ public class EditWin extends JFrame{
     private MyTextPane textPane;//改 - 富文本
     private JScrollPane pane;
     private JMenuBar menuBar;
-    private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding;
+    private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, mRun;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint, iBaidu;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
     private String filePath = null;//打开某个文件的路径
     private String content = null;//打开某个文件的内容
+    private String fileName = null;//文件名
+    private String pureFileName = null;//文件名,不带后缀
 
     private Font menuFont = new Font("微软雅黑", 0, 15);
     //这里不同的电脑会不一样 DTUtil.getFontIndex()
@@ -62,6 +64,7 @@ public class EditWin extends JFrame{
         mTools = new JMenu("工具(T)");
         mHelp = new JMenu("帮助(H)");
         mHighlight = new JMenu("高亮(L)");
+        mRun = new JMenu("运行(R)");
         textPane = new MyTextPane();
         pane = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         lFoot1 = new JLabel(footMessage);
@@ -87,6 +90,7 @@ public class EditWin extends JFrame{
         iReOpen = new MyMenuItem("重新载入(U)");
         iPrint = new MyMenuItem("打印(P)...");
         iBaidu = new MyMenuItem("使用百度搜索(E)");
+        iRun = new MyMenuItem("运行(B)");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -127,6 +131,7 @@ public class EditWin extends JFrame{
         menuBar.add(mEdit);
         menuBar.add(mTools);
         menuBar.add(mHighlight);
+        menuBar.add(mRun);
         menuBar.add(mHelp);
         pCenter.add(pane);//滚动条
 
@@ -157,6 +162,7 @@ public class EditWin extends JFrame{
         mTools.add(iCount);
         mTools.add(iDate);
         mTools.add(iNote);
+        mRun.add(iRun);
         mHelp.add(iAbout);
         mHighlight.add(iNoHL);
         this.add(menuBar, BorderLayout.NORTH);
@@ -441,6 +447,24 @@ public class EditWin extends JFrame{
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+        setFileName(new File(filePath).getName());
+        setPureFileName(getFileName().replaceAll("\\.\\w+$", ""));
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getPureFileName() {
+        return pureFileName;
+    }
+
+    public void setPureFileName(String pureFileName) {
+        this.pureFileName = pureFileName;
     }
 
     public MyTextPane getTextPane() {
@@ -491,6 +515,13 @@ public class EditWin extends JFrame{
         return iNoHL;
     }
 
+    public JMenu getmRun() {
+        return mRun;
+    }
+
+    public MyMenuItem getiRun() {
+        return iRun;
+    }
 
     public MyMenuItem getiFind() {
         return iFind;

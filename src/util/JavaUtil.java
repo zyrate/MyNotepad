@@ -14,4 +14,14 @@ public class JavaUtil {
     }
 
     public static CountDownLatch setTextLatch = null; //文本变动的锁，即先文本变动后高亮。
+
+    /**
+     * 得到文件类型
+     * 一律小写
+     * @param fileName
+     * @return
+     */
+    public static String getFileType(String fileName){
+        return fileName == null ? fileName : fileName.substring(fileName.lastIndexOf('.')+1, fileName.length()).toLowerCase();
+    }
 }

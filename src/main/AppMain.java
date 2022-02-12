@@ -1,6 +1,7 @@
 package main;
 
 import biz.AppFunc;
+import biz.runbiz.RunBiz;
 import util.DTUtil;
 import view.EditWin;
 import view.FindAndReplace;
@@ -21,6 +22,7 @@ public class AppMain {
 
         EditWin editWin = new EditWin();
         AppFunc appFunc = new AppFunc(editWin);
+        RunBiz runBiz = new RunBiz(editWin);
         if(args.length != 0){//直接打开文件
             appFunc.open(new File(args[0]));
         }

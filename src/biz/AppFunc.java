@@ -64,6 +64,9 @@ import java.util.concurrent.CountDownLatch;
  *      - 增加打印接口 Ctrl+P
  *      - 增加使用百度搜索
  *      - 增加用XML方式读取高亮配置
+ *
+ * >2.50 - 加入运行功能
+ *
  */
 /**
  * BUG
@@ -98,6 +101,7 @@ import java.util.concurrent.CountDownLatch;
  * 2.43 复制一段文字后，选中内容直接粘贴替换，这时又复制了被替换的内容 - 已解决
  * 2.43 打开文件后不高亮或高亮不完全 - BUG在焦点监听部分，两个高亮线程冲突 - 已解决(去掉了焦点监听，只会添乱)
  * 2.43 自动换行打开/取消的时候没有重新高亮 - 已解决
+ * 2.50 #无法输入GBK或UTF8编码的内容，导致奇怪的乱码
  */
 public class AppFunc {
     public EditWin editWin;
