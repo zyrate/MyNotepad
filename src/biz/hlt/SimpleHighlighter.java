@@ -26,6 +26,8 @@ public class SimpleHighlighter {
     JTextPane textPane; // 这里改回了JTextPane
     public static final String PATH= "C:\\NotepadData\\highlights";
     public static final String CONF_TYPE = ".hlts";//当前使用的配置文件类型 .xml 或 .hlts
+
+    //如果要规范的话，每个优先级内部都应该确保 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> normalList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> importantList = new ArrayList();//优先级高的高亮
     private ArrayList<Highlight> unimportantList = new ArrayList();//优先级低的高亮
@@ -42,7 +44,9 @@ public class SimpleHighlighter {
     public void prepare(String settingName, String fileType){
         this.settingName = settingName;
         this.fileType = fileType.toLowerCase();//不管大小写
-        HltConfReader conf = new HltDefaltReader(PATH+"\\"+settingName, fileType);
+        if(settingName == null) return;
+        //可读取不同类型的配置文件
+        HltConfReader conf = new HltXmlReader(PATH+"\\"+settingName, fileType);
         this.normalList = conf.getNormalList();
         this.importantList = conf.getImportantList();
         this.unimportantList = conf.getUnimportantList();
@@ -113,10 +117,20 @@ public class SimpleHighlighter {
                 //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
                 //如果key是正则，就直接用，不是正则，就当作关键词
                 String regex;
-                if (highlight.getKey1().matches("<.+>")) {//是正则
-                    regex = highlight.getKey1().replaceAll("^(\\<)|(\\>)$", "");//去除标记
-                } else {//不是正则
-                    regex = "\\b" + highlight.getKey1() + "\\b";
+
+                Boolean isRegex = highlight.isKeyWordRegex();//是否是正则
+                if(isRegex == null){/*自定义配置*/
+                    if (highlight.getKey1().matches("<.+>")) {//是正则
+                        regex = highlight.getKey1().replaceAll("^(\\<)|(\\>)$", "");//去除标记
+                    } else {//不是正则
+                        regex = "\\b" + highlight.getKey1() + "\\b";
+                    }
+                }else{/*兼容 V2.43 XML配置*/
+                    if(isRegex){
+                        regex = highlight.getKey1();
+                    }else{
+                        regex = "\\b" + highlight.getKey1() + "\\b";
+                    }
                 }
                 Matcher m = Pattern.compile(regex).matcher(text);
                 //高亮

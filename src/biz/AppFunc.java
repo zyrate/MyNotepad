@@ -236,7 +236,7 @@ public class AppFunc {
         if(nowFile == null)
             return;
         String nowFileName = nowFile.getName();
-        editWin.prepareHighlight(highlightSettingName, nowFileName.substring(nowFileName.lastIndexOf('.'), nowFileName.length()));
+        editWin.prepareHighlight(highlightSettingName, nowFileName.substring(nowFileName.lastIndexOf('.')));
     }
     //高亮
     public void highlight(){

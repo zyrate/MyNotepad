@@ -19,7 +19,7 @@ public class HltDefaltReader implements HltConfReader {
      */
     public HltDefaltReader(String settingPath, String fileType){
         //正则一定不能有歧义！
-        File file = new File(settingPath+".highlights");
+        File file = new File(settingPath+SimpleHighlighter.CONF_TYPE);
         if(file.exists()){//如果文件存在
             String buff = read(file);
             Matcher m = Pattern.compile("\\{[\\s\\S]*?\\}\\n").matcher(buff);//大括号{} 这里正则有待改进

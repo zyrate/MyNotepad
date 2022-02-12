@@ -8,6 +8,7 @@ import java.awt.*;
 
 
 public class Highlight {
+    public static final int UNKNOWN  = 0;
     public static final int KEYWORD  = 1;
     public static final int ALL_LINE = 2;
     public static final int PART = 3;
@@ -21,9 +22,13 @@ public class Highlight {
     private String font;
     private boolean italic;
     private boolean underline;
+    //关键字KEYWORD是否是正则，为了兼容自定义高亮配置以<>区分是否是正则的做法。
+    //如果此字段为null，表明用的是自定义配置；否则是xml配置，在xml中以key的属性设置该字段
+    private Boolean keyWordRegex = null;
 
     String[] keys, values;
 
+    //该构造方法供自定义配置用
     public Highlight(int type, String[] keys, String[] values){
         this.type = type;
         this.keys = keys;
@@ -31,17 +36,21 @@ public class Highlight {
         init();
     }
 
-    public Highlight(int type, String key1, String key2, String color, boolean bold,
-                     int size, String font, boolean italic, boolean underline){
+    //该构造方法供xml配置用
+    public Highlight(int type, String key1, String key2, String color, String backColor, boolean bold,
+                     int size, String font, boolean italic, boolean underline, boolean keyWordRegex, boolean canDivided){
         this.type = type;
         this.key1 = key1;
         this.key2 = key2;
         this.color = transfer(color);
+        this.backColor = transfer(backColor);
         this.bold = bold;
         this.size = size;
         this.font = font;
         this.italic = italic;
         this.underline = underline;
+        this.keyWordRegex = keyWordRegex;
+        this.canDivided = canDivided;
     }
 
     private Color transfer(String color){
@@ -194,5 +203,13 @@ public class Highlight {
 
     public void setUnderline(boolean underline) {
         this.underline = underline;
+    }
+
+    public Boolean isKeyWordRegex() {
+        return keyWordRegex;
+    }
+
+    public void setKeyWordRegex(Boolean keyWordRegex) {
+        this.keyWordRegex = keyWordRegex;
     }
 }
