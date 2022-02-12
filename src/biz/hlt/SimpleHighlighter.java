@@ -46,7 +46,7 @@ public class SimpleHighlighter {
         this.fileType = fileType.toLowerCase();//不管大小写
         if(settingName == null) return;
         //可读取不同类型的配置文件
-        HltConfReader conf = new HltXmlReader(PATH+"\\"+settingName, fileType);
+        HltConfReader conf = new HltDefaultReader(PATH+"\\"+settingName, fileType);
         this.normalList = conf.getNormalList();
         this.importantList = conf.getImportantList();
         this.unimportantList = conf.getUnimportantList();

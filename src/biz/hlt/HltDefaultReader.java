@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HltDefaltReader implements HltConfReader {
+public class HltDefaultReader implements HltConfReader {
     private ArrayList<Highlight> normalList = new ArrayList();//按指定顺序的高亮 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> importantList = new ArrayList();//优先级高的高亮
     private ArrayList<Highlight> unimportantList = new ArrayList();//优先级低的高亮
@@ -17,7 +17,7 @@ public class HltDefaltReader implements HltConfReader {
      * @param settingPath 配置文件路径
      * @param fileType 当前开启高亮的文件类型
      */
-    public HltDefaltReader(String settingPath, String fileType){
+    public HltDefaultReader(String settingPath, String fileType){
         //正则一定不能有歧义！
         File file = new File(settingPath+SimpleHighlighter.CONF_TYPE);
         if(file.exists()){//如果文件存在

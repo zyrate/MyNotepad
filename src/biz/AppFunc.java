@@ -63,6 +63,7 @@ import java.util.concurrent.CountDownLatch;
  *      - 增加底部字数显示
  *      - 增加打印接口 Ctrl+P
  *      - 增加使用百度搜索
+ *      - 增加用XML方式读取高亮配置
  */
 /**
  * BUG
