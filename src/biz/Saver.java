@@ -1,5 +1,6 @@
 package biz;
 
+import util.DTUtil;
 import view.EditWin;
 
 import javax.swing.*;
@@ -12,33 +13,34 @@ import java.util.Date;
 
 public class Saver {
     private File file;
+    private String charset;//按指定字符集读取文件 - null为默认
     EditWin editWin;
 
-    public Saver(EditWin editWin){
+    public Saver(int type, EditWin editWin, String charset){
         this.editWin = editWin;
-        if(editWin.getFilePath() != null)
-            file = new File(editWin.getFilePath());
-        else {
-            editWin.showStatus("选择保存路径");
+        this.charset = charset;
+        if(type == 1) {//保存
+            if (editWin.getFilePath() != null)
+                file = new File(editWin.getFilePath());
+            else {
+                editWin.showStatus("选择保存路径");
+                file = select();
+                editWin.showStatus("就绪");
+            }
+            if (file != null) {
+                editWin.changeStatus("正在保存：" + file.getName());
+                save(1);
+                editWin.changeStatus(new Date().toLocaleString() + " 已保存");
+            }
+        }else if(type == 2) {//另存
+            editWin.showStatus("选择另存为路径");
             file = select();
             editWin.showStatus("就绪");
-        }
-        if(file != null){
-            editWin.changeStatus("正在保存："+file.getName());
-            save(1);
-            editWin.changeStatus(new Date().toLocaleString()+" 已保存");
-        }
-    }
-    //另存为
-    public Saver(EditWin editWin, Object nullObj){
-        this.editWin = editWin;
-        editWin.showStatus("选择另存为路径");
-        file = select();
-        editWin.showStatus("就绪");
-        if(file != null){
-            editWin.changeStatus("正在保存："+file.getName());
-            save(2);
-            editWin.changeStatus(new Date().toLocaleString()+" 已另存至："+file.getPath());
+            if(file != null){
+                editWin.changeStatus("正在保存："+file.getName());
+                save(2);
+                editWin.changeStatus(new Date().toLocaleString()+" 已另存至："+file.getPath());
+            }
         }
     }
 
@@ -62,7 +64,13 @@ public class Saver {
         try {
             if(!file.exists())
                 file.createNewFile();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            //同样要注意编码
+            BufferedWriter writer;
+            if(charset != null) {
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
+            }else{
+                writer = new BufferedWriter(new FileWriter(file));
+            }
             String str = editWin.getTextPane().getText();
             for(int i = 0; i < str.length(); i++){//注意回车的处理，有点烦
                 if(str.charAt(i) == '\n')

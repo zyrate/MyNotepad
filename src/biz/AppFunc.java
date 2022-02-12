@@ -101,7 +101,7 @@ import java.util.concurrent.CountDownLatch;
  * 2.43 复制一段文字后，选中内容直接粘贴替换，这时又复制了被替换的内容 - 已解决
  * 2.43 打开文件后不高亮或高亮不完全 - BUG在焦点监听部分，两个高亮线程冲突 - 已解决(去掉了焦点监听，只会添乱)
  * 2.43 自动换行打开/取消的时候没有重新高亮 - 已解决
- * 2.50 #无法输入GBK或UTF8编码的内容，导致奇怪的乱码
+ * 2.50 无法输入GBK或UTF8编码的内容，导致奇怪的乱码 (2.50之前无法输入UTF8，2.50无法输入GBK ？？？) - 已解决(Saver处)
  */
 public class AppFunc {
     public EditWin editWin;
@@ -356,7 +356,7 @@ public class AppFunc {
         if(contentChange()){
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(editWin);
+                new Saver(1, editWin, DTUtil.getCharset());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
@@ -375,7 +375,7 @@ public class AppFunc {
         if(contentChange()){
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(editWin);
+                new Saver(1, editWin, DTUtil.getCharset());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
@@ -414,7 +414,7 @@ public class AppFunc {
     }
     //保存
     public void save(){
-        new Saver(editWin);
+        new Saver(1, editWin, DTUtil.getCharset());
         //开启高亮响应
         pauseHlt = false;
         prepareHighlight();
@@ -422,7 +422,7 @@ public class AppFunc {
     }
     //另存为
     public void saveAnother(){
-        new Saver(editWin, null);
+        new Saver(2, editWin, DTUtil.getCharset());
         //开启高亮响应
         pauseHlt = false;
         prepareHighlight();
@@ -436,7 +436,7 @@ public class AppFunc {
             //有改动
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(editWin);
+                new Saver(1, editWin, DTUtil.getCharset());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
