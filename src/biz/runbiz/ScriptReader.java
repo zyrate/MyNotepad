@@ -1,5 +1,7 @@
 package biz.runbiz;
 
+import view.About;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public class ScriptReader {
     public static final String PATH = "C:\\NotepadData\\scripts";
-    public static final String FILE = "V3.0run.script";
+    public static final String FILE = About.VERSION+"run.script";
     private HashMap<String, String[]> cmdsMap = new HashMap<>();//类型与脚本Map
 
     public ScriptReader(){

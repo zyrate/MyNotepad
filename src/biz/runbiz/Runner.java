@@ -46,7 +46,7 @@ public class Runner {
                     File batFile = new File(batPath);
                     batFile.createNewFile();
                     FileWriter writer = new FileWriter(batFile);
-                    writer.write("cls && cmd /c "+cmds.get(i)+"&& pause\nexit");
+                    writer.write("cls && cmd /c "+cmds.get(i)+"&& echo. && pause\nexit"); //后面是换行+停留+退出
                     writer.flush();
                     writer.close();
                     process = runtime.exec("cmd /c start "+ batPath, null, new File(path));
