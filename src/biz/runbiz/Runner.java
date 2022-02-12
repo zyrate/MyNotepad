@@ -1,6 +1,8 @@
 package biz.runbiz;
 
 
+import view.MessageDialog;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -18,11 +20,14 @@ public class Runner {
     private OutputStream out;
     private int exitCode;//退出码
 
+    private MessageDialog errDlg = null;
 
     public Runner(ArrayList cmds, String path){
         this.cmds = cmds;
         this.path = path;
         runtime = Runtime.getRuntime();
+        if(errDlg == null)
+            errDlg = new MessageDialog("错误输出", 800, 300);
     }
 
     public void run(){
@@ -32,6 +37,8 @@ public class Runner {
                     process = runtime.exec(cmds.get(i), null, new File(path));
                     in = process.getInputStream();
                     err = process.getErrorStream();
+                    showError(err);
+                    showError(in);
                     exitCode = process.waitFor();
                 }else{
                     //最终还是用bat解决了问题
@@ -60,6 +67,27 @@ public class Runner {
      */
     public void shutdown(){
         process.destroy();
+    }
+
+    /**
+     * 显示报错信息
+     */
+    public void showError(InputStream err){
+        new Thread(){
+            @Override
+            public void run() {
+                BufferedReader errOut = new BufferedReader(new InputStreamReader(err));
+                try {
+                    String buff;
+                    while((buff = errOut.readLine()) != null){
+                        errDlg.setVisible(true);
+                        errDlg.append(buff);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
 

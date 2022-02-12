@@ -26,7 +26,24 @@ public class RunBiz {
         addListener();
     }
 
-    private void run(){
+    /**
+     * 菜单事件处理
+     */
+    public static final int RUN = 1;
+    private void dealMenu(int event){
+        new Thread(){
+            @Override
+            public void run() {
+                switch (event){
+                    case RUN:
+                        runFile();
+                        break;
+                }
+            }
+        }.start();
+    }
+
+    private void runFile(){
         final String PATH = "C:\\NotepadData\\build";
         final String FILE = editWin.getFilePath();
         final String NAME = editWin.getPureFileName();
@@ -56,7 +73,7 @@ public class RunBiz {
 
         runner = new Runner(cmds, PATH);
         runner.run();
-        editWin.showStatus("正在运行...");
+        editWin.showStatus("运行："+editWin.getFileName());
 
     }
 
@@ -71,14 +88,14 @@ public class RunBiz {
                 int code = e.getKeyCode();
                 if(ctrl && code == KeyEvent.VK_B){
                     //运行
-                    run();
+                    runFile();
                 }
             }
         });
         editWin.getiRun().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                run();
+                dealMenu(RUN);
             }
         });
         editWin.addWindowListener(new WindowAdapter() {
