@@ -92,6 +92,7 @@ public class Opener{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                if(buff.equals("")) charset = DTUtil.getCharset(); //如果是空文件，则用默认编码
                 editWin.setCurrEncoding(charset==null?autoCharset:charset);
                 editWin.setContent(buff);
                 editWin.setFilePath(file.getPath());

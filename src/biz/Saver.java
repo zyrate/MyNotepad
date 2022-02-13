@@ -67,10 +67,10 @@ public class Saver {
             //同样要注意编码
             BufferedWriter writer;
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
-            String str = editWin.getTextPane().getText();
+            String str = editWin.getTextPane().getText().replaceAll("\\r", "");//把所有的\r去掉
             for(int i = 0; i < str.length(); i++){//注意回车的处理，有点烦
                 if(str.charAt(i) == '\n')
-                    writer.write("\r\n");
+                    writer.newLine();
                 else
                     writer.write(str.charAt(i));
             }
