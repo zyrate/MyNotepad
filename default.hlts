@@ -1,10 +1,10 @@
-¹«¹²Çø
+å…¬å…±åŒº
 {.java .c .h .js .s .cpp
 [
-'[0-9]+\.?[0-9]*f*' : #ff4400;;
+'[0-9]+\.?[0-9]*f*' : #DC143C;;
 'continue' : #3355cc bold;; 'break' : #3355cc bold;;'else' : #3355cc bold;;'return' : #3355cc bold;;'int' : #3355cc bold;;'for' : #3355cc bold;;'if' : #3355cc bold;;'while' : #3355cc bold;;'do' : #3355cc bold;;'void' : #3355cc bold;;'float' : #3355cc bold;;'double' : #3355cc bold;;'char' : #3355cc bold;; 'final' : #3355cc bold;; 'static' : #3355cc bold;; 'switch' : #3355cc bold;; 'case' : #3355cc bold;;
 '[A-Z0-9_]+' : #7E3D76 bold;;
-'<(>>>)|(>>)|(<<<)|(<<)>' : #DC143C;;
+'<[\!\@\#\$\%\^&\*\(\)\_\+\-\=\{\}\[\]\:\;\,\.\<\>\?\~\\|]>' : #6C3365;;
 ]
 <
 '//' : #019858 !;;
@@ -20,7 +20,7 @@
 '<[\?\:]>' : #DC143C;;
 ]
 }
-±Ê¼Ç
+ç¬”è®°
 {.note
 [
 '<[0-9]+\.?[0-9]*>' : #ff4400;;
@@ -30,9 +30,9 @@
 ]
 <
 '//' : #00a677 !;;
-'!#' : #557cb5 italic underline "¿¬Ìå" !;;
-'~#' : #557cb5 italic "¿¬Ìå" !;;
-'#' : #005ab5 "¿¬Ìå"  !;;
+'!#' : #557cb5 italic underline "æ¥·ä½“" !;;
+'~#' : #557cb5 italic "æ¥·ä½“" !;;
+'#' : #005ab5 "æ¥·ä½“" !;;
 >
 (
 '`' '`' : b#f9f2f4 #c7254e "Consolas" !;;
@@ -40,35 +40,35 @@
 '\*\*\*' '\*\*\*' : #007979;;
 '\{.+\}\n' '\{end\}\n' : #ae8f00;;
 '\(' '\)' : #6e6e6e;;
-'£¨' '£©' : #6e6e6e;; 
+'ï¼ˆ' 'ï¼‰' : #6e6e6e;; 
 '\"' '\"' : #0077ee !;;
-'\|¡°' '¡±\|' : #6c6c6c "¿¬Ìå";;
+'\|â€œ' 'â€\|' : #6c6c6c "æ¥·ä½“";;
 )
 }
-¸ßÁÁ
-{.highlights
+é«˜äº®
+{.hlts
 [
 '<#[0-9a-fA-F]{6}>' : #9f35ff;;'<[bB]#[0-9a-fA-F]{6}>' : #9f35ff b#dddddd !;;
 '<\;\;>' : #930000;;
 'bold' : #3355cc;;'italic' : #3355cc;;'underline' : #3355cc;;
 '<\.\w+\s+>' : #f75000;;
 '<[\!\?]>' : #000097 bold;;
-'<[\<\>\[\]\(\)\}\{]>' : #613030 bold 30 "Î¢ÈíÑÅºÚ";;
+'<[\<\>\[\]\(\)\}\{]>' : #613030 30 "Consola";;
 ]
 (
 '\'' '\'' : #007979 bold;;
 '\"' '\"' : #bb6655;;
 )
 }
-Java´úÂë
+Javaä»£ç 
 {.java
 [
-'instanceof' : #3355cc bold;;'finally' : #3355cc bold;;'super' : #3355cc bold;;'class' : #3355cc bold;; 'private' : #3355cc bold;; 'protected' : #3355cc bold;;'abstract' : #3355cc bold;;'implements' : #3355cc bold;;'extends' : #3355cc bold;;'public' : #3355cc bold;;'this' : #3355cc bold;;'new' : #3355cc bold;;'boolean' : #3355cc bold;;'void' : #3355cc bold;; 'try' : #3355cc bold;; 'catch' : #3355cc bold;; 'import' : #3355cc bold;; 'package' : #6c3365 bold;;
-'false' : #9F4D95 bold;;'null' : #9F4D95 bold;; 'true' : #6c3365 bold;;
+'synchronized' : #3355cc bold;;'instanceof' : #3355cc bold;;'finally' : #3355cc bold;;'super' : #3355cc bold;;'class' : #3355cc bold;; 'private' : #3355cc bold;; 'protected' : #3355cc bold;;'abstract' : #3355cc bold;;'implements' : #3355cc bold;;'extends' : #3355cc bold;;'public' : #3355cc bold;;'this' : #3355cc bold;;'new' : #3355cc bold;;'boolean' : #3355cc bold;;'void' : #3355cc bold;; 'try' : #3355cc bold;; 'catch' : #3355cc bold;; 'import' : #3355cc bold;; 'package' : #6c3365 bold;;
+'false' : #9F4D95 bold;;'null' : #9F4D95 bold;; 'true' : #9F4D95 bold;;
 '<@\w+>' : #c6a300 bold;;
 ]
 }
-CÓïÑÔ
+Cè¯­è¨€
 {.c .h .cpp
 [
 '(unsigned)|(signed)' : #3355cc bold;;'const' : #3355cc bold;;'typedef' : #3355cc bold;;'(enum)|(union)' : #3355cc bold;;
@@ -83,6 +83,20 @@ CÓïÑÔ
 '#include' : #467500;;
 >
 }
+C++
+{.cpp
+[
+;'vector' : #3355cc bold;;'string' : #3355cc bold;;'using' : #3355cc bold;;
+'namespace' : #3355cc bold;;'bool' : #3355cc bold;;'vector' : #3355cc bold;;
+'catch' : #3355cc bold;;'class' : #3355cc bold;;'try' : #3355cc bold;;
+'enum' : #3355cc bold;;'explicit' : #3355cc bold;;'export' : #3355cc bold;;
+'friend' : #3355cc bold;;'new' : #3355cc bold;;'operator' : #3355cc bold;;
+'public' : #3355cc bold;;'private' : #3355cc bold;;'template' : #3355cc bold;;
+'this' : #3355cc bold;;'throw' : #3355cc bold;;
+'false' : #9F4D95 bold;;'nullptr' : #9F4D95 bold;; 'true' : #9F4D95 bold;;
+]
+}
+
 JavaScript
 {.js .jsp
 [
@@ -91,7 +105,7 @@ JavaScript
 'this' : #9F4D95;;
 ]
 }
-²ãµşÑùÊ½±í
+å±‚å æ ·å¼è¡¨
 {.css
 [
 '<\.[a-zA-z0-9-_]+>' : #ae00ae;;
@@ -122,7 +136,7 @@ JSP
 '<%--' '--%>' : #9d9d9d italic !;;
 )
 }
-³¬ÎÄ±¾±ê¼ÇÓïÑÔ
+è¶…æ–‡æœ¬æ ‡è®°è¯­è¨€
 {.html .htm .xml .jsp .iml
 [
 '<.>' : #3c3c3c;;
@@ -145,20 +159,20 @@ JSP
 '=' : #005757;;
 >
 }
-±¸ÍüÂ¼
+å¤‡å¿˜å½•
 {.memo
 [
 '<[X|\+]>' : #ff0000;;
-'°²×°' : #7b7b7b !;;'ÏÂÔØ' : #7b7b7b !;;
+'å®‰è£…' : #7b7b7b !;;'ä¸‹è½½' : #7b7b7b !;;
 '\d{4}-\d{1,2}-\d{1,2}' : #007979;;
 '<\|>' : #0000ff !;;
 ]
 <
-'Â·¾¶' : #977C00;;
+'è·¯å¾„' : #977C00;;
 '#' : #ff8800;;
 >
 (
 '\(' '\)' : #FF359A ?;;
-'Â·' '¾¶' : #7b7b7b !;;
+'è·¯' 'å¾„' : #7b7b7b !;;
 )
 }
