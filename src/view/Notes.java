@@ -2,6 +2,7 @@ package view;
 
 import biz.AppFunc;
 import util.DTUtil;
+import util.JavaUtil;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -129,7 +130,7 @@ public class Notes extends JDialog{
         String name = JOptionPane.showInputDialog(this, "标题：", "新建笔记", JOptionPane.INFORMATION_MESSAGE);
         if(name != null && !name.equals("")){
             if(!name.contains(".")){
-                file = new File("C:\\NotepadData\\notes\\"+name+".txt");
+                file = new File("C:\\NotepadData\\notes\\"+name+".note");
             }else{
                 file = new File("C:\\NotepadData\\notes\\"+name);
             }
@@ -161,7 +162,7 @@ public class Notes extends JDialog{
         if(newName != null && !newName.equals(oldName)){
             File file;
             if(!newName.contains(".")){
-                file = new File("C:\\NotepadData\\notes\\"+newName+".txt");
+                file = new File("C:\\NotepadData\\notes\\"+newName+"."+ JavaUtil.getFileType(files[list.getSelectedIndex()].getName()));
             }else{
                 file = new File("C:\\NotepadData\\notes\\"+newName);
             }
