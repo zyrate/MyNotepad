@@ -2,6 +2,7 @@ package view;
 
 import biz.hlt.SimpleHighlighter;
 import util.DTUtil;
+import util.JavaUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -180,6 +181,7 @@ public class EditWin extends JFrame{
         File path = new File(SimpleHighlighter.PATH);
         if(!path.exists()){
             path.mkdir();
+            JavaUtil.copyFile("default"+SimpleHighlighter.CONF_TYPE, path.getPath());//拷贝配置文件
         }
         String[] filesName = path.list(new FilenameFilter() {
             @Override

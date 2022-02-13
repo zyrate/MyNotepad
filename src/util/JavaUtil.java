@@ -27,6 +27,23 @@ public class JavaUtil {
         return fileName == null ? fileName : fileName.substring(fileName.lastIndexOf('.')+1, fileName.length()).toLowerCase();
     }
 
+    /**
+     * 将根目录下的文件复制到其他处
+     * @param fileName 源文件名(项目根目录)
+     * @param tarPath 目标路径
+     */
+    public static void copyFile(String fileName, String tarPath){
+        try(InputStream is = new FileInputStream(fileName);
+            OutputStream os = new FileOutputStream(tarPath+"\\"+fileName, true)){
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ((len=is.read(buffer)) != -1){
+                os.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 判断文件编码格式 - CSDN

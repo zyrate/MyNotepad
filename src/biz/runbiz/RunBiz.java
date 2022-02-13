@@ -1,9 +1,11 @@
 package biz.runbiz;
 
 import util.JavaUtil;
+import view.About;
 import view.EditWin;
 
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -14,14 +16,14 @@ public class RunBiz {
     EditWin editWin;
     private Runner runner;
 
+
+    private final String BUILD_PATH = "C:\\NotepadData\\build"; //输出路径
+    private final String SCRIPT_PATH = "C:\\NotepadData\\scripts"; //脚本路径
+    private String file; //源文件路径
+    private String name; //源文件名(无后缀)
+
     public RunBiz(EditWin editWin){
         this.editWin = editWin;
-
-        if(editWin.getTextPane().getCodeMode()){
-            editWin.getiRun().setEnabled(true);
-        }else{
-            editWin.getiRun().setEnabled(false);
-        }
 
         addListener();
     }
@@ -44,11 +46,23 @@ public class RunBiz {
     }
 
     private void runFile(){
-        final String PATH = "C:\\NotepadData\\build";
-        final String FILE = editWin.getFilePath();
-        final String NAME = editWin.getPureFileName();
+        file = editWin.getFilePath();
+        name = editWin.getPureFileName();
 
-        if (FILE == null) {
+        File path = new File(SCRIPT_PATH);
+        //scripts路径不存在
+        if(!path.exists()){
+            path.mkdir();
+            JavaUtil.copyFile(About.VERSION+"run.script", path.getPath());
+        }
+        //build路径不存在
+        path = new File(BUILD_PATH);
+        if(!path.exists()){
+            path.mkdir();
+        }
+
+
+        if (file == null) {
             editWin.changeStatus("当前文件不可运行");
             return;
         }
@@ -61,9 +75,9 @@ public class RunBiz {
             return;
         }
         for(int i = 0; i < cmdArr.length; i++){
-            String cmd = cmdArr[i].replaceAll("%PATH%", PATH.replaceAll("\\\\", "\\\\\\\\"));//后面的必须有
-            cmd = cmd.replaceAll("%FILE%", FILE.replaceAll("\\\\", "\\\\\\\\"));
-            cmd = cmd.replaceAll("%NAME%", NAME);
+            String cmd = cmdArr[i].replaceAll("%PATH%", BUILD_PATH.replaceAll("\\\\", "\\\\\\\\"));//后面的必须有
+            cmd = cmd.replaceAll("%FILE%", file.replaceAll("\\\\", "\\\\\\\\"));
+            cmd = cmd.replaceAll("%NAME%", name);
             if(i != cmdArr.length-1){
                 cmds.add(cmd);
             }else{
@@ -71,7 +85,7 @@ public class RunBiz {
             }
         }
 
-        runner = new Runner(cmds, PATH);
+        runner = new Runner(cmds, BUILD_PATH);
         runner.run();
         editWin.showStatus("运行："+editWin.getFileName());
 

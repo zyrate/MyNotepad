@@ -68,6 +68,7 @@ import java.util.concurrent.CountDownLatch;
  * >2.50 - 加入运行功能
  *       - 加入文件编码类型判断功能，Opener会自己判断文件编码并打开，这样的话Setting里的charset就是默认编码了
  *       - 加入了当前编码菜单，读取文件时会关联这个菜单，默认编码是新建文件时用的
+ *       - 首次使用MyNotepad无需手动配置
  *
  */
 /**
