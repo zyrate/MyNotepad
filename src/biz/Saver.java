@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class Saver {
     private File file;
-    private String charset;//按指定字符集读取文件 - null为默认
+    private String charset;//按指定字符集读取文件 - 不能为null
     EditWin editWin;
 
     public Saver(int type, EditWin editWin, String charset){
@@ -66,11 +66,7 @@ public class Saver {
                 file.createNewFile();
             //同样要注意编码
             BufferedWriter writer;
-            if(charset != null) {
-                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
-            }else{
-                writer = new BufferedWriter(new FileWriter(file));
-            }
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
             String str = editWin.getTextPane().getText();
             for(int i = 0; i < str.length(); i++){//注意回车的处理，有点烦
                 if(str.charAt(i) == '\n')

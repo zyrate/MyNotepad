@@ -111,7 +111,7 @@ public class Notes extends JDialog{
 
     public void open(){
         if(!model.isEmpty()){
-            appFunc.open(files[list.getSelectedIndex()]);//调用封装好的打开方法，更安全
+            appFunc.open(files[list.getSelectedIndex()], null);//调用封装好的打开方法，更安全
             dispose();
         }
     }
@@ -149,7 +149,7 @@ public class Notes extends JDialog{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            appFunc.open(file);
+            appFunc.open(file, DTUtil.getCharset()); //新建编码用默认的
             dispose();
         }
     }

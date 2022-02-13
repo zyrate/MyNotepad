@@ -1,10 +1,10 @@
 package biz;
 
 import util.DTUtil;
+import util.JavaUtil;
 import view.EditWin;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -15,7 +15,8 @@ import java.util.concurrent.CountDownLatch;
 public class Opener{
     private File file;
     EditWin editWin;
-    private String charset;//按指定字符集读取文件 - null为默认
+    private String charset;//按指定字符集读取文件 - null为自动识别
+    private String autoCharset;//自动识别的字符集
     private CountDownLatch downLatch;//同步辅助
 
     public Opener(EditWin editWin, File file, String charset){
@@ -50,6 +51,7 @@ public class Opener{
         if(file == null){
             return null;
         }
+        autoCharset = JavaUtil.detectCharset(file);
         //加锁
         downLatch = new CountDownLatch(1);
 
@@ -67,7 +69,7 @@ public class Opener{
                     if(charset != null)
                         reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));//按照指定字符集解码
                     else
-                        reader = new BufferedReader(new FileReader(file));//默认字符集
+                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), autoCharset));//自动识别字符集
                     file.length();
                     //readLine方法不读\n
                     boolean firstLine = true; //第一行
@@ -90,6 +92,7 @@ public class Opener{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                editWin.setCurrEncoding(charset==null?autoCharset:charset);
                 editWin.setContent(buff);
                 editWin.setFilePath(file.getPath());
                 editWin.update();

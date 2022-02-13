@@ -24,7 +24,7 @@ public class AppMain {
         AppFunc appFunc = new AppFunc(editWin);
         RunBiz runBiz = new RunBiz(editWin);
         if(args.length != 0){//直接打开文件
-            appFunc.open(new File(args[0]));
+            appFunc.open(new File(args[0]), null);
         }
     }
 }

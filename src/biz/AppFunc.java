@@ -66,6 +66,8 @@ import java.util.concurrent.CountDownLatch;
  *      - 增加用XML方式读取高亮配置
  *
  * >2.50 - 加入运行功能
+ *       - 加入文件编码类型判断功能，Opener会自己判断文件编码并打开，这样的话Setting里的charset就是默认编码了
+ *       - 加入了当前编码菜单，读取文件时会关联这个菜单，默认编码是新建文件时用的
  *
  */
 /**
@@ -160,7 +162,7 @@ public class AppFunc {
             @Override
             public void run() {
                 if(event == OPEN)
-                    open(null);
+                    open(null, null);
                 else if(event == SAVE)
                     save();
                 else if(event == SAVE_ANOTHER)
@@ -356,7 +358,7 @@ public class AppFunc {
         if(contentChange()){
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(1, editWin, DTUtil.getCharset());
+                new Saver(1, editWin, editWin.getCurrEncoding());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
@@ -371,11 +373,11 @@ public class AppFunc {
     }
     //打开
     private CountDownLatch downLatch;
-    public void open(File file){
+    public void open(File file, String charset){
         if(contentChange()){
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(1, editWin, DTUtil.getCharset());
+                new Saver(1, editWin, editWin.getCurrEncoding());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
@@ -383,12 +385,12 @@ public class AppFunc {
         }
         //传进了文件
         if(file != null){
-            downLatch = new Opener(editWin, file, DTUtil.getCharset()).open();
+            downLatch = new Opener(editWin, file, charset).open();
             afterOpen();
             return;
         }
         //自选文件
-        downLatch = new Opener(editWin, DTUtil.getCharset()).open();
+        downLatch = new Opener(editWin, charset).open();
         afterOpen();
     }
     //打开之后的操作 - 多线程同步真的烦死了
@@ -414,7 +416,7 @@ public class AppFunc {
     }
     //保存
     public void save(){
-        new Saver(1, editWin, DTUtil.getCharset());
+        new Saver(1, editWin, editWin.getCurrEncoding());
         //开启高亮响应
         pauseHlt = false;
         prepareHighlight();
@@ -422,7 +424,7 @@ public class AppFunc {
     }
     //另存为
     public void saveAnother(){
-        new Saver(2, editWin, DTUtil.getCharset());
+        new Saver(2, editWin, editWin.getCurrEncoding());
         //开启高亮响应
         pauseHlt = false;
         prepareHighlight();
@@ -436,7 +438,7 @@ public class AppFunc {
             //有改动
             int option = JOptionPane.showConfirmDialog(editWin, "是否保存文档？");
             if(option == JOptionPane.OK_OPTION){
-                new Saver(1, editWin, DTUtil.getCharset());
+                new Saver(1, editWin, editWin.getCurrEncoding());
             }else if(option == JOptionPane.NO_OPTION){
             }else{
                 return;
@@ -516,7 +518,7 @@ public class AppFunc {
                         return false;
                     Object o = t.getTransferData(DataFlavor.javaFileListFlavor);
                     List list = (List) o;//文件列表
-                    open(new File(list.get(0).toString()));//只取第一个文件
+                    open(new File(list.get(0).toString()), null);//只取第一个文件
                     return true;
                 }
                 catch (Exception e) {
@@ -666,7 +668,7 @@ public class AppFunc {
             public void actionPerformed(ActionEvent e) {
                 String nowPath = editWin.getFilePath();
                 if(nowPath != null)
-                    open(new File(nowPath));
+                    open(new File(nowPath), editWin.getCurrEncoding()); //重新载入就不识别了
             }
         });
         editWin.getiPrint().addActionListener(new ActionListener() {
@@ -735,7 +737,7 @@ public class AppFunc {
                 if(ctrl && e.getKeyCode() == KeyEvent.VK_S) {//Ctrl组合键的写法
                     save();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_O) {
-                    open(null);
+                    open(null, null);
                 }else if(ctrl && shift && e.getKeyCode() == KeyEvent.VK_A) { //ctrl+shift+A
                     saveAnother();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_T) {
@@ -880,17 +882,32 @@ public class AppFunc {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     DTUtil.setCharset(item.getLabel());
+                    for(JCheckBoxMenuItem other : editWin.getCharsetItems()){
+                        other.setState(false);
+                    }
+                    item.setState(true);
+                }
+            });
+        }
+        //当前编码项监听
+        for(JCheckBoxMenuItem item : editWin.getCurrCharsetItems()){
+            item.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     if(editWin.getFilePath() != null) {
                         new Thread(){
                             @Override
                             public void run() {
                                 pauseHlt = true;//高亮先暂停
-                                open(new File(editWin.getFilePath()));
+                                open(new File(editWin.getFilePath()), item.getLabel());
                                 highlight();
                             }
                         }.start();
+                    }else{ //未命名文件
+                        editWin.setCurrEncoding(item.getLabel());
+                        editWin.update();
                     }
-                    for(JCheckBoxMenuItem other : editWin.getCharsetItems()){
+                    for(JCheckBoxMenuItem other : editWin.getCurrCharsetItems()){
                         other.setState(false);
                     }
                     item.setState(true);

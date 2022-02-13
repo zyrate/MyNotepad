@@ -21,7 +21,7 @@ public class EditWin extends JFrame{
     private MyTextPane textPane;//改 - 富文本
     private JScrollPane pane;
     private JMenuBar menuBar;
-    private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, mRun;
+    private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen, iPrint, iBaidu, iRun;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
@@ -32,6 +32,7 @@ public class EditWin extends JFrame{
     private String content = null;//打开某个文件的内容
     private String fileName = null;//文件名
     private String pureFileName = null;//文件名,不带后缀
+    private String currEncoding = DTUtil.getCharset();//当前编码类型，未打开文件时是默认编码
 
     private Font menuFont = new Font("微软雅黑", 0, 15);
     //这里不同的电脑会不一样 DTUtil.getFontIndex()
@@ -39,6 +40,7 @@ public class EditWin extends JFrame{
     private String[] charsets = {"GBK", "UTF-8", "Unicode"};
     private ArrayList<JCheckBoxMenuItem> highlightItems = new ArrayList<>();//高亮菜单项
     private ArrayList<JCheckBoxMenuItem> charsetItems = new ArrayList<>();//字符集菜单项
+    private ArrayList<JCheckBoxMenuItem> currCharsetItems = new ArrayList<>();//当前字符集菜单项
 
     /*构造方法里的方法再次模块化有利于代码整洁*/
     public EditWin(){
@@ -86,7 +88,8 @@ public class EditWin extends JFrame{
         iFind = new MyMenuItem("查找(F)...");
         iReplace = new MyMenuItem("替换(R)...");
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
-        imEncoding = new JMenu("编码方式");
+        imEncoding = new JMenu("默认编码方式");
+        imCurrEncoding = new JMenu("当前编码方式");
         iReOpen = new MyMenuItem("重新载入(U)");
         iPrint = new MyMenuItem("打印(P)...");
         iBaidu = new MyMenuItem("使用百度搜索(E)");
@@ -156,7 +159,9 @@ public class EditWin extends JFrame{
         mEdit.addSeparator();
         mEdit.add(iCode);
         mEdit.add(iBaidu);
+        mEdit.add(imCurrEncoding);
         mEdit.add(imEncoding);
+        mEdit.addSeparator();
         mEdit.add(iFind);
         mEdit.add(iReplace);
         mTools.add(iCount);
@@ -197,11 +202,19 @@ public class EditWin extends JFrame{
     //初始化编码菜单
     private void initEncodingMenu(){
         for(int i = 0; i < charsets.length; i++){
+            //默认
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(charsets[i]);
             charsetItems.add(item);
             imEncoding.add(item);
             if(charsets[i].equals(DTUtil.getCharset())){
                 item.setState(true);
+            }
+            //当前
+            JCheckBoxMenuItem item2 = new JCheckBoxMenuItem(charsets[i]);
+            currCharsetItems.add(item2);
+            imCurrEncoding.add(item2);
+            if(charsets[i].equals(currEncoding)){
+                item2.setState(true);
             }
         }
     }
@@ -245,6 +258,7 @@ public class EditWin extends JFrame{
         content = null;
         filePath = null;
         textPane.setText("");
+        currEncoding = DTUtil.getCharset();//新建文件用默认编码
         update();
     }
     //更新显示
@@ -255,7 +269,15 @@ public class EditWin extends JFrame{
             setTitle(filePath+" - 记事本");
         textPane.setFont(textFont);
         lFoot1.setText(footMessage);
-        lFoot2.setText(DTUtil.getCharset());
+        lFoot2.setText(currEncoding);
+        //更新编码菜单
+        for(JCheckBoxMenuItem item : getCurrCharsetItems()){
+            if(item.getLabel().equals(currEncoding)){
+                item.setState(true);
+            }else {
+                item.setState(false);
+            }
+        }
     }
     //这两个更新分开写是因为更新文本好像会让光标移动，有时不想这样
     //更新内容
@@ -356,10 +378,12 @@ public class EditWin extends JFrame{
         addFootTipListener(iReset, "恢复字体、界面大小、选择等默认设置");
         addFootTipListener(iSave, "保存本文件，Ctrl + S");
         addFootTipListener(iSaveAnother, "另存为本文件，Ctrl + Shift + A");
-        addFootTipListener(imEncoding, "设置编码方式以正确读取文件");
+        addFootTipListener(imEncoding, "设置默认的编码方式");
+        addFootTipListener(imCurrEncoding, "设置当前的编码方式以正确读取和保存文件");
         addFootTipListener(iReOpen, "重新载入当前文件");
         addFootTipListener(iPrint, "打印当前文件内容，Ctrl + P");
         addFootTipListener(iBaidu, "使用百度搜索当前内容或选中内容，Ctrl + E");
+        addFootTipListener(iRun, "运行当前文件，Ctrl + B");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -467,6 +491,10 @@ public class EditWin extends JFrame{
         this.pureFileName = pureFileName;
     }
 
+    public String getCurrEncoding() {
+        return currEncoding;
+    }
+
     public MyTextPane getTextPane() {
         return textPane;
     }
@@ -533,6 +561,14 @@ public class EditWin extends JFrame{
 
     public MyMenuItem getiBaidu() {
         return iBaidu;
+    }
+
+    public ArrayList<JCheckBoxMenuItem> getCurrCharsetItems() {
+        return currCharsetItems;
+    }
+
+    public void setCurrEncoding(String currEncoding) {
+        this.currEncoding = currEncoding;
     }
 
     public JCheckBoxMenuItem getiCode() {
