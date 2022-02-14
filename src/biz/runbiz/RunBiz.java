@@ -25,6 +25,19 @@ public class RunBiz {
     public RunBiz(EditWin editWin){
         this.editWin = editWin;
 
+
+        File path = new File(SCRIPT_PATH);
+        //scripts路径不存在
+        if(!path.exists()){
+            path.mkdir();
+            JavaUtil.copyFile(About.VERSION+"run.script", path.getPath());
+        }
+        //build路径不存在
+        path = new File(BUILD_PATH);
+        if(!path.exists()){
+            path.mkdir();
+        }
+
         addListener();
     }
 
@@ -48,19 +61,6 @@ public class RunBiz {
     private void runFile(){
         file = editWin.getFilePath();
         name = editWin.getPureFileName();
-
-        File path = new File(SCRIPT_PATH);
-        //scripts路径不存在
-        if(!path.exists()){
-            path.mkdir();
-            JavaUtil.copyFile(About.VERSION+"run.script", path.getPath());
-        }
-        //build路径不存在
-        path = new File(BUILD_PATH);
-        if(!path.exists()){
-            path.mkdir();
-        }
-
 
         if (file == null) {
             editWin.changeStatus("当前文件不可运行");

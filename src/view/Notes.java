@@ -39,6 +39,13 @@ public class Notes extends JDialog{
         setVisible(true);
     }
 
+    //初始化工作路径
+    public static void initPath(){
+        File notesDir = new File("C:\\NotepadData\\notes");
+        if(!notesDir.exists()){
+            notesDir.mkdir();
+        }
+    }
 
     public void updateNotes(boolean notesExt){//笔记是否有扩展名
         model.clear();
@@ -207,7 +214,7 @@ public class Notes extends JDialog{
         return files;
     }
 
-    public void addListener(){
+    private void addListener(){
         list.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

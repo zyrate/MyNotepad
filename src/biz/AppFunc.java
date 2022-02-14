@@ -155,6 +155,8 @@ public class AppFunc {
         editWin.getTextPane().add(popup);
         addHandler();
         addListener();
+        //其他初始化
+        Notes.initPath();
     }
     //处理菜单事件
     private void menuDeal(int event){
