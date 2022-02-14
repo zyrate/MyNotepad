@@ -9,8 +9,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -121,7 +120,7 @@ public class Notes extends JDialog{
             int option = JOptionPane.showConfirmDialog(this, "真的要删除此笔记吗？");
             if(option != JOptionPane.OK_OPTION)
                 return;
-            files[list.getSelectedIndex()].delete();
+            boolean is = files[list.getSelectedIndex()].delete();
             updateNotes(DTUtil.getNotesExt());
         }
     }
@@ -147,9 +146,11 @@ public class Notes extends JDialog{
             //不重复
             try {
                 file.createNewFile();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //这里open如果没有处理好就无法重命名和删除新建的文件 - 已解决(新增的识别编码的代码块里没有关闭流)
             appFunc.open(file, DTUtil.getCharset()); //新建编码用默认的
             dispose();
         }

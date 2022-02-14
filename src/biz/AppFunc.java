@@ -106,6 +106,7 @@ import java.util.concurrent.CountDownLatch;
  * 2.43 自动换行打开/取消的时候没有重新高亮 - 已解决
  * 2.50 无法输入GBK或UTF8编码的内容，导致奇怪的乱码 (2.50之前无法输入UTF8，2.50无法输入GBK ？？？) - 已解决(Saver处)
  * 2.50 打开窗口首次保存文件每行会多出一个回车 - 已解决(\r去掉)
+ * 2.50 笔记界面有时会莫名其妙无法删除和重命名新建的文件 - 已解决(读写文件以后如果不想一直占用，一定要及时关闭流)
  */
 public class AppFunc {
     public EditWin editWin;

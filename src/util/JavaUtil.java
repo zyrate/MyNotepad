@@ -56,11 +56,12 @@ public class JavaUtil {
         byte[] first3Bytes = new byte[3];
         try {
             boolean checked = false;
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fis);
             bis.mark(0);
             int read = bis.read(first3Bytes, 0, 3);
             if (read == -1) {
-                return charset; //文件编码为 ANSI
+                checked = true; //文件编码为 ANSI   不能在这里 return! 要关闭流!!
             } else if (first3Bytes[0] == (byte) 0xFF
                     && first3Bytes[1] == (byte) 0xFE) {
                 charset = "Unicode"; //文件编码为 UTF-16LE
@@ -106,6 +107,7 @@ public class JavaUtil {
                     }
                 }
             }
+            fis.close();
             bis.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -64,13 +64,18 @@ public class Opener{
 
                 String buff = "";
                 String line;
+
+                BufferedReader reader = null;
+                InputStreamReader isr = null;
+                FileInputStream fis = null;
                 try {
-                    BufferedReader reader;
+                    fis = new FileInputStream(file);
                     if(charset != null)
-                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));//按照指定字符集解码
+                        isr = new InputStreamReader(fis, charset);//按照指定字符集解码
                     else
-                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), autoCharset));//自动识别字符集
-                    file.length();
+                        isr = new InputStreamReader(fis, autoCharset);//自动识别字符集
+                    reader = new BufferedReader(isr);
+
                     //readLine方法不读\n
                     boolean firstLine = true; //第一行
                     while((line=reader.readLine()) != null){
@@ -84,13 +89,21 @@ public class Opener{
                         buffered += line.getBytes().length+1;
                         editWin.changeStatus("正在打开："+file.getName()+"  ("+buffered*100/length+"%)");
                     }
-                    reader.close();
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "找不到指定文件！可能文件名错误或者已经被移除！", "错误", JOptionPane.OK_OPTION);
                     return;
                 } catch (IOException e) {
                     e.printStackTrace();
+                }finally {
+                    try {
+                        fis.close();
+                        isr.close();
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 if(buff.equals("")) charset = DTUtil.getCharset(); //如果是空文件，则用默认编码
                 editWin.setCurrEncoding(charset==null?autoCharset:charset);
