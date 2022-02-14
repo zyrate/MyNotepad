@@ -408,12 +408,15 @@ public class AppFunc {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                editWin.changeStatus("正在高亮...");
                 //开启高亮响应
                 pauseHlt = false;
                 //准备高亮
                 prepareHighlight();
                 //高亮
                 highlight();
+                editWin.changeStatus("就绪");
+                editWin.showStatus("高亮完成");
                 //撤销器重置
                 undo.discardAllEdits();
             }

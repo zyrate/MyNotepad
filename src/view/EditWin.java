@@ -228,10 +228,7 @@ public class EditWin extends JFrame{
 
     //开始高亮
     public void highlight(){
-        changeStatus("正在高亮...");
         textPane.highlight();
-        changeStatus("就绪");
-        showStatus("高亮完成");
     }
     public void highlight(int offset, int length){
         textPane.highlight(offset, length);
