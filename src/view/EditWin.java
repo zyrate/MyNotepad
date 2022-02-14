@@ -253,11 +253,11 @@ public class EditWin extends JFrame{
     }
     //初始界面
     public void reBegin(){
-        footMessage = mainMessage;
         content = null;
         filePath = null;
         textPane.setText("");
         currEncoding = DTUtil.getCharset();//新建文件用默认编码
+        changeStatus("就绪");
         update();
     }
     //更新显示
