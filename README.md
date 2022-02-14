@@ -7,6 +7,15 @@ MyNotepad是一个用原生Java写的编程记事本程序。
 **其他功能：** 记笔记、更改字体、进入代码模式、查找替换、字数统计、自动识别文件编码等实用功能。
 
 正在不断完善ing... 欢迎提出BUG
+## 程序截图
+<img src="https://img-blog.csdnimg.cn/4ee3f19dcb1049e2b0502f556d00ea6e.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/d4a6c19678e04d00a5ba636fa04f62ec.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/a7cc57469c9d400a88ab5cdfc13b390e.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/f010fa18bb544229a095003fcb22d77a.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/e157752eb42141b2ace77044e7d7aaf3.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/8a87868f56444cd382ef4aaf75b584ec.png" width="60%"></img>
+<img src="https://img-blog.csdnimg.cn/1dbe9ded1b444e1593ee106b87f4c1a5.png" width="60%"></img>
+
 ## 使用方法
 - 导入到IDEA中，运行AppMain中的启动方法，即可使用
 - 本程序的配置文件路径在 `C:\\NotepadData`
