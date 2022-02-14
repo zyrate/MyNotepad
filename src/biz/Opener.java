@@ -33,11 +33,11 @@ public class Opener{
     }
 
     public File select(){
-        JFileChooser fileChooser = new JFileChooser(DTUtil.getLastPath());
+        JFileChooser fileChooser = new JFileChooser(DTUtil.getLastOpenPath());
         int option = fileChooser.showOpenDialog(null);
         if(option == JFileChooser.APPROVE_OPTION) {
             //更新最后路径
-            DTUtil.setLastPath(fileChooser.getSelectedFile().getPath());
+            DTUtil.setLastOpenPath(fileChooser.getSelectedFile().getPath());
             return fileChooser.getSelectedFile();
         }
         else

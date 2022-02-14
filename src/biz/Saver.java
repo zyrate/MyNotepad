@@ -45,7 +45,7 @@ public class Saver {
     }
 
     public File select(){
-        JFileChooser fileChooser = new JFileChooser("C:\\");
+        JFileChooser fileChooser = new JFileChooser(DTUtil.getLastSavePath());
         int option = fileChooser.showSaveDialog(null);
         if(option == JFileChooser.APPROVE_OPTION) {
             File temp = fileChooser.getSelectedFile();
@@ -54,6 +54,9 @@ public class Saver {
                 file = new File(temp.getPath()+".txt");
             }else
                 file = temp;
+
+            //更新最后路径
+            DTUtil.setLastSavePath(file.getPath());
             return file;
         }
         else
