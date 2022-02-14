@@ -161,9 +161,9 @@ public class FontChooser extends JDialog{
     public void showFont(){
         chosenFont = new Font(fontsList.getList().getSelectedValue(), stylesList.getList().getSelectedIndex(), Integer.valueOf(tSize.getText())+10);//加数字
         lShowCn.setFont(chosenFont);
-        lShowCn.setText("云瑞工作室");
+        lShowCn.setText("示例文字 123");
         lShowEn.setFont(chosenFont);
-        lShowEn.setText("AaBbYy");
+        lShowEn.setText("main(String[] a){");
     }
 
     //如果在文本监听中修改了文本，会出异常

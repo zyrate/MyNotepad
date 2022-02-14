@@ -365,6 +365,7 @@ public class EditWin extends JFrame{
         addFootTipListener(mHelp, "有关该记事本的帮助信息");
         addFootTipListener(mHighlight, "设置是否启用高亮功能以及其样式");
         addFootTipListener(mTools, "实用小工具");
+        addFootTipListener(mRun, "运行代码");
         addFootTipListener(iCode, "是否进入代码模式，Ctrl + \\");
         addFootTipListener(iReplace, "替换文本，Ctrl + R");
         addFootTipListener(iFind, "查找文本，Ctrl + F");
