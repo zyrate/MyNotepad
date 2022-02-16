@@ -24,7 +24,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -95,6 +95,7 @@ public class EditWin extends JFrame{
         iPrint = new MyMenuItem("打印(P)...");
         iBaidu = new MyMenuItem("使用百度搜索(E)");
         iRun = new MyMenuItem("运行(B)");
+        iTranslate = new MyMenuItem("使用谷歌翻译(G)");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -166,9 +167,11 @@ public class EditWin extends JFrame{
         mEdit.add(iLineWrap);
         mEdit.addSeparator();
         mEdit.add(iCode);
-        mEdit.add(iBaidu);
         mEdit.add(imCurrEncoding);
         mEdit.add(imEncoding);
+        mEdit.addSeparator();
+        mEdit.add(iBaidu);
+        mEdit.add(iTranslate);
         mEdit.addSeparator();
         mEdit.add(iFind);
         mEdit.add(iReplace);
@@ -391,6 +394,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iReOpen, "重新载入当前文件");
         addFootTipListener(iPrint, "打印当前文件内容，Ctrl + P");
         addFootTipListener(iBaidu, "使用百度搜索当前内容或选中内容，Ctrl + E");
+        addFootTipListener(iTranslate, "使用谷歌翻译当前内容或选中内容，Ctrl + G");
         addFootTipListener(iRun, "运行当前文件，Ctrl + B");
 
         for(int i = 0; i < highlightItems.size(); i++){
@@ -583,4 +587,7 @@ public class EditWin extends JFrame{
         return iCode;
     }
 
+    public MyMenuItem getiTranslate() {
+        return iTranslate;
+    }
 }

@@ -69,6 +69,7 @@ import java.util.concurrent.CountDownLatch;
  *       - 加入文件编码类型判断功能，Opener会自己判断文件编码并打开，这样的话Setting里的charset就是默认编码了
  *       - 加入了当前编码菜单，读取文件时会关联这个菜单，默认编码是新建文件时用的
  *       - 首次使用MyNotepad无需手动配置
+ *       - 增加使用谷歌翻译
  *
  */
 /**
@@ -204,6 +205,22 @@ public class AppFunc {
 
         try {
             Desktop.getDesktop().browse(URI.create("https://baidu.com/s?wd="+search));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //使用谷歌翻译
+    private void googleTranslate(){
+        String search;
+        String seleted = editWin.getTextPane().getSelectedText();
+        if(seleted != null){
+            search = seleted;
+        }else{
+            search = editWin.getTextPane().getText();
+        }
+
+        try {
+            Desktop.getDesktop().browse(URI.create("https://translate.google.cn/?text="+search));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -691,6 +708,12 @@ public class AppFunc {
                 searchBaidu();
             }
         });
+        editWin.getiTranslate().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                googleTranslate();
+            }
+        });
         iCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -793,6 +816,8 @@ public class AppFunc {
                     print();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_E) {
                     searchBaidu();
+                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_G) {
+                    googleTranslate();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_UP){
                     e.consume();
                     editWin.setSize(editWin.getWidth(), editWin.getHeight()+12);
