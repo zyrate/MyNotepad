@@ -61,14 +61,23 @@ public class DTUtil {
         return settings.getCharset();
     }
 
-    public static void setLastPath(String lastPath){
+    public static void setLastOpenPath(String lastPath){
         read();
-        settings.setLastPath(lastPath);
+        settings.setLastOpenPath(lastPath);
         write(settings);
     }
-    public static String getLastPath(){
+    public static String getLastOpenPath(){
         read();
-        return settings.getLastPath();
+        return settings.getLastOpenPath();
+    }
+    public static void setLastSavePath(String lastPath){
+        read();
+        settings.setLastSavePath(lastPath);
+        write(settings);
+    }
+    public static String getLastSavePath(){
+        read();
+        return settings.getLastSavePath();
     }
     public static void setHighlightName(String name){
         read();
