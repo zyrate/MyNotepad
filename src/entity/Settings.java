@@ -11,22 +11,27 @@ public class Settings implements Serializable{
     private boolean notesExt = false;//笔记是否有扩展名
     private boolean codeMode = true;//代码模式
     private String highlightName = null;
-    private String lastPath = "C:\\";//上一次打开的文件目录
+    private String lastOpenPath = "C:\\";//上一次打开的文件目录
+    private String lastSavePath = "C:\\";//上一次保存的文件目录
     private String charset = "GBK";//编码
 
+    public String getLastSavePath() {
+        return lastSavePath;
+    }
+    public void setLastSavePath(String lastSavePath) {
+        this.lastSavePath = lastSavePath;
+    }
     public String getCharset() {
         return charset;
     }
-
     public void setCharset(String charset) {
         this.charset = charset;
     }
-
-    public String getLastPath() {
-        return lastPath;
+    public String getLastOpenPath() {
+        return lastOpenPath;
     }
-    public void setLastPath(String lastPath) {
-        this.lastPath = lastPath;
+    public void setLastOpenPath(String lastOpenPath) {
+        this.lastOpenPath = lastOpenPath;
     }
     public boolean isCodeMode() {
         return codeMode;
