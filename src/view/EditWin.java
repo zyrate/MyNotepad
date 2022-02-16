@@ -121,6 +121,13 @@ public class EditWin extends JFrame{
         mTools.setFont(menuFont);
         mHelp.setFont(menuFont);
         mHighlight.setFont(menuFont);
+        mRun.setFont(menuFont);
+        iLineWrap.setFont(menuFont);
+        iNoHL.setFont(menuFont);
+        iCode.setFont(menuFont);
+        imCurrEncoding.setFont(menuFont);
+        imEncoding.setFont(menuFont);
+
         textPane.setFont(textFont);
         iNoHL.setState(true);
 
@@ -192,6 +199,7 @@ public class EditWin extends JFrame{
         for(String name : filesName){
             String settingName = name.replaceAll(SimpleHighlighter.CONF_TYPE, "");
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(settingName);
+            item.setFont(menuFont);
             mHighlight.add(item);
             highlightItems.add(item);
             if(settingName.equals(DTUtil.getHighlightName())){
