@@ -117,9 +117,9 @@ public class FontChooser extends JDialog{
         tFont.setBounds(17, 35, 213, 30);
         tStyle.setBounds(244, 35, 173, 30);
         tSize.setBounds(432, 35, 93, 30);
-        lFont.setBounds(18, 10, 30, 30);
-        lStyle.setBounds(245, 10, 30, 30);
-        lSize.setBounds(433, 10, 30, 30);
+        lFont.setBounds(18, 5, 60, 40);
+        lStyle.setBounds(245, 5, 60, 40);
+        lSize.setBounds(433, 5, 60, 40);
         lShowEn.setBounds(13, 300, 220, 150);
         lShowCn.setBounds(240, 300, 288, 150);
         bOK.setBounds(300, 510, 110, 35);
