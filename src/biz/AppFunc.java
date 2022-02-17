@@ -78,7 +78,7 @@ import java.util.concurrent.CountDownLatch;
  */
 /**
  * BUG
- * 2.0  #在打开一个文件后，用输入法打字，进行撤销时会混乱甚至卡住。...
+ * 2.0  #在打开一个文件后，用输入法打字，进行撤销时会混乱甚至卡住。... (加了同步，部分解决)
  * 2.1  不高亮问题 - 少了个!号 - 已解决
  * 2.2  修复了首次打开文件会每行多一个回车的bug，具体在Opener
  * 2.2  查找时焦点可以移到替换框内，并用快捷键进行替换 - 已解决
@@ -791,12 +791,16 @@ public class AppFunc {
                 }else if(ctrl && !shift && e.getKeyCode() == KeyEvent.VK_Z){
                     //撤销
                     if(undo.canUndo()) {
-                        undo.undo();
+                        synchronized (editWin.getTextPane().getDocument()){
+                            undo.undo();
+                        }
                     }
                 }else if(ctrl && shift && e.getKeyCode() == KeyEvent.VK_Z){
                     //回撤
                     if(undo.canRedo()) {
-                        undo.redo();
+                        synchronized (editWin.getTextPane().getDocument()){
+                            undo.redo();
+                        }
                     }
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_D){
                     cloneText();
