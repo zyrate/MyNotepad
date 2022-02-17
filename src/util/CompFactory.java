@@ -1,6 +1,8 @@
 package util;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+
 /**
  * 组件工具类
  */
@@ -30,16 +32,31 @@ public class CompFactory {
         l.setFont(font1);
         return l;
     }
-    public static JMenu createMenu(String label){
+    //菜单可直接设置快捷键
+    public static JMenu createMenu(String label, int key){
         JMenu menu = new JMenu(label);
         menu.setFont(font2);
+        menu.setMnemonic(key); //Alt + key
         return menu;
     }
+    public static JMenuItem createMenuItem(String label, String keys){
+        JMenuItem item = new JMenuItem(label);
+        item.setFont(font2);
+        item.setAccelerator(KeyStroke.getKeyStroke(keys)); //这里可以写组合键
+        return item;
+    }
+    //也可不设置
     public static JMenuItem createMenuItem(String label){
         JMenuItem item = new JMenuItem(label);
         item.setFont(font2);
         return item;
     }
+    public static JMenu createMenu(String label){
+        JMenu menu = new JMenu(label);
+        menu.setFont(font2);
+        return menu;
+    }
+    //单选框不设快捷键
     public static JCheckBoxMenuItem createCheckMenuItem(String label){
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(label);
         item.setFont(font2);

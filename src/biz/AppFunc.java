@@ -71,6 +71,7 @@ import java.util.concurrent.CountDownLatch;
  *       - 加入了当前编码菜单，读取文件时会关联这个菜单，默认编码是新建文件时用的
  *       - 首次使用MyNotepad无需手动配置
  *       - 增加使用谷歌翻译
+ *       - 菜单栏菜单项组件快捷键绑定
  *
  */
 /**
@@ -139,6 +140,7 @@ public class AppFunc {
     public AppFunc(EditWin editWin){
         this.editWin = editWin;
         undo = new UndoManager();
+        //弹出菜单用不了快捷键。。。
         iCopy = CompFactory.createMenuItem("复制(C)");
         iPaste = CompFactory.createMenuItem("粘贴(V)");
         iCut = CompFactory.createMenuItem("剪切(X)");
@@ -766,17 +768,7 @@ public class AppFunc {
                 boolean ctrl = e.isControlDown();
                 boolean shift = e.isShiftDown();
                 boolean alt = e.isAltDown();
-                if(ctrl && e.getKeyCode() == KeyEvent.VK_S) {//Ctrl组合键的写法
-                    save();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_O) {
-                    open(null, null);
-                }else if(ctrl && shift && e.getKeyCode() == KeyEvent.VK_A) { //ctrl+shift+A
-                    saveAnother();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_T) {
-                    chooseFont();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_N) {
-                    newOne();
-                }else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     closing();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_X) {
                     cut();
@@ -798,28 +790,15 @@ public class AppFunc {
                     }
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_D){
                     choose();
-                }else if(e.getKeyCode() == KeyEvent.VK_F1){
-                    count();
-                }else if(e.getKeyCode() == KeyEvent.VK_F2){
-                    editWin.getTextPane().append(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));
-                }else if(e.getKeyCode() == KeyEvent.VK_F3){
-                    notes();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_F12){
                     //测试键
                     editWin.getTextPane().test();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_F){
-                    find();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_R) {
-                    replace();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
                     onCodeModel();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_P) {
-                    print();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_E) {
-                    searchBaidu();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_G) {
-                    googleTranslate();
-                }else if(ctrl && e.getKeyCode() == KeyEvent.VK_UP){
+                }
+
+                //下面是鸡肋功能
+                else if(ctrl && e.getKeyCode() == KeyEvent.VK_UP){
                     e.consume();
                     editWin.setSize(editWin.getWidth(), editWin.getHeight()+12);
                     editWin.setLocation(editWin.getX(), editWin.getY()-6);
