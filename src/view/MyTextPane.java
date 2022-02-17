@@ -65,7 +65,7 @@ public class MyTextPane extends JTextPane {
     public void quickWrap(){
         int length = 0;
         int pos = this.getCaretPosition();
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();//一定要去\r
         for(int i = pos; i < text.length(); i++){
             if(text.charAt(i) == '\n')
                 break;
@@ -85,7 +85,7 @@ public class MyTextPane extends JTextPane {
      */
     public void autoIndent(int offset, boolean isAnother){
         int pos = offset>0 ? offset : this.getCaretPosition();
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();//一定要去\r
         String indent = "";
         char firstNonBlank = ' ';//记录第一个非空白字符
         boolean flag = false;//标记是否可以记录空白个数
@@ -118,7 +118,7 @@ public class MyTextPane extends JTextPane {
      */
     private int getExpectedIndent(int offset, boolean isAnother){
         int pos = offset>0 ? offset : this.getCaretPosition();
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();//一定要去\r
         int indentL = 0;
         char firstNonBlank = ' ';//记录第一个非空白字符
         boolean flag = false;//标记是否可以记录空白个数
@@ -170,7 +170,7 @@ public class MyTextPane extends JTextPane {
             replaceRange("", this.getSelectionStart(), this.getSelectionEnd());
             return;
         }
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();//一定要去\r
         int pos = this.getCaretPosition();
         int length = 0;
         int expected = getExpectedIndent(-1, true);
@@ -197,7 +197,7 @@ public class MyTextPane extends JTextPane {
      */
     private void addAtBeginOfLine(String str, int pos){
         pos = pos == -1 ? getCaretPosition() : pos;//从外界还是光标
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();
         int i;
         for(i = pos-1; i >= 0; i--){
             if(text.charAt(i) == '\n')
@@ -213,7 +213,7 @@ public class MyTextPane extends JTextPane {
      */
     private boolean rmAtBeginOfLine(String str, int pos){
         pos = pos == -1 ? getCaretPosition() : pos;//从外界还是光标
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();
         int start = 0, end = text.length();//这一行的开始和结尾
         for(int i = pos-1; i >= 0; i--){
             if(text.charAt(i) == '\n'){
@@ -248,7 +248,7 @@ public class MyTextPane extends JTextPane {
      */
     private boolean isAtBeginOfLine(String str, int pos){
         pos = pos == -1 ? getCaretPosition() : pos;//从外界还是光标
-        String text = this.getText().replaceAll("\\r", "");//一定要去\r
+        String text = this.getText();
         int start = 0, end = text.length();//这一行的开始和结尾
         for(int i = pos-1; i >= 0; i--){
             if(text.charAt(i) == '\n'){
@@ -285,7 +285,7 @@ public class MyTextPane extends JTextPane {
             int start = getSelectionStart();
             int end = getSelectionEnd();
             boolean allCommented = true;//标记是否所有行都已注释，这样的话才去掉
-            String text = this.getText().replaceAll("\\r", "");//一定要去\r
+            String text = this.getText();
             for(int i = start; i < end; i++){
                 if(text.charAt(i) == '\n' || i == end-1){
                     if(!isAtBeginOfLine("//", i)){
@@ -300,7 +300,7 @@ public class MyTextPane extends JTextPane {
                         rmAtBeginOfLine("//", i);
                         i-=2;
                         end-=2;
-                        text = this.getText().replaceAll("\\r", "");//一定要去\r
+                        text = this.getText();//一定要去\r
                     }
                 }
             }else{
@@ -309,7 +309,7 @@ public class MyTextPane extends JTextPane {
                         addAtBeginOfLine("//", i);
                         i+=2;
                         end+=2;
-                        text = this.getText().replaceAll("\\r", "");//一定要去\r
+                        text = this.getText();//一定要去\r
                     }
                 }
             }
@@ -321,7 +321,7 @@ public class MyTextPane extends JTextPane {
      * @return
      */
     public int getCursorLine(){
-        String text = this.getText().replaceAll("\\r", "");;
+        String text = this.getText();
         int pos = getCaretPosition();
         int line = 0;
         for(int i=0; i<pos; i++){
@@ -335,7 +335,7 @@ public class MyTextPane extends JTextPane {
      * @return
      */
     public int getCursorColumn(){
-        String text = this.getText().replaceAll("\\r", "");;
+        String text = this.getText();
         int pos = getCaretPosition();
         int column = 0;
         for(int i=pos-1; i>=0 && text.charAt(i)!='\n'; i--){
@@ -548,15 +548,47 @@ public class MyTextPane extends JTextPane {
         this.setSelectionStart(start);
         this.setSelectionEnd(end);
     }
-    //选中光标所在行
-    public void chooseLine(){
+    //一行开始
+    public int getLineStart(){
         int pos = this.getCaretPosition();
-        int start, end;
+        int start;
         //向前
         for (start = pos-1; !getCharOfIndex(start).equals("\n") && start >= 0; start--);
+        //调整
+        if(start < 0) start = 0;
+        else start++;
+        return start;
+    }
+    //一行结束
+    public int getLineEnd(){
+        int pos = this.getCaretPosition();
+        String text = this.getText();
+        int end;
         //向后
-        for (end = pos; !getCharOfIndex(end).equals("\n"); end++);
-        choose(start, end);
+        for (end = pos; !getCharOfIndex(end).equals("\n") && end < text.length(); end++);
+        //调整
+        if(end < text.length()) end++;
+        return end;
+    }
+    //返回光标所在行
+    public String getLine(){
+        int start = getLineStart(), end = getLineEnd();
+        try {
+            return getText(start, end-start);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    //删除光标所在行
+    public void removeLine(){
+        int start = getLineStart(), end = getLineEnd();
+        removeString(start, end-start);
+    }
+
+    @Override
+    public String getText(){
+        return super.getText().replaceAll("\\r", "");//一定要去\r
     }
 
     /**

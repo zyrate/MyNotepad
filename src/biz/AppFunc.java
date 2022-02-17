@@ -72,6 +72,8 @@ import java.util.concurrent.CountDownLatch;
  *       - 首次使用MyNotepad无需手动配置
  *       - 增加使用谷歌翻译
  *       - 菜单栏菜单项组件快捷键绑定
+ *       - 改变了复制和剪切的逻辑
+ *       - 加入了文本克隆功能和快捷键
  *
  */
 /**
@@ -124,7 +126,7 @@ public class AppFunc {
     private boolean pauseHlt = false;
     //右键菜单
     private JPopupMenu popup;
-    private JMenuItem iCopy, iPaste, iCut, iDelete, iSelectAll, iFomart;
+    private JMenuItem iCopy, iPaste, iCut, iClone, iSelectAll, iFomart;
     /*菜单事件*/
     public static final int OPEN = 1;
     public static final int SAVE = 2;
@@ -144,14 +146,14 @@ public class AppFunc {
         iCopy = CompFactory.createMenuItem("复制(C)");
         iPaste = CompFactory.createMenuItem("粘贴(V)");
         iCut = CompFactory.createMenuItem("剪切(X)");
-        iDelete = CompFactory.createMenuItem("删除(D)");
+        iClone = CompFactory.createMenuItem("克隆(D)");
         iSelectAll = CompFactory.createMenuItem("全部选中(A)");
         iFomart = CompFactory.createMenuItem("CSS格式化");
         popup = new JPopupMenu();
         popup.add(iCut);
         popup.add(iCopy);
         popup.add(iPaste);
-        popup.add(iDelete);
+        popup.add(iClone);
         popup.addSeparator();
         popup.add(iSelectAll);
         popup.add(iFomart);
@@ -311,14 +313,14 @@ public class AppFunc {
     }
     //复制
     public void copy(){
-        if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
-            editWin.showStatus("请先选中内容！");
-            return;
+        String content = editWin.getTextPane().getSelectedText();
+        if(content == null){//没有选中文字，复制一行
+            content = editWin.getTextPane().getLine();
         }
         // 获取系统剪贴板
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         // 封装文本内容
-        Transferable trans = new StringSelection(editWin.getTextPane().getSelectedText());
+        Transferable trans = new StringSelection(content);
         // 把文本内容设置到系统剪贴板
         clipboard.setContents(trans, null);
         editWin.changeStatus("已复制");
@@ -347,24 +349,32 @@ public class AppFunc {
     }
     //剪切
     public void cut(){
-        if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
-            editWin.showStatus("请先选中内容！");
-            return;
-        }
         copy();
-        editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
+        if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
+            editWin.getTextPane().removeLine();//删去一行
+        }else {
+            editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
+        }
         editWin.changeStatus("已剪切");
     }
+    //克隆一行/一段
+    public void cloneText(){
+        String content = editWin.getTextPane().getSelectedText();
+        int insertPos = editWin.getTextPane().getSelectionEnd();
+        if(content == null){//没有选中文字，一行
+            content = editWin.getTextPane().getLine();
+            insertPos = editWin.getTextPane().getLineEnd();
+        }
+        editWin.getTextPane().justInsert(content, insertPos);
+        editWin.getTextPane().setSelectionStart(insertPos);
+        editWin.getTextPane().setSelectionEnd(insertPos+content.length());
+    }
     //删除
-    public void delete(){
+    private void delete(){
         if(editWin.getTextPane().getSelectedText() == null){//没有选中文字
             return;
         }
         editWin.getTextPane().replaceRange("", editWin.getTextPane().getSelectionStart(), editWin.getTextPane().getSelectionEnd());
-    }
-    //选中某一行
-    public void choose(){
-        editWin.getTextPane().chooseLine();
     }
     //笔记
     public void notes(){
@@ -735,10 +745,10 @@ public class AppFunc {
                 cut();
             }
         });
-        iDelete.addActionListener(new ActionListener() {
+        iClone.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                delete();
+                cloneText();
             }
         });
         iSelectAll.addActionListener(new ActionListener() {
@@ -789,7 +799,7 @@ public class AppFunc {
                         undo.redo();
                     }
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_D){
-                    choose();
+                    cloneText();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_F12){
                     //测试键
                     editWin.getTextPane().test();
