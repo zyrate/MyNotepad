@@ -843,15 +843,22 @@ public class AppFunc {
             @Override
             public void keyReleased(KeyEvent e) {
                 //这里调用不会有先后问题
-                editWin.cursorChange();
                 editWin.selectedChange();
             }
         });
+
+        editWin.getTextPane().addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                editWin.cursorChange();
+
+            }
+        });
+
         //鼠标监听
         editWin.getTextPane().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                editWin.cursorChange();
                 //右键
                 if(e.getButton() == MouseEvent.BUTTON3){
                     popup.show(editWin.getTextPane(), e.getX(), e.getY());
