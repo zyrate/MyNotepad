@@ -1,6 +1,7 @@
 package view;
 
 import biz.hlt.SimpleHighlighter;
+import util.CompFactory;
 import util.DTUtil;
 import util.JavaUtil;
 
@@ -23,7 +24,7 @@ public class EditWin extends JFrame{
     private JScrollPane pane;
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
-    private MyMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
+    private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
@@ -62,40 +63,40 @@ public class EditWin extends JFrame{
         pFootRight = new JPanel();
         pFootLeft = new JPanel();
         menuBar = new JMenuBar();
-        mFile = new JMenu("文件(F)");
-        mEdit = new JMenu("编辑(E)");
-        mTools = new JMenu("工具(T)");
-        mHelp = new JMenu("帮助(H)");
-        mHighlight = new JMenu("高亮(L)");
-        mRun = new JMenu("运行(R)");
+        mFile = CompFactory.createMenu("文件(F)");
+        mEdit = CompFactory.createMenu("编辑(E)");
+        mTools = CompFactory.createMenu("工具(T)");
+        mHelp = CompFactory.createMenu("帮助(H)");
+        mHighlight = CompFactory.createMenu("高亮(L)");
+        mRun = CompFactory.createMenu("运行(R)");
         textPane = new MyTextPane();
         pane = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         lFoot1 = new JLabel(footMessage);
         lFoot2 = new JLabel("UTF8");
         lFoot3 = new JLabel("第 0 行，第 0 列");
         lFoot4 = new JLabel("共 0 字");
-        iOpen = new MyMenuItem("打开(O)...");
-        iSave = new MyMenuItem("保存(S)");
-        iSaveAnother = new MyMenuItem("另存为(A)...");
-        iFont = new MyMenuItem("字体(T)...");
-        iReset = new MyMenuItem("恢复默认设置");
-        iAbout = new MyMenuItem("关于记事本");
-        iCount = new MyMenuItem("F1 字数统计");
-        iNew = new MyMenuItem("新建(N)");
-        iDate = new MyMenuItem("F2 日期");
-        iNote = new MyMenuItem("F3 笔记");
-        iLineWrap = new JCheckBoxMenuItem("自动换行");
-        iNoHL = new JCheckBoxMenuItem("无");
-        iFind = new MyMenuItem("查找(F)...");
-        iReplace = new MyMenuItem("替换(R)...");
+        iOpen = CompFactory.createMenuItem("打开(O)...");
+        iSave = CompFactory.createMenuItem("保存(S)");
+        iSaveAnother = CompFactory.createMenuItem("另存为(A)...");
+        iFont = CompFactory.createMenuItem("字体(T)...");
+        iReset = CompFactory.createMenuItem("恢复默认设置");
+        iAbout = CompFactory.createMenuItem("关于记事本");
+        iCount = CompFactory.createMenuItem("F1 字数统计");
+        iNew = CompFactory.createMenuItem("新建(N)");
+        iDate = CompFactory.createMenuItem("F2 日期");
+        iNote = CompFactory.createMenuItem("F3 笔记");
+        iLineWrap = CompFactory.createCheckMenuItem("自动换行");
+        iNoHL = CompFactory.createCheckMenuItem("无");
+        iFind = CompFactory.createMenuItem("查找(F)...");
+        iReplace = CompFactory.createMenuItem("替换(R)...");
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
-        imEncoding = new JMenu("默认编码方式");
-        imCurrEncoding = new JMenu("当前编码方式");
-        iReOpen = new MyMenuItem("重新载入(U)");
-        iPrint = new MyMenuItem("打印(P)...");
-        iBaidu = new MyMenuItem("使用百度搜索(E)");
-        iRun = new MyMenuItem("运行(B)");
-        iTranslate = new MyMenuItem("使用谷歌翻译(G)");
+        imEncoding = CompFactory.createMenu("默认编码方式");
+        imCurrEncoding = CompFactory.createMenu("当前编码方式");
+        iReOpen = CompFactory.createMenuItem("重新载入(U)");
+        iPrint = CompFactory.createMenuItem("打印(P)...");
+        iBaidu = CompFactory.createMenuItem("使用百度搜索(E)");
+        iRun = CompFactory.createMenuItem("运行(B)");
+        iTranslate = CompFactory.createMenuItem("使用谷歌翻译(G)");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -117,18 +118,6 @@ public class EditWin extends JFrame{
         lFoot4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         menuBar.setBackground(Color.WHITE);
         textPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-        mFile.setFont(menuFont);
-        mEdit.setFont(menuFont);
-        mTools.setFont(menuFont);
-        mHelp.setFont(menuFont);
-        mHighlight.setFont(menuFont);
-        mRun.setFont(menuFont);
-        iLineWrap.setFont(menuFont);
-        iNoHL.setFont(menuFont);
-        iCode.setFont(menuFont);
-        imCurrEncoding.setFont(menuFont);
-        imEncoding.setFont(menuFont);
-
         textPane.setFont(textFont);
         iNoHL.setState(true);
 
@@ -421,11 +410,11 @@ public class EditWin extends JFrame{
 
     //getter and setter
 
-    public MyMenuItem getiPrint() {
+    public JMenuItem getiPrint() {
         return iPrint;
     }
 
-    public MyMenuItem getiReOpen() {
+    public JMenuItem getiReOpen() {
         return iReOpen;
     }
 
@@ -437,23 +426,23 @@ public class EditWin extends JFrame{
         return pane;
     }
 
-    public MyMenuItem getiNote() {
+    public JMenuItem getiNote() {
         return iNote;
     }
 
-    public MyMenuItem getiDate() {
+    public JMenuItem getiDate() {
         return iDate;
     }
 
-    public MyMenuItem getiNew() {
+    public JMenuItem getiNew() {
         return iNew;
     }
 
-    public MyMenuItem getiCount() {
+    public JMenuItem getiCount() {
         return iCount;
     }
 
-    public MyMenuItem getiAbout() {
+    public JMenuItem getiAbout() {
         return iAbout;
     }
 
@@ -461,11 +450,11 @@ public class EditWin extends JFrame{
         return iLineWrap;
     }
 
-    public MyMenuItem getiReset() {
+    public JMenuItem getiReset() {
         return iReset;
     }
 
-    public MyMenuItem getiFont() {
+    public JMenuItem getiFont() {
         return iFont;
     }
 
@@ -531,15 +520,15 @@ public class EditWin extends JFrame{
         return mHighlight;
     }
 
-    public MyMenuItem getiOpen() {
+    public JMenuItem getiOpen() {
         return iOpen;
     }
 
-    public MyMenuItem getiSave() {
+    public JMenuItem getiSave() {
         return iSave;
     }
 
-    public MyMenuItem getiSaveAnother() {
+    public JMenuItem getiSaveAnother() {
         return iSaveAnother;
     }
 
@@ -559,19 +548,19 @@ public class EditWin extends JFrame{
         return mRun;
     }
 
-    public MyMenuItem getiRun() {
+    public JMenuItem getiRun() {
         return iRun;
     }
 
-    public MyMenuItem getiFind() {
+    public JMenuItem getiFind() {
         return iFind;
     }
 
-    public MyMenuItem getiReplace() {
+    public JMenuItem getiReplace() {
         return iReplace;
     }
 
-    public MyMenuItem getiBaidu() {
+    public JMenuItem getiBaidu() {
         return iBaidu;
     }
 
@@ -587,7 +576,7 @@ public class EditWin extends JFrame{
         return iCode;
     }
 
-    public MyMenuItem getiTranslate() {
+    public JMenuItem getiTranslate() {
         return iTranslate;
     }
 }

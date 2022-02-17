@@ -6,6 +6,7 @@ import java.awt.*;
  */
 public class CompFactory {
     public static final Font font1 = new Font("微软雅黑", 0, 18);
+    public static final Font font2 = new Font("微软雅黑", 0, 15);
     public static JTextArea createTextArea(int x, int y, int width, int height){
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
@@ -19,8 +20,8 @@ public class CompFactory {
         tf.setFont(font1);
         return tf;
     }
-    public static JButton createButton(String name){
-        JButton b = new JButton(name);
+    public static JButton createButton(String text){
+        JButton b = new JButton(text);
         b.setFont(font1);
         return b;
     }
@@ -28,5 +29,20 @@ public class CompFactory {
         JLabel l = new JLabel(name);
         l.setFont(font1);
         return l;
+    }
+    public static JMenu createMenu(String label){
+        JMenu menu = new JMenu(label);
+        menu.setFont(font2);
+        return menu;
+    }
+    public static JMenuItem createMenuItem(String label){
+        JMenuItem item = new JMenuItem(label);
+        item.setFont(font2);
+        return item;
+    }
+    public static JCheckBoxMenuItem createCheckMenuItem(String label){
+        JCheckBoxMenuItem item = new JCheckBoxMenuItem(label);
+        item.setFont(font2);
+        return item;
     }
 }

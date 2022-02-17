@@ -1,4 +1,5 @@
 package biz;
+import util.CompFactory;
 import util.DTUtil;
 import util.JavaUtil;
 import view.*;
@@ -122,7 +123,7 @@ public class AppFunc {
     private boolean pauseHlt = false;
     //右键菜单
     private JPopupMenu popup;
-    private MyMenuItem iCopy, iPaste, iCut, iDelete, iSelectAll, iFomart;
+    private JMenuItem iCopy, iPaste, iCut, iDelete, iSelectAll, iFomart;
     /*菜单事件*/
     public static final int OPEN = 1;
     public static final int SAVE = 2;
@@ -138,12 +139,12 @@ public class AppFunc {
     public AppFunc(EditWin editWin){
         this.editWin = editWin;
         undo = new UndoManager();
-        iCopy = new MyMenuItem("复制(C)");
-        iPaste = new MyMenuItem("粘贴(V)");
-        iCut = new MyMenuItem("剪切(X)");
-        iDelete = new MyMenuItem("删除(D)");
-        iSelectAll = new MyMenuItem("全部选中(A)");
-        iFomart = new MyMenuItem("CSS格式化");
+        iCopy = CompFactory.createMenuItem("复制(C)");
+        iPaste = CompFactory.createMenuItem("粘贴(V)");
+        iCut = CompFactory.createMenuItem("剪切(X)");
+        iDelete = CompFactory.createMenuItem("删除(D)");
+        iSelectAll = CompFactory.createMenuItem("全部选中(A)");
+        iFomart = CompFactory.createMenuItem("CSS格式化");
         popup = new JPopupMenu();
         popup.add(iCut);
         popup.add(iCopy);

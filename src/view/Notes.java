@@ -1,6 +1,7 @@
 package view;
 
 import biz.AppFunc;
+import util.CompFactory;
 import util.DTUtil;
 import util.JavaUtil;
 
@@ -19,7 +20,7 @@ import java.util.Date;
 
 public class Notes extends JDialog{
     AppFunc appFunc;
-    private MyButton bNew, bOpen, bDelete, bCancel;
+    private JButton bNew, bOpen, bDelete, bCancel;
     private DefaultListModel<String> model;
     private JList list;
     private JScrollPane pane;
@@ -27,7 +28,7 @@ public class Notes extends JDialog{
     private JLabel lCnt;
     private JCheckBox cExt;//是否扩展名
     private JPopupMenu popup;//右键菜单
-    private MyMenuItem iRename;//重命名
+    private JMenuItem iRename;//重命名
 
     private File[] files;
 
@@ -65,10 +66,10 @@ public class Notes extends JDialog{
 
     private void init(){
         setModal(true);
-        bNew = new MyButton("+ 新建");
-        bOpen = new MyButton("打开");
-        bDelete = new MyButton("删除");
-        bCancel = new MyButton("取消");
+        bNew = CompFactory.createButton("+ 新建");
+        bOpen = CompFactory.createButton("打开");
+        bDelete = CompFactory.createButton("删除");
+        bCancel = CompFactory.createButton("取消");
         bNew.setBounds(100, 420, 120, 40);
         bOpen.setBounds(230, 420, 120, 40);
         bDelete.setBounds(360, 420, 120, 40);
@@ -81,7 +82,7 @@ public class Notes extends JDialog{
         cExt.setBounds(593, 18, 100, 20);
         cExt.setFont(new Font("楷体", 0, 20));
         cExt.setFocusable(false);
-        iRename = new MyMenuItem("重命名");
+        iRename = CompFactory.createMenuItem("重命名");
         popup = new JPopupMenu();
         popup.add(iRename);
 
