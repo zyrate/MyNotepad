@@ -76,6 +76,7 @@ import java.util.concurrent.CountDownLatch;
  *       - 加入了文本克隆功能和快捷键
  *
  * >2.51 - 加入显示行号功能
+ *       - 重构了Appfunc高亮部分的代码，让每次高亮都保证只有一个线程，打开文件终于不会高亮不全了
  *
  */
 /**
@@ -126,6 +127,8 @@ public class AppFunc {
     private String highlightSettingName = DTUtil.getHighlightName();
     //暂停高亮响应
     private boolean pauseHlt = false;
+    //是否刚刚打开文件
+    private boolean justOpened = true;
     //右键菜单
     private JPopupMenu popup;
     private JMenuItem iCopy, iPaste, iCut, iClone, iSelectAll, iFomart;
@@ -274,45 +277,55 @@ public class AppFunc {
         String nowFileName = nowFile.getName();
         editWin.prepareHighlight(highlightSettingName, nowFileName.substring(nowFileName.lastIndexOf('.')));
     }
+
+
     //高亮
     public void highlight(){
         if(!pauseHlt) {
-            try {
-                JavaUtil.setTextLatch.await();//等待文本变动结束
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //这个锁不如当计数器用。。
+            if(JavaUtil.setTextLatch.getCount() != 0){
+                return;
             }
-            editWin.highlight();
+            if (t_highlight != null && t_highlight.isAlive())
+                t_highlight.stop();
+            t_highlight = new Thread() {
+                @Override
+                public void run() {
+                    editWin.highlight();
+                    if(justOpened) { //改页脚只在刚打开文件并高亮后显示
+                        editWin.changeStatus("就绪");
+                        editWin.showStatus("高亮完成");
+                        justOpened = false;
+                    }
+                }
+            };
+            t_highlight.start();
         }
     }
     //先消除样式的高亮
     public void highlight(int offset, int length){
         if(!pauseHlt) {
-            try {
-                JavaUtil.setTextLatch.await();//等待文本变动结束
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //滤掉冗余的情况
+            if(editWin.getTextPane().getSHighlighter() == null  ||
+                    !editWin.getTextPane().getSHighlighter().hasPrepared()){
+                return;
             }
-            editWin.highlight(offset, length);
+            //这个锁不如当计数器用。。
+            if(JavaUtil.setTextLatch.getCount() != 0){
+                return;
+            }
+            if (t_highlight != null && t_highlight.isAlive())
+                t_highlight.stop();
+            t_highlight = new Thread() {
+                @Override
+                public void run() {
+                    editWin.highlight(offset, length);
+                }
+            };
+            t_highlight.start();
         }
     }
-    //高亮线程工作
-    public void onHighlight(int offset, int length){
-        //滤掉冗余的情况
-        if(editWin.getTextPane().getSHighlighter() == null  ||
-                !editWin.getTextPane().getSHighlighter().hasPrepared()){
-            return;
-        }
-        if (t_highlight != null && t_highlight.isAlive())
-            t_highlight.stop();
-        t_highlight = new Thread() {
-            @Override
-            public void run() {
-                highlight(offset, length);
-            }
-        };
-        t_highlight.start();
-    }
+
     //复制
     public void copy(){
         String content = editWin.getTextPane().getSelectedText();
@@ -443,12 +456,11 @@ public class AppFunc {
                 editWin.changeStatus("正在高亮...");
                 //开启高亮响应
                 pauseHlt = false;
+                justOpened = true;
                 //准备高亮
                 prepareHighlight();
                 //高亮
                 highlight();
-                editWin.changeStatus("就绪");
-                editWin.showStatus("高亮完成");
                 //撤销器重置
                 undo.discardAllEdits();
             }
@@ -586,12 +598,12 @@ public class AppFunc {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 textChange();
-                onHighlight(e.getOffset(), e.getLength());
+                highlight(e.getOffset(), e.getLength());
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
                 textChange();
-                onHighlight(e.getOffset(), e.getLength());
+                highlight(e.getOffset(), e.getLength());
             }
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -905,6 +917,7 @@ public class AppFunc {
                         public void run() {
                             prepareHighlight();
                             highlight();
+                            justOpened = true;//当做刚打开
                         }
                     }.start();
                 }
