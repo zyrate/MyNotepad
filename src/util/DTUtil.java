@@ -60,6 +60,15 @@ public class DTUtil {
         read();
         return settings.getCharset();
     }
+    public static void setShowLineNum(boolean isShow){
+        read();
+        settings.setShowLineNum(isShow);
+        write(settings);
+    }
+    public static boolean getShowLineNum(){
+        read();
+        return settings.isShowLineNum();
+    }
 
     public static void setLastOpenPath(String lastPath){
         read();

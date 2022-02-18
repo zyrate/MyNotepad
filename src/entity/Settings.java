@@ -10,6 +10,7 @@ public class Settings implements Serializable{
     private boolean isMaxFrame=false;
     private boolean notesExt = false;//笔记是否有扩展名
     private boolean codeMode = true;//代码模式
+    private boolean showLineNum = false;//是否显示行号
     private String highlightName = null;
     private String lastOpenPath = "C:\\";//上一次打开的文件目录
     private String lastSavePath = "C:\\";//上一次保存的文件目录
@@ -18,6 +19,15 @@ public class Settings implements Serializable{
     public String getLastSavePath() {
         return lastSavePath;
     }
+
+    public boolean isShowLineNum() {
+        return showLineNum;
+    }
+
+    public void setShowLineNum(boolean showLineNum) {
+        this.showLineNum = showLineNum;
+    }
+
     public void setLastSavePath(String lastSavePath) {
         this.lastSavePath = lastSavePath;
     }

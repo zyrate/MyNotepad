@@ -75,6 +75,8 @@ import java.util.concurrent.CountDownLatch;
  *       - 改变了复制和剪切的逻辑
  *       - 加入了文本克隆功能和快捷键
  *
+ * >2.51 - 加入显示行号功能
+ *
  */
 /**
  * BUG
@@ -641,6 +643,18 @@ public class AppFunc {
                 prepareHighlight();
                 //高亮
                 highlight();
+            }
+        });
+        editWin.getiLineNum().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(editWin.getiLineNum().getState() == true){
+                    editWin.getPane().setRowHeaderView(new TextLineNumber(editWin.getTextPane()));
+                    DTUtil.setShowLineNum(true);
+                }else{
+                    editWin.getPane().setRowHeaderView(null);
+                    DTUtil.setShowLineNum(false);
+                }
             }
         });
         editWin.getiReset().addActionListener(new ActionListener() {

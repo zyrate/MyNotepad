@@ -7,7 +7,6 @@ import util.JavaUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,7 +27,7 @@ public class EditWin extends JFrame{
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate;
-    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode;
+    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
@@ -53,6 +52,7 @@ public class EditWin extends JFrame{
         add();
         initHighlightMenu();
         initEncodingMenu();
+        initOtherMenu();
         addListener();
         setVisible(true);
         update();
@@ -92,6 +92,7 @@ public class EditWin extends JFrame{
         iFind = CompFactory.createMenuItem("查找(F)...", "control F");
         iReplace = CompFactory.createMenuItem("替换(R)...", "control R");
         iCode = new JCheckBoxMenuItem("代码模式 (\\)");
+        iLineNum = new JCheckBoxMenuItem("显示行号");
         imEncoding = CompFactory.createMenu("默认编码方式");
         imCurrEncoding = CompFactory.createMenu("当前编码方式");
         iReOpen = CompFactory.createMenuItem("重新载入(U)", "control U");
@@ -128,6 +129,7 @@ public class EditWin extends JFrame{
         iLineWrap.setState(DTUtil.getLineWrap());
         iCode.setState(DTUtil.getCodeMode());
         textPane.setCodeMode(DTUtil.getCodeMode());
+        pane.setRowHeaderView(DTUtil.getShowLineNum()?new TextLineNumber(textPane):null);
     }
     private void add(){
         menuBar.add(mFile);
@@ -158,6 +160,7 @@ public class EditWin extends JFrame{
         mEdit.add(iLineWrap);
         mEdit.addSeparator();
         mEdit.add(iCode);
+        mEdit.add(iLineNum);
         mEdit.add(imCurrEncoding);
         mEdit.add(imEncoding);
         mEdit.addSeparator();
@@ -220,6 +223,15 @@ public class EditWin extends JFrame{
             if(charsets[i].equals(currEncoding)){
                 item2.setState(true);
             }
+        }
+    }
+
+    //初始化其他菜单
+    private void initOtherMenu(){
+        if(DTUtil.getShowLineNum()){
+            iLineNum.setState(true);
+        }else{
+            iLineNum.setState(false);
         }
     }
 
@@ -387,6 +399,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iBaidu, "使用百度搜索当前内容或选中内容，Ctrl + E");
         addFootTipListener(iTranslate, "使用谷歌翻译当前内容或选中内容，Ctrl + G");
         addFootTipListener(iRun, "运行当前文件，Ctrl + B");
+        addFootTipListener(iLineNum, "是否显示行号");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -411,6 +424,10 @@ public class EditWin extends JFrame{
 
 
     //getter and setter
+
+    public JCheckBoxMenuItem getiLineNum() {
+        return iLineNum;
+    }
 
     public JMenuItem getiPrint() {
         return iPrint;
