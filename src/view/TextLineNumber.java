@@ -389,8 +389,12 @@ public class TextLineNumber extends JPanel
 
         if (lastLine != currentLine)
         {
-//			repaint();
-            getParent().repaint(); //####
+            //#### 这里一直报空指针，改了
+			if(getParent() == null){
+			    repaint();
+            }else {
+                getParent().repaint();
+            }
             lastLine = currentLine;
         }
     }
@@ -438,8 +442,12 @@ public class TextLineNumber extends JPanel
                     if (rect != null && rect.y != lastHeight)
                     {
                         setPreferredWidth();
-//						repaint();
-                        getParent().repaint();//###
+						//#### 这里一直报空指针，改了
+                        if(getParent() == null){
+                            repaint();
+                        }else {
+                            getParent().repaint();
+                        }
                         lastHeight = rect.y;
                     }
                 }
@@ -465,8 +473,12 @@ public class TextLineNumber extends JPanel
             }
             else
             {
-//				repaint(); //###
-                getParent().repaint(); //###
+				//#### 这里一直报空指针，改了
+                if(getParent() == null){
+                    repaint();
+                }else {
+                    getParent().repaint();
+                }
             }
         }
     }
