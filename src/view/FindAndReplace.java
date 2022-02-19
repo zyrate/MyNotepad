@@ -57,7 +57,7 @@ public class FindAndReplace extends JDialog{
         instance.setVisible(true);
         return instance;
     }
-    public FindAndReplace(){
+    private FindAndReplace(){
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLayout(null);
