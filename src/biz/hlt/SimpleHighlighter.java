@@ -1,7 +1,6 @@
 package biz.hlt;
 
 import entity.Highlight;
-import view.MyTextPane;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -33,9 +32,10 @@ public class SimpleHighlighter {
     private ArrayList<Highlight> unimportantList = new ArrayList();//优先级低的高亮
 
     private int[] highlighted;//已经高亮过的 - 记为1
+    private int hltStart = 0, hltEnd = -1;//高亮区间，默认代表全部高亮
     Style sys = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 
-    public SimpleHighlighter(MyTextPane textPane){
+    public SimpleHighlighter(JTextPane textPane){
         this.textPane = textPane;
         this.styledDocument = textPane.getStyledDocument();
     }
@@ -54,7 +54,8 @@ public class SimpleHighlighter {
 
     //设置默认样式
     public void defaultSetting(){
-        this.setCharacterAttributes(0, textPane.getText().length(), sys, true);
+        //加入了hltEnd
+        this.setCharacterAttributes(0, hltEnd==-1?textPane.getText().length():hltEnd-hltStart, sys, true);
     }
 
     //返回是否准备好高亮
@@ -112,6 +113,7 @@ public class SimpleHighlighter {
     //添加了中断判断
     private void action(ArrayList<Highlight> list) {
         String text = textPane.getText().replaceAll("\\r", "");//这里还是需要把\r去掉
+        text = text.substring(hltStart, hltEnd==-1?text.length():hltEnd); //截取高亮区间
         for (Highlight highlight : list)
             if (highlight.getType() == Highlight.KEYWORD) {//关键字
                 //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
@@ -220,6 +222,7 @@ public class SimpleHighlighter {
             }
         }
         this.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);//最后一次
+
         return true;
     }
 
@@ -238,8 +241,25 @@ public class SimpleHighlighter {
     private void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
         //这里对Document的修改进行同步
         synchronized (this.styledDocument) {
-            styledDocument.setCharacterAttributes(offset, length, s, replace);
+            //从高亮起始位置
+            styledDocument.setCharacterAttributes(hltStart+offset, length, s, replace);
         }
     }
 
+
+    public int getHltStart() {
+        return hltStart;
+    }
+
+    public void setHltStart(int hltStart) {
+        this.hltStart = hltStart;
+    }
+
+    public int getHltEnd() {
+        return hltEnd;
+    }
+
+    public void setHltEnd(int hltEnd) {
+        this.hltEnd = hltEnd;
+    }
 }
