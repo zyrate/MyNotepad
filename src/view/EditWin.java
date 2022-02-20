@@ -91,8 +91,8 @@ public class EditWin extends JFrame{
         iNoHL = CompFactory.createCheckMenuItem("无");
         iFind = CompFactory.createMenuItem("查找(F)...", "control F");
         iReplace = CompFactory.createMenuItem("替换(R)...", "control R");
-        iCode = new JCheckBoxMenuItem("代码模式 (\\)");
-        iLineNum = new JCheckBoxMenuItem("显示行号");
+        iCode = CompFactory.createCheckMenuItem("代码模式 (\\)");
+        iLineNum = CompFactory.createCheckMenuItem("显示行号");
         imEncoding = CompFactory.createMenu("默认编码方式");
         imCurrEncoding = CompFactory.createMenu("当前编码方式");
         iReOpen = CompFactory.createMenuItem("重新载入(U)", "control U");
