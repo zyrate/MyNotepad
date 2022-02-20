@@ -26,7 +26,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -100,6 +100,7 @@ public class EditWin extends JFrame{
         iBaidu = CompFactory.createMenuItem("使用百度搜索", "control E");
         iRun = CompFactory.createMenuItem("运行(B)", "control R");
         iTranslate = CompFactory.createMenuItem("使用谷歌翻译", "control G");
+        iTimer = CompFactory.createMenuItem("计时器", "F4");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -172,6 +173,7 @@ public class EditWin extends JFrame{
         mTools.add(iCount);
         mTools.add(iDate);
         mTools.add(iNote);
+        mTools.add(iTimer);
         mRun.add(iRun);
         mHelp.add(iAbout);
         mHighlight.add(iNoHL);
@@ -400,6 +402,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iTranslate, "使用谷歌翻译当前内容或选中内容，Ctrl + G");
         addFootTipListener(iRun, "运行当前文件，Ctrl + B");
         addFootTipListener(iLineNum, "是否显示行号");
+        addFootTipListener(iTimer, "正计时或倒计时");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -493,6 +496,10 @@ public class EditWin extends JFrame{
         this.filePath = filePath;
         setFileName(new File(filePath).getName());
         setPureFileName(getFileName().replaceAll("\\.\\w+$", ""));
+    }
+
+    public JMenuItem getiTimer() {
+        return iTimer;
     }
 
     public String getFileName() {

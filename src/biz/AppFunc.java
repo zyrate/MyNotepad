@@ -77,6 +77,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * >2.51 - 加入显示行号功能
  *       - 重构了Appfunc高亮部分的代码，让每次高亮都保证只有一个线程，打开文件终于不会高亮不全了
+ *       - 增加了计时器功能
  *
  */
 /**
@@ -144,6 +145,7 @@ public class AppFunc {
     public static final int FIND = 9;
     public static final int REPLACE = 10;
     public static final int PRINT = 11;
+    public static final int TIMER = 12;
     public AppFunc(EditWin editWin){
         this.editWin = editWin;
         undo = new UndoManager();
@@ -199,6 +201,8 @@ public class AppFunc {
                     replace();
                 else if(event == PRINT)
                     print();
+                else if(event == TIMER)
+                    MyTimer.showTimer(editWin);
             }
         }.start();
     }
@@ -753,6 +757,13 @@ public class AppFunc {
                 googleTranslate();
             }
         });
+        editWin.getiTimer().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuDeal(TIMER);
+            }
+        });
+
         iCopy.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
