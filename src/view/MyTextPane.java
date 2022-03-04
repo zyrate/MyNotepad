@@ -28,7 +28,7 @@ public class MyTextPane extends JTextPane {
 
     //Ctrl + F12 测试
     public void test(){
-
+        autoTab();
     }
 
     //高亮前的准备 - 把设置从文件中读出来以提高效率
@@ -273,6 +273,74 @@ public class MyTextPane extends JTextPane {
         }
         return false;
     }
+
+    /**
+     * 从from到to的每一行的首部添加str
+     * @param from
+     * @param to
+     * @param str
+     */
+    public void addForEachLine(int from, int to, String str){
+        if(from > to) {
+            int temp = from;
+            from = to;
+            to = temp;
+        }
+        String text = this.getText();
+        boolean newLine = true;
+        for(int i = from; i < to || newLine; i++){
+            if(newLine){
+                addAtBeginOfLine(str, i);
+                i += str.length();
+                to += str.length();
+                text = this.getText();
+            }
+            if(i >= to || i < 0 || text.charAt(i) != '\n'){
+                newLine = false;
+            }else{
+                newLine = true;
+            }
+        }
+    }
+
+    /**
+     * 从from到to的每一行的首部移除str
+     * 移除和添加的逻辑还真不能一样
+     * 因为移除涉及到选中位置的问题(遍历时)
+     * 解决办法是先将from和to扩展到首尾
+     * @param from
+     * @param to
+     * @param str
+     */
+    public void rmForEachLine(int from, int to, String str){
+        if(from > to) {
+            int temp = from;
+            from = to;
+            to = temp;
+        }else if(from == to){
+            from --;
+        }
+        String text = this.getText();
+        StringBuilder sb = new StringBuilder();
+        while(from >= 0 && text.charAt(from) != '\n') from --;
+        while(to < text.length() && text.charAt(to) != '\n') to ++;
+        from++;
+        boolean newLine = true;
+        for(int i = from; i < to || newLine; i++){
+            if(newLine){
+                rmAtBeginOfLine(str, i);
+                to -= str.length();
+                text = this.getText();
+            }
+            if(i >= to || i < 0 || text.charAt(i) != '\n'){
+                newLine = false;
+            }else{
+                newLine = true;
+            }
+        }
+
+    }
+
     /**
      * 自动注释
      */
@@ -295,26 +363,32 @@ public class MyTextPane extends JTextPane {
                 }
             }
             if(allCommented){//所有行均注释
-                for(int i = start; i < end; i++){
-                    if(text.charAt(i) == '\n' || i == end-1){
-                        rmAtBeginOfLine("//", i);
-                        i-=2;
-                        end-=2;
-                        text = this.getText();//一定要去\r
-                    }
-                }
+                rmForEachLine(start, end, "//");
             }else{
-                for(int i = start; i < end; i++){
-                    if(text.charAt(i) == '\n' || i == end-1){
-                        addAtBeginOfLine("//", i);
-                        i+=2;
-                        end+=2;
-                        text = this.getText();//一定要去\r
-                    }
-                }
+                addForEachLine(start, end, "//");
             }
         }
     }
+
+    /**
+     * 自动添加缩进
+     */
+    public void autoTab(){
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        addForEachLine(start, end, TAB);
+    }
+
+    /**
+     * 自动取消缩进
+     */
+    public void autoDeTab(){
+        int start = getSelectionStart();
+        int end = getSelectionEnd();
+        rmForEachLine(start, end, TAB);
+    }
+
+
 
     /**
      * 得到光标所在行数，从1计数
@@ -446,9 +520,16 @@ public class MyTextPane extends JTextPane {
                         asynInsert("\n");
                         autoIndent(getCaretPosition()+1, false);
                     }
-                }else if(code == KeyEvent.VK_TAB){//Tab键默认4个空格
+                }else if(!shift && code == KeyEvent.VK_TAB){//Tab键默认4个空格
                     e.consume();
-                    insert(TAB);
+                    if(getSelectedText() == null) {
+                        insert(TAB);
+                    }else{
+                        autoTab(); //一起缩进
+                    }
+                }else if(shift && code == KeyEvent.VK_TAB){
+                    e.consume();
+                    autoDeTab();
                 }else if(code == KeyEvent.VK_BACK_SPACE){//自动删去前面的空白
                     e.consume();
                     autoBackspace();
@@ -588,7 +669,9 @@ public class MyTextPane extends JTextPane {
 
     @Override
     public String getText(){
-        return super.getText().replaceAll("\\r", "");//一定要去\r
+        synchronized (getDocument()){
+            return super.getText().replaceAll("\\r", "");//一定要去\r
+        }
     }
 
     /**

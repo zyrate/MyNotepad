@@ -78,6 +78,7 @@ import java.util.concurrent.CountDownLatch;
  * >2.51 - 加入显示行号功能
  *       - 重构了Appfunc高亮部分的代码，让每次高亮都保证只有一个线程，打开文件终于不会高亮不全了
  *       - 增加了计时器功能
+ *       - 增加选中TAB功能
  *
  */
 /**
