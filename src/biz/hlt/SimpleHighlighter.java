@@ -69,9 +69,9 @@ public class SimpleHighlighter {
 
         highlighted = new int[textPane.getText().length()];
         //在前面的优先级高
-        action(importantList);
-        action(normalList);
-        action(unimportantList);
+        matchHighlight(importantList);
+        matchHighlight(normalList);
+        matchHighlight(unimportantList);
         transDefault();
     }
     //先移除指定位置的高亮样式 - 解决了高亮短暂残留的问题 - 暂时解决了高亮报错问题
@@ -90,7 +90,7 @@ public class SimpleHighlighter {
     }
 
     //补画没有高亮的内容
-    private void transDefault(){
+    protected void transDefault(){
         int index = 0, len = 0;
         boolean flag = true;
         for(int i = 0; i < highlighted.length; i++){
@@ -109,9 +109,14 @@ public class SimpleHighlighter {
         this.setCharacterAttributes(index, len, sys, true);//最后一次
     }
 
-    //这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下 - 因为已改成了单线程，所以去掉了同步
-    //添加了中断判断
-    private void action(ArrayList<Highlight> list) {
+    /**
+     * 匹配高亮 - 将高亮列表中的所有作用域进行匹配，如符合则渲染样式（render）
+     * 这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下 - 因为已改成了单线程，所以去掉了同步
+     * 添加了中断判断
+     * @param list
+     */
+
+    protected void matchHighlight(ArrayList<Highlight> list) {
         String text = textPane.getText().replaceAll("\\r", "");//这里还是需要把\r去掉
         text = text.substring(hltStart, hltEnd==-1?text.length():hltEnd); //截取高亮区间
         for (Highlight highlight : list)
@@ -137,7 +142,7 @@ public class SimpleHighlighter {
                 Matcher m = Pattern.compile(regex).matcher(text);
                 //高亮
                 while (m.find()) {
-                    todo(m.start(), m.end(), highlight);
+                    render(m.start(), m.end(), highlight);
                     //标记
                     for (int i = m.start(); i < m.end(); i++)
                         highlighted[i] = 1;
@@ -151,7 +156,7 @@ public class SimpleHighlighter {
                         length++;
                     }
 
-                    todo(m.start(), m.start() + length, highlight);//这里的位置有待斟酌
+                    render(m.start(), m.start() + length, highlight);//这里的位置有待斟酌
                     //标记
                     for (int i = m.start(); i < m.start() + length; i++)
                         highlighted[i] = 1;
@@ -165,7 +170,7 @@ public class SimpleHighlighter {
                     if (m2.find(m1.end())) {
                         end = m2.end();
                         //要被高亮的部分
-                        boolean done = todo(start, end, highlight);
+                        boolean done = render(start, end, highlight);
                         if(!done){//被中断了，代表不可分割，就忽略start，从end之前再次开始
                             start = end-1;
                         }else{
@@ -183,13 +188,13 @@ public class SimpleHighlighter {
     }
 
     /**
-     * 根据高亮改变指定位置的样式
+     * 渲染 - 根据高亮改变指定位置的样式
      * @param start
      * @param end
      * @param highlight
      * @return 返回为false的话代表高亮失败，即没有改变任何样式，可能是因为高亮属性中设置了不可分割，如果被分割，此高亮无效
      */
-    private boolean todo(int start, int end, Highlight highlight){
+    protected boolean render(int start, int end, Highlight highlight){
         Style s = styledDocument.addStyle("s", sys);
         //这里如果颜色没设置的话，就默认
         StyleConstants.setForeground(s, highlight.getColor()==null?Color.black:highlight.getColor());
@@ -226,7 +231,7 @@ public class SimpleHighlighter {
         return true;
     }
 
-    private boolean hasHighlighted(int index){
+    protected boolean hasHighlighted(int index){
         return highlighted[index] == 1;
     }
 
@@ -238,7 +243,7 @@ public class SimpleHighlighter {
      * @param s
      * @param replace
      */
-    private void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
+    protected void setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace){
         //这里对Document的修改进行同步
         synchronized (this.styledDocument) {
             //从高亮起始位置
