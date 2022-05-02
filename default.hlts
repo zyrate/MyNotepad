@@ -1,17 +1,20 @@
 公共区
-{.java .c .h .js .s .cpp
+{.java .c .h .js .s .cpp .scala
 [
 '[0-9]+\.?[0-9]*f*' : #DC143C;;
-'continue' : #3355cc bold;; 'break' : #3355cc bold;;'else' : #3355cc bold;;'return' : #3355cc bold;;'int' : #3355cc bold;;'for' : #3355cc bold;;'if' : #3355cc bold;;'while' : #3355cc bold;;'do' : #3355cc bold;;'void' : #3355cc bold;;'float' : #3355cc bold;;'double' : #3355cc bold;;'char' : #3355cc bold;; 'final' : #3355cc bold;; 'static' : #3355cc bold;; 'switch' : #3355cc bold;; 'case' : #3355cc bold;;
+'continue' : #3355cc bold;; 'break' : #3355cc bold;;'else' : #3355cc bold;;'return' : #3355cc bold;;
+'int' : #3355cc bold;;'for' : #3355cc bold;;'if' : #3355cc bold;;'while' : #3355cc bold;;'do' : #3355cc bold;;
+'void' : #3355cc bold;;'float' : #3355cc bold;;'double' : #3355cc bold;;'char' : #3355cc bold;;
+'final' : #3355cc bold;; 'static' : #3355cc bold;; 'switch' : #3355cc bold;; 'case' : #3355cc bold;;
 '[A-Z0-9_]+' : #7E3D76 bold;;
-'<[\!\@\#\$\%\^&\*\(\)\_\+\-\=\{\}\[\]\:\;\,\.\<\>\?\~\\|]>' : #6C3365;;
+'<[\!\#\$\%\^&\*\(\)\+\-\=\{\}\[\]\:\;\,\.\<\>\?\~\\|]>' : #6C3365;;
 ]
 <
 '//' : #019858 !;;
 >
 (
 '/\*' '\*/' : #7373b9 !;;
-'\"' '\"' : #d26900 ~;;
+'\"' '\"' : #d26900 ~ !;;
 '\'' '\'' : #ff8000 ~;;
 )
 }
@@ -24,9 +27,11 @@
 {.note
 [
 '<[0-9]+\.?[0-9]*>' : #ff4400;;
-'class' : #3355cc;;'private' : #3355cc;;'public' : #3355cc;;'else' : #3355cc;;'this' : #3355cc;;'return' : #3355cc;;'int' : #3355cc;;'for' : #3355cc;;'if' : #3355cc;;'while' : #3355cc;;'do' : #3355cc;;'int' : #3355cc;;'var' : #3355cc;;'new' : #3355cc;;'boolean' : #3355cc;;'void' : #3355cc;;'float' : #3355cc;;'double' : #3355cc;;'int' : #3355cc;;'char' : #3355cc;;
-'true' : #9f35ff;;'false' : #9f35ff;;'null' : #9f35ff;;'undefined' : #9f35ff;;'NaN' : #9f35ff;;'<&[a-z]+;>' : #9f35ff;;
-'<->|=>>' : #0000ff;;
+'class' : #3355cc;;'private' : #3355cc;;'public' : #3355cc;;'else' : #3355cc;;'this' : #3355cc;;'return' : #3355cc;;
+'int' : #3355cc;;'for' : #3355cc;;'if' : #3355cc;;'while' : #3355cc;;'do' : #3355cc;;'int' : #3355cc;;'var' : #3355cc;;
+'new' : #3355cc;;'boolean' : #3355cc;;'void' : #3355cc;;'float' : #3355cc;;'double' : #3355cc;;'int' : #3355cc;;
+'char' : #3355cc;;'true' : #9f35ff;;'false' : #9f35ff;;'null' : #9f35ff;;'undefined' : #9f35ff;;'NaN' : #9f35ff;;
+'<&[a-z]+;>' : #9f35ff;;'<->|=>>' : #0000ff;;
 ]
 <
 '//' : #00a677 !;;
@@ -36,11 +41,12 @@
 >
 (
 '`' '`' : b#f9f2f4 #c7254e "Consolas" !;;
+'~~\w+' '~~' : #D4D4D4 "Consolas" {cpp} !;;
 '\'' '\'' : #bb3d00 !;;
 '\*\*\*' '\*\*\*' : #007979;;
 '\{.+\}\n' '\{end\}\n' : #ae8f00;;
 '\(' '\)' : #6e6e6e;;
-'（' '）' : #6e6e6e;; 
+'（' '）' : #6e6e6e;;
 '\"' '\"' : #0077ee !;;
 '\|“' '”\|' : #6c6c6c "楷体";;
 )
@@ -61,23 +67,58 @@
 )
 }
 Java代码
-{.java
+{.java .scala
 [
-'synchronized' : #3355cc bold;;'instanceof' : #3355cc bold;;'finally' : #3355cc bold;;'super' : #3355cc bold;;'class' : #3355cc bold;; 'private' : #3355cc bold;; 'protected' : #3355cc bold;;'abstract' : #3355cc bold;;'implements' : #3355cc bold;;'extends' : #3355cc bold;;'public' : #3355cc bold;;'this' : #3355cc bold;;'new' : #3355cc bold;;'boolean' : #3355cc bold;;'void' : #3355cc bold;; 'try' : #3355cc bold;; 'catch' : #3355cc bold;; 'import' : #3355cc bold;; 'package' : #6c3365 bold;;
+'synchronized' : #3355cc bold;;'instanceof' : #3355cc bold;;'finally' : #3355cc bold;;'super' : #3355cc bold;;
+'class' : #3355cc bold;; 'private' : #3355cc bold;; 'protected' : #3355cc bold;;'abstract' : #3355cc bold;;
+'implements' : #3355cc bold;;'extends' : #3355cc bold;;'public' : #3355cc bold;;'this' : #3355cc bold;;
+'new' : #3355cc bold;;'boolean' : #3355cc bold;;'void' : #3355cc bold;; 'try' : #3355cc bold;; 'catch' : #3355cc bold;;
+'transient' : #3355cc bold;; 'import' : #3355cc bold;; 'package' : #6c3365 bold;;
 'false' : #9F4D95 bold;;'null' : #9F4D95 bold;; 'true' : #9F4D95 bold;;
 '<@\w+>' : #c6a300 bold;;
 ]
 }
+Scala
+{.scala
+[
+'object' : #3355cc bold;;'val' : #3355cc bold;;'var' : #3355cc bold;;'def' : #3355cc bold;;'trait' : #3355cc bold;;
+'match' : #3355cc bold;;'implicit' : #3355cc bold;;'sealed' : #3355cc bold;;'Nil' : #9F4D95;;
+'String' : #2874A6;;'List' : #2874A6;;'Map' : #2874A6;;'Seq' : #2874A6;;'Iterable' : #2874A6;;'Iterator' : #2874A6;;
+'int' : #000000 !;;'double' : #000000 !;;'float' : #000000 !;;
+'char' : #000000 !;;'synchronized' : #000000 !;;'instanceof' : #000000 !;;'boolean' : #000000 !;;'void' : #000000 !;;
+'continue' : #000000 !;;'break' : #000000 !;;'switch' : #000000 !;;
+]
+}
+Python
+{.py
+[
+'def' : #3355cc bold;;'if' : #3355cc bold;;'elif' : #3355cc bold;;'else' : #3355cc bold;;'for' : #3355cc bold;;
+'in' : #3355cc bold;;'try' : #3355cc bold;;'except' : #3355cc bold;;
+'pass' : #3355cc bold;;'return' : #3355cc bold;;'is' : #3355cc bold;;'break' : #3355cc bold;;'continue' : #3355cc bold;;
+'not' : #3355cc bold;;'raise' : #3355cc bold;;'import' : #3355cc bold;;'from' : #3355cc bold;;'yield' : #3355cc bold;;
+'with' : #3355cc bold;;'or' : #3355cc bold;;'and' : #3355cc bold;;'as' : #3355cc bold;;
+'finally' : #3355cc bold;;'assert' : #3355cc bold;;
+'None' : #9F4D95 bold;;'True' : #9F4D95 bold;;'False' : #9F4D95 bold;;
+]
+<
+'#' : #019858 !;;
+>
+(
+'\"' '\"' : #d26900 ~;;
+'\"\"\"' '\"\"\"' : #d26900 ~;;
+'\'' '\'' : #ff8000 ~;;
+)
+}
 C语言
 {.c .h .cpp
 [
-'(unsigned)|(signed)' : #3355cc bold;;'const' : #3355cc bold;;'typedef' : #3355cc bold;;'(enum)|(union)' : #3355cc bold;;
-'struct' : #3355cc bold;;'(long)|(short)' : #3355cc bold;;
-'<->>' : #842b00;;'register' : #3355cc bold;;'(extern|auto)' : #3355cc bold;;'default' : #3355cc bold;;'goto' : #3355cc bold;;
+'(unsigned\b)|(\bsigned)' : #3355cc bold;;'const' : #3355cc bold;;'typedef' : #3355cc bold;;'(enum\b)|(\bunion)' : #3355cc bold;;
+'struct' : #3355cc bold;;'(long\b)|(\bshort)' : #3355cc bold;;
+'<->>' : #842b00;;'register' : #3355cc bold;;'(extern\b)|(\bauto)' : #3355cc bold;;'default' : #3355cc bold;;'goto' : #3355cc bold;;
 '<#\w+>' : #484891 bold !;;
 '0[xX][0-9a-fA-F]+' : #ff0000;;
-'NULL' : #6c3365 bold;; 
-'sizeof' : #a23400;;
+'NULL' : #6c3365 bold;;
+'sizeof' : #a23400 bold;;
 ]
 <
 '#include' : #467500;;
@@ -86,14 +127,16 @@ C语言
 C++
 {.cpp
 [
-;'vector' : #3355cc bold;;'string' : #3355cc bold;;'using' : #3355cc bold;;
-'namespace' : #3355cc bold;;'bool' : #3355cc bold;;'vector' : #3355cc bold;;
+'using' : #3355cc bold;;
+'namespace' : #3355cc bold;;'bool' : #3355cc bold;;
 'catch' : #3355cc bold;;'class' : #3355cc bold;;'try' : #3355cc bold;;
 'enum' : #3355cc bold;;'explicit' : #3355cc bold;;'export' : #3355cc bold;;
 'friend' : #3355cc bold;;'new' : #3355cc bold;;'operator' : #3355cc bold;;
 'public' : #3355cc bold;;'private' : #3355cc bold;;'template' : #3355cc bold;;
-'this' : #3355cc bold;;'throw' : #3355cc bold;;
+'this' : #3355cc bold;;'throw' : #3355cc bold;;'delete' : #3355cc bold;;
 'false' : #9F4D95 bold;;'nullptr' : #9F4D95 bold;; 'true' : #9F4D95 bold;;
+'vector' :  #a23400 bold;;'string' :  #a23400 bold;;'map' : #a23400 bold;;
+'set' : #a23400 bold;;
 ]
 }
 
@@ -140,6 +183,7 @@ JSP
 {.html .htm .xml .jsp .iml
 [
 '<.>' : #3c3c3c;;
+'<(==|>=|<=|!=)>' : #977c00 !;;
 '<=>' : #3c3c3c !;;
 '<(</)|(/>)|(<\?)|(\?>)|[!<>]>' : #7b7b7b !;;
 '<<[a-zA-Z0-9/_\?\.-]+>' : #0055ca !;;
@@ -153,10 +197,12 @@ JSP
 }
 {.properties
 [
-'<=>' : #9d9d9d !;;
+'<.>' : #00568E;;
+'<=>' : #000000 !;;
 ]
 <
-'=' : #005757;;
+'=' : #a23400;;
+'#' : #019858 !;;
 >
 }
 备忘录
@@ -174,5 +220,17 @@ JSP
 (
 '\(' '\)' : #FF359A ?;;
 '路' '径' : #7b7b7b !;;
+)
+}
+JSON
+{.json
+[
+'<:>' : #000000 !;;
+'<:\s*\"[^,]*\">' : #a23400 !;;
+'<:\s*false>' : #F20000;;'<:\s*true>' : #F20000;;'<:\s*null>' : #F20000;;
+'<:\s*\-?\d+(\.\d+)?>' : #F20000;;
+]
+(
+'\"' '\"' : #00568E;;
 )
 }
