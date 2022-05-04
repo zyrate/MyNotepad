@@ -62,7 +62,7 @@ public class Opener{
                 long length = file.length();
                 long buffered = 3;//已读的 (每次都差3到不了100%)
 
-                String buff = "";
+                StringBuilder buff = new StringBuilder();
                 String line;
 
                 BufferedReader reader = null;
@@ -80,12 +80,12 @@ public class Opener{
                     boolean firstLine = true; //第一行
                     while((line=reader.readLine()) != null){
                         if(firstLine){
-                            buff += line;
+                            buff.append(line);
                             firstLine = false;
                             continue;
                         }
-                        buff += "\n";
-                        buff += line;
+                        buff.append("\n");
+                        buff.append(line);
                         buffered += line.getBytes().length+1;
                         editWin.changeStatus("正在打开："+file.getName()+"  ("+buffered*100/length+"%)");
                     }
@@ -105,9 +105,10 @@ public class Opener{
                         e.printStackTrace();
                     }
                 }
-                if(buff.equals("")) charset = DTUtil.getCharset(); //如果是空文件，则用默认编码
+                String content = buff.toString();
+                if(content.equals("")) charset = DTUtil.getCharset(); //如果是空文件，则用默认编码
                 editWin.setCurrEncoding(charset==null?autoCharset:charset);
-                editWin.setContent(buff);
+                editWin.setContent(content);
                 editWin.setFilePath(file.getPath());
                 editWin.update();
                 editWin.updateContent();
