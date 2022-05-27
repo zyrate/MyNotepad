@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
  * 组件工具类
  */
 public class CompFactory {
-    public static final Font font1 = new Font("微软雅黑", 0, 18);
-    public static final Font font2 = new Font("微软雅黑", 0, 15);
+    public static final Font font1 = new Font("微软雅黑", 0, 18);//label字体
+    public static final Font font2 = new Font("微软雅黑", 0, 17);//菜单字体
     public static JTextArea createTextArea(int x, int y, int width, int height){
         JTextArea ta = new JTextArea();
         ta.setEditable(false);

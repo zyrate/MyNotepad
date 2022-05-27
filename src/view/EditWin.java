@@ -37,7 +37,6 @@ public class EditWin extends JFrame{
     private String pureFileName = null;//文件名,不带后缀
     private String currEncoding = DTUtil.getCharset();//当前编码类型，未打开文件时是默认编码
 
-    private Font menuFont = new Font("微软雅黑", 0, 15);
     //这里不同的电脑会不一样 DTUtil.getFontIndex()
     private Font textFont = new Font(FontChooser.fontsName[DTUtil.getFontIndex()], DTUtil.getStyleIndex(), DTUtil.getFontSize()+10);
     private String[] charsets = {"GBK", "UTF-8", "Unicode"};
@@ -73,10 +72,10 @@ public class EditWin extends JFrame{
         mRun = CompFactory.createMenu("运行(R)", KeyEvent.VK_R);
         textPane = new MyTextPane();
         pane = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        lFoot1 = new JLabel(footMessage);
-        lFoot2 = new JLabel("UTF8");
-        lFoot3 = new JLabel("第 0 行，第 0 列");
-        lFoot4 = new JLabel("共 0 字");
+        lFoot1 = CompFactory.createLabel(footMessage);
+        lFoot2 = CompFactory.createLabel("UTF8");
+        lFoot3 = CompFactory.createLabel("第 0 行，第 0 列");
+        lFoot4 = CompFactory.createLabel("共 0 字");
         iOpen = CompFactory.createMenuItem("打开(O)...", "control O");
         iSave = CompFactory.createMenuItem("保存(S)", "control S");
         iSaveAnother = CompFactory.createMenuItem("另存为(A)...");
@@ -113,13 +112,9 @@ public class EditWin extends JFrame{
         this.setIconImage(imageIcon.getImage());
         pCenter.setLayout(new BorderLayout());
         pFoot.setLayout(new BorderLayout());
-        pFoot.setPreferredSize(new Dimension(1, 22));
+        pFoot.setPreferredSize(new Dimension(1, 25));//底部高度
         pFootLeft.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));//这句话是流式布局的垂直居中和水平边距
         pFootRight.setLayout(new FlowLayout(FlowLayout.RIGHT, 30, 0));
-        lFoot1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        lFoot2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        lFoot3.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        lFoot4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         menuBar.setBackground(Color.WHITE);
         textPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         textPane.setFont(textFont);
@@ -197,8 +192,7 @@ public class EditWin extends JFrame{
         });
         for(String name : filesName){
             String settingName = name.replaceAll(SimpleHighlighter.CONF_TYPE, "");
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(settingName);
-            item.setFont(menuFont);
+            JCheckBoxMenuItem item = CompFactory.createCheckMenuItem(settingName);
             mHighlight.add(item);
             highlightItems.add(item);
             if(settingName.equals(DTUtil.getHighlightName())){
