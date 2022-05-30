@@ -114,4 +114,29 @@ public class JavaUtil {
         }
         return charset;
     }
+
+    public static PrintStream consoleOut = System.out;
+    public static PrintStream consoleErr = System.err;
+    /**
+     * 设置日志策略
+     * @param location console - 控制台，file - 文件
+     * @param logFileName log文件名
+     */
+    public static void setLoggingPolicy(String location, String logFileName){
+        if(location.equals("console")){
+            System.setOut(consoleOut);
+            System.setErr(consoleErr);
+        }else if(location.equals("file")) {
+            String LOG_PATH = "C:\\NotepadData\\logs\\";
+            File logs = new File(LOG_PATH);
+            if (!logs.exists()) logs.mkdir();
+            //输出重定向
+            try {
+                System.setOut(new LoggerStream(LOG_PATH + logFileName, "INFO"));
+                System.setErr(new LoggerStream(LOG_PATH + logFileName, "ERROR"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

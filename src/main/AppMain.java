@@ -2,7 +2,7 @@ package main;
 
 import biz.AppFunc;
 import biz.runbiz.RunBiz;
-import util.DTUtil;
+import util.JavaUtil;
 import view.EditWin;
 import view.FindAndReplace;
 
@@ -15,7 +15,10 @@ import java.io.*;
 
 public class AppMain {
     //args的第一个参数就是被打开的那个文件(如果存在的话)
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+//        JavaUtil.setLoggingPolicy("console", null);
+        JavaUtil.setLoggingPolicy("file", "mynotepad-main.log");
+
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         } catch (Exception e){}
