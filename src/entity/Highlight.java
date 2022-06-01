@@ -25,6 +25,9 @@ public class Highlight {
     //关键字KEYWORD是否是正则，为了兼容自定义高亮配置以<>区分是否是正则的做法。
     //如果此字段为null，表明用的是自定义配置；否则是xml配置，在xml中以key的属性设置该字段
     private Boolean keyWordRegex = null;
+    //是否可跨行
+    //此字段只用作标记性，在区域高亮的时候，会额外对可以跨行的高亮进行渲染
+    private boolean canSpanLines = false;
 
     String[] keys, values;
 
@@ -81,6 +84,7 @@ public class Highlight {
             else if(key2 == null)
                 key2 = k;
         }
+        if(key1.equals("/\\*") && key2.equals("\\*/")) this.canSpanLines = true;
         //这样就不用考虑顺序了
         int index;
         if((index = contains("[bB]{0}#[0-9a-fA-F]{6}")) != -1){
@@ -115,6 +119,14 @@ public class Highlight {
                 return i;
         }
         return -1;
+    }
+
+    public boolean isCanSpanLines() {
+        return canSpanLines;
+    }
+
+    public void setCanSpanLines(boolean canSpanLines) {
+        this.canSpanLines = canSpanLines;
     }
 
     public boolean isCanDivided() {

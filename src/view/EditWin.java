@@ -240,8 +240,8 @@ public class EditWin extends JFrame{
     public void highlight(){
         textPane.highlight();
     }
-    public void highlight(int offset, int length){
-        textPane.highlight(offset, length);
+    public void highlight(int offset, int length, String type){
+        textPane.highlightChangedLine(offset, length, type);
     }
     //开始动画
     private void starAnimation(){

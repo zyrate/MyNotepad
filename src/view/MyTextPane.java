@@ -23,7 +23,6 @@ public class MyTextPane extends JTextPane {
     public MyTextPane(){
         this.setSelectionColor(new Color(89, 116, 171));
         this.setSelectedTextColor(new Color(247, 247, 247));
-        addKeyLisener();
     }
 
     //Ctrl + F12 测试
@@ -41,9 +40,24 @@ public class MyTextPane extends JTextPane {
         if(highlighter != null)
             highlighter.highlight();
     }
-    public void highlight(int offset, int length){
-        if(highlighter != null)
-            highlighter.highlight(offset, length);
+
+    /**
+     * 高亮内容发生变化的所有行 - 以行为单位可能是最终办法
+     * @param offset
+     * @param length
+     * @param type insert 还是 remove
+     */
+    public void highlightChangedLine(int offset, int length, String type){
+        if(highlighter != null) {
+            int start = getLineStart(offset);
+            int end = start;
+            if(type.equals("insert")) end = getLineEnd(offset+length);
+            else if(type.equals("remove")) end = getLineEnd(offset); //如果是删除的话只高亮一行
+            highlighter.setHltStart(start);
+            highlighter.setHltEnd(end);
+            highlighter.highlight();
+            highlighter.highlightSpanLines();
+        }
     }
     public void defaultView(){
         if(highlighter != null)
@@ -436,109 +450,7 @@ public class MyTextPane extends JTextPane {
 
 
 
-    /************************************
-     * 用于特殊键盘事件的监听
-     * 都是屏蔽系统的监听器（或者系统不响应），自己处理
-     * 代码模式时生效
-     */
-    private void addKeyLisener(){
-        this.addKeyListener(new KeyAdapter() {
-            /**
-             * 自动生成字符
-             * 字符最好用typed
-             * @param e
-             */
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if(!isCodeMode)
-                    return;
-                char ch = e.getKeyChar();//字符要用这个判断，用code无效
-                if(ch == '(') {//  - 记住这里不用判断shift
-                    e.consume();
-                    insert("(");
-                    asynInsert(")");
-                }else if(ch == ')'){
-                    if(getNextChar().equals(")")){
-                        e.consume();
-                        offsetFromCare(1);
-                    }
-                }else if(ch == '{') {//  - 记住这里不用判断shift
-                    e.consume();
-                    insert("{");
-                    asynInsert("}");
-                }else if(ch == '}'){
-                    if(getNextChar().equals("}")){
-                        e.consume();
-                        offsetFromCare(1);
-                    }
-                }else if(ch == '[') {//  - 记住这里不用判断shift
-                    e.consume();
-                    insert("[");
-                    asynInsert("]");
-                }else if(ch == ']'){
-                    if(getNextChar().equals("]")){
-                        e.consume();
-                        offsetFromCare(1);
-                    }
-                }else if(ch == '\'') {//  - 记住这里不用判断shift
-                    //简易的判断规则
-                    if(!getNextChar().equals("'")) {//去掉了!getPreChar().equals("'") ||
-                        e.consume();
-                        insert("'");
-                        asynInsert("'");
-                    }else if(getNextChar().equals("'")){
-                        e.consume();
-                        offsetFromCare(1);
-                    }
-                }else if(ch == '"') {//  - 记住这里不用判断shift
-                    //简易的判断规则
-                    if(!getNextChar().equals("\"")) {//去掉了!getPreChar().equals("\"") ||
-                        e.consume();
-                        insert("\"");
-                        asynInsert("\"");
-                    }else if(getNextChar().equals("\"")){
-                        e.consume();
-                        offsetFromCare(1);
-                    }
-                }
-            }
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(!isCodeMode)
-                    return;
-                int code = e.getKeyCode();
-                char ch = e.getKeyChar();
-                boolean ctrl = e.isControlDown();
-                boolean shift = e.isShiftDown();
-                //这里的consume方法是销毁这个事件，这样系统就不会再自动添加这个键了
-                if(!shift && code == KeyEvent.VK_ENTER) {//自动缩进
-                    e.consume();
-                    insert("\n");
-                    autoIndent(-1, true);
-                    //如果是在大括号中间回车，把}放到下一行
-                    if(getNextChar().equals("}")){
-                        asynInsert("\n");
-                        autoIndent(getCaretPosition()+1, false);
-                    }
-                }else if(!shift && code == KeyEvent.VK_TAB){//Tab键默认4个空格
-                    e.consume();
-                    if(getSelectedText() == null) {
-                        insert(TAB);
-                    }else{
-                        autoTab(); //一起缩进
-                    }
-                }else if(shift && code == KeyEvent.VK_TAB){
-                    e.consume();
-                    autoDeTab();
-                }else if(code == KeyEvent.VK_BACK_SPACE){//自动删去前面的空白
-                    e.consume();
-                    autoBackspace();
-                }else if(ctrl && ch == '/'){
-                    autoComment();
-                }
-            }
-        });
-    }
+
     /**************准备工作**************/
     //自动换行
     public void setLineWrap(boolean lineWrap){
@@ -629,9 +541,9 @@ public class MyTextPane extends JTextPane {
         this.setSelectionStart(start);
         this.setSelectionEnd(end);
     }
-    //一行开始
-    public int getLineStart(){
-        int pos = this.getCaretPosition();
+    //一行开始，-1代表光标位置
+    public int getLineStart(int ofPos){
+        int pos = ofPos==-1?this.getCaretPosition():ofPos;
         int start;
         //向前
         for (start = pos-1; !getCharOfIndex(start).equals("\n") && start >= 0; start--);
@@ -640,10 +552,11 @@ public class MyTextPane extends JTextPane {
         else start++;
         return start;
     }
-    //一行结束
-    public int getLineEnd(){
-        int pos = this.getCaretPosition();
+    //一行结束，-1代表光标位置
+    public int getLineEnd(int ofPos){
+        int pos = ofPos==-1?this.getCaretPosition():ofPos;
         String text = this.getText();
+        if(pos > text.length()) return text.length(); //越位判断
         int end;
         //向后
         for (end = pos; !getCharOfIndex(end).equals("\n") && end < text.length(); end++);
@@ -653,7 +566,7 @@ public class MyTextPane extends JTextPane {
     }
     //返回光标所在行
     public String getLine(){
-        int start = getLineStart(), end = getLineEnd();
+        int start = getLineStart(-1), end = getLineEnd(-1);
         try {
             return getText(start, end-start);
         } catch (BadLocationException e) {
@@ -663,7 +576,7 @@ public class MyTextPane extends JTextPane {
     }
     //删除光标所在行
     public void removeLine(){
-        int start = getLineStart(), end = getLineEnd();
+        int start = getLineStart(-1), end = getLineEnd(-1);
         removeString(start, end-start);
     }
 
@@ -824,5 +737,13 @@ public class MyTextPane extends JTextPane {
     /**************准备工作**************/
     public SimpleHighlighter getSHighlighter() {
         return highlighter;
+    }
+
+    public boolean isCodeMode() {
+        return isCodeMode;
+    }
+
+    public boolean isWrap() {
+        return isWrap;
     }
 }

@@ -308,8 +308,8 @@ public class AppFunc {
             t_highlight.start();
         }
     }
-    //先消除样式的高亮
-    public void highlight(int offset, int length){
+    //区域高亮
+    public void highlight(int offset, int length, String type){
         if(!pauseHlt) {
             //滤掉冗余的情况
             if(editWin.getTextPane().getSHighlighter() == null  ||
@@ -325,7 +325,7 @@ public class AppFunc {
             t_highlight = new Thread() {
                 @Override
                 public void run() {
-                    editWin.highlight(offset, length);
+                    editWin.highlight(offset, length, type);
                 }
             };
             t_highlight.start();
@@ -384,7 +384,7 @@ public class AppFunc {
         int insertPos = editWin.getTextPane().getSelectionEnd();
         if(content == null){//没有选中文字，一行
             content = editWin.getTextPane().getLine();
-            insertPos = editWin.getTextPane().getLineEnd();
+            insertPos = editWin.getTextPane().getLineEnd(-1);
         }
         editWin.getTextPane().justInsert(content, insertPos);
         editWin.getTextPane().setSelectionStart(insertPos);
@@ -604,12 +604,12 @@ public class AppFunc {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 textChange();
-                highlight(e.getOffset(), e.getLength());
+                highlight(e.getOffset(), e.getLength(), "insert");
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
                 textChange();
-                highlight(e.getOffset(), e.getLength());
+                highlight(e.getOffset(), e.getLength(), "remove");
             }
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -883,6 +883,115 @@ public class AppFunc {
             public void keyReleased(KeyEvent e) {
                 //这里调用不会有先后问题
                 editWin.selectedChange();
+            }
+        });
+
+        /************************************
+         * 用于特殊键盘事件的监听
+         * 都是屏蔽系统的监听器（或者系统不响应），自己处理
+         * 代码模式时生效
+         * 原先在MyTextPane里面，现在放在这里更方便管理
+         */
+        editWin.getTextPane().addKeyListener(new KeyAdapter() {
+            MyTextPane tp = editWin.getTextPane();
+            /**
+             * 自动生成字符
+             * 字符最好用typed
+             * @param e
+             */
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(!tp.isCodeMode())
+                    return;
+                char ch = e.getKeyChar();//字符要用这个判断，用code无效
+                if(ch == '(') {//  - 记住这里不用判断shift
+                    e.consume();
+                    tp.insert("(");
+                    tp.asynInsert(")");
+                }else if(ch == ')'){
+                    if(tp.getNextChar().equals(")")){
+                        e.consume();
+                        tp.offsetFromCare(1);
+                    }
+                }else if(ch == '{') {//  - 记住这里不用判断shift
+                    e.consume();
+                    tp.insert("{");
+                    tp.asynInsert("}");
+                }else if(ch == '}'){
+                    if(tp.getNextChar().equals("}")){
+                        e.consume();
+                        tp.offsetFromCare(1);
+                    }
+                }else if(ch == '[') {//  - 记住这里不用判断shift
+                    e.consume();
+                    tp.insert("[");
+                    tp.asynInsert("]");
+                }else if(ch == ']'){
+                    if(tp.getNextChar().equals("]")){
+                        e.consume();
+                        tp.offsetFromCare(1);
+                    }
+                }else if(ch == '\'') {//  - 记住这里不用判断shift
+                    //简易的判断规则
+                    if(!tp.getNextChar().equals("'")) {//去掉了!getPreChar().equals("'") ||
+                        e.consume();
+                        tp.insert("'");
+                        tp.asynInsert("'");
+                    }else if(tp.getNextChar().equals("'")){
+                        e.consume();
+                        tp.offsetFromCare(1);
+                    }
+                }else if(ch == '"') {//  - 记住这里不用判断shift
+                    //简易的判断规则
+                    if(!tp.getNextChar().equals("\"")) {//去掉了!getPreChar().equals("\"") ||
+                        e.consume();
+                        tp.insert("\"");
+                        tp.asynInsert("\"");
+                    }else if(tp.getNextChar().equals("\"")){
+                        e.consume();
+                        tp.offsetFromCare(1);
+                    }
+                }
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(!tp.isCodeMode())
+                    return;
+                int code = e.getKeyCode();
+                char ch = e.getKeyChar();
+                boolean ctrl = e.isControlDown();
+                boolean shift = e.isShiftDown();
+                //这里的consume方法是销毁这个事件，这样系统就不会再自动添加这个键了
+                if(!shift && code == KeyEvent.VK_ENTER) {//自动缩进
+                    e.consume();
+                    tp.insert("\n");
+                    tp.autoIndent(-1, true);
+                    //如果是在大括号中间回车，把}放到下一行
+                    if(tp.getNextChar().equals("}")){
+                        tp.asynInsert("\n");
+                        tp.autoIndent(tp.getCaretPosition()+1, false);
+                    }
+                }else if(!shift && code == KeyEvent.VK_TAB){//Tab键默认4个空格
+                    e.consume();
+                    if(tp.getSelectedText() == null) {
+                        tp.insert(tp.TAB);
+                    }else{
+                        tp.autoTab(); //一起缩进
+                    }
+                }else if(shift && code == KeyEvent.VK_TAB){
+                    e.consume();
+                    tp.autoDeTab();
+                }else if(code == KeyEvent.VK_BACK_SPACE){//自动删去前面的空白
+                    e.consume();
+                    tp.autoBackspace();
+                }else if(ctrl && ch == '/'){
+                    pauseHlt = true;
+                    tp.autoComment();
+                    pauseHlt = false;
+                    //注释完后再高亮所有行
+                    highlight(tp.getLineStart(tp.getSelectionStart()),
+                            tp.getLineEnd(tp.getSelectionEnd()-tp.getSelectionStart()), "insert");
+                }
             }
         });
 

@@ -1,11 +1,13 @@
 package biz.hlt;
 
 import entity.Highlight;
+import entity.HltToken;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,16 @@ import java.util.regex.Pattern;
  * > 从配置文件中读取指定文件的高亮样式描述
  * > 转换成Highlight对象存入不同的优先级列表
  * > 将每一个高亮样式应用到相应文本
+ *
+ * 目前大文件实时高亮慢的解决办法：
+ * 打开文件时的一次性高亮逻辑不变
+ * 文本变动时的高亮策略变为：
+ *      只高亮变动的行，
+ *      但是这样会出现跨行高亮不生效的情况
+ *      所以在样式实体里添加了是否跨行的属性
+ *      每次文本变动都会再对所有的跨行样式进行高亮
+ *      但是这样在跨行样式失效时无法触发transDefault（因为这个方法是全局的，而highlighted里已无全局标记）
+ *      所以想到了用token形式
  */
 
 
@@ -33,6 +45,7 @@ public class SimpleHighlighter {
 
     private int[] highlighted;//已经高亮过的 - 记为1
     private int hltStart = 0, hltEnd = -1;//高亮区间，默认代表全部高亮
+    private LinkedList<HltToken> spanLinesTokens;//跨行高亮标记
     Style sys = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 
     public SimpleHighlighter(JTextPane textPane){
@@ -50,43 +63,44 @@ public class SimpleHighlighter {
         this.normalList = conf.getNormalList();
         this.importantList = conf.getImportantList();
         this.unimportantList = conf.getUnimportantList();
+
     }
 
     //设置默认样式
     public void defaultSetting(){
         //加入了hltEnd
-        this.setCharacterAttributes(0, hltEnd==-1?textPane.getText().length():hltEnd-hltStart, sys, true);
+        this.setCharacterAttributes(0, getHltEnd()-hltStart, sys, true);
     }
 
     //返回是否准备好高亮
     public boolean hasPrepared(){
         return styledDocument != null && settingName != null;
     }
-    //开始高亮
+    //开始高亮（所有部分）
     public void highlight(){
         if(!hasPrepared())//没有准备或无设置就不高亮
             return;
 
-        highlighted = new int[textPane.getText().length()];
+        highlighted = new int[getHltEnd()-getHltStart()];
         //在前面的优先级高
-        matchHighlight(importantList);
-        matchHighlight(normalList);
-        matchHighlight(unimportantList);
+        matchHighlight(importantList, false);
+        matchHighlight(normalList, false);
+        matchHighlight(unimportantList, false);
         transDefault();
     }
-    //先移除指定位置的高亮样式 - 解决了高亮短暂残留的问题 - 暂时解决了高亮报错问题
-    public void highlight(int offset, int length){
+    //高亮跨行部分
+    public void highlightSpanLines(){
         if(!hasPrepared())//没有准备或无设置就不高亮
             return;
-        try{
 
-            //Thread.sleep(2);//这里高亮线程 “谦让一下”，不跟setText方法抢运行，就不报错了。但是文件越大sleep时间要越长
+        spanLinesTokens = new LinkedList<>();
 
-            this.setCharacterAttributes(offset, length, sys, true);
-        }catch (Exception e){
-            System.out.println("Illegal cast to MutableAttributeSet");
-        }
-        highlight();
+        setHltStart(0);
+        setHltEnd(-1);
+        highlighted = new int[getHltEnd()-getHltStart()];
+        matchHighlight(importantList, true);
+        matchHighlight(normalList, true);
+        matchHighlight(unimportantList, true);
     }
 
     //补画没有高亮的内容
@@ -103,10 +117,10 @@ public class SimpleHighlighter {
                 len++;
             }else{
                 flag = true;
-                this.setCharacterAttributes(index, len, sys, true);
+                this.setCharacterAttributes(hltStart+index, len, sys, true);
             }
         }
-        this.setCharacterAttributes(index, len, sys, true);//最后一次
+        this.setCharacterAttributes(hltStart+index, len, sys, true);//最后一次
     }
 
     /**
@@ -114,52 +128,55 @@ public class SimpleHighlighter {
      * 这里改成同步方法好像能极大缓解延时和颜色混乱问题 - 多个线程的情况下 - 因为已改成了单线程，所以去掉了同步
      * 添加了中断判断
      * @param list
+     * @param onlySpan 是否只为跨行高亮
      */
 
-    protected void matchHighlight(ArrayList<Highlight> list) {
+    protected void matchHighlight(ArrayList<Highlight> list, boolean onlySpan) {
         String text = textPane.getText().replaceAll("\\r", "");//这里还是需要把\r去掉
-        text = text.substring(hltStart, hltEnd==-1?text.length():hltEnd); //截取高亮区间
-        for (Highlight highlight : list)
+        text = text.substring(hltStart, getHltEnd()); //截取高亮区间
+        for (Highlight highlight : list) {
+            if(onlySpan && !highlight.isCanSpanLines())
+                continue;
             if (highlight.getType() == Highlight.KEYWORD) {//关键字
-                //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
-                //如果key是正则，就直接用，不是正则，就当作关键词
-                String regex;
+            //极容易出现编码不一致问题！！！ 而且还有正则特殊字符的问题
+            //如果key是正则，就直接用，不是正则，就当作关键词
+            String regex;
 
-                Boolean isRegex = highlight.isKeyWordRegex();//是否是正则
-                if(isRegex == null){/*自定义配置*/
-                    if (highlight.getKey1().matches("<.+>")) {//是正则
-                        regex = highlight.getKey1().replaceAll("^(\\<)|(\\>)$", "");//去除标记
-                    } else {//不是正则
-                        regex = "\\b" + highlight.getKey1() + "\\b";
-                    }
-                }else{/*兼容 V2.43 XML配置*/
-                    if(isRegex){
-                        regex = highlight.getKey1();
-                    }else{
-                        regex = "\\b" + highlight.getKey1() + "\\b";
-                    }
+            Boolean isRegex = highlight.isKeyWordRegex();//是否是正则
+            if (isRegex == null) {/*自定义配置*/
+                if (highlight.getKey1().matches("<.+>")) {//是正则
+                    regex = highlight.getKey1().replaceAll("^(\\<)|(\\>)$", "");//去除标记
+                } else {//不是正则
+                    regex = "\\b" + highlight.getKey1() + "\\b";
                 }
-                Matcher m = Pattern.compile(regex).matcher(text);
-                //高亮
-                while (m.find()) {
-                    render(m.start(), m.end(), highlight);
-                    //标记
-                    for (int i = m.start(); i < m.end(); i++)
-                        highlighted[i] = 1;
+            } else {/*兼容 V2.43 XML配置*/
+                if (isRegex) {
+                    regex = highlight.getKey1();
+                } else {
+                    regex = "\\b" + highlight.getKey1() + "\\b";
                 }
-            } else if (highlight.getType() == Highlight.ALL_LINE) {//整行
+            }
+            Matcher m = Pattern.compile(regex).matcher(text);
+            //高亮
+            while (m.find()) {
+                render(m.start(), m.end(), highlight);
+                //标记
+                for (int i = m.start(); i < m.end(); i++)
+                    highlighted[i] = 1;
+                }
+             } else if (highlight.getType() == Highlight.ALL_LINE) {//整行
                 //一定是正则，所以只要求内容
                 Matcher m = Pattern.compile(highlight.getKey1()).matcher(text);
                 while (m.find()) {
-                    int length = 0;
-                    for (int i = m.start(); i < text.length() && text.charAt(i) != '\n'; i++) {
-                        length++;
-                    }
+                int length = 0;
+                for (int i = m.start(); i < text.length() && text.charAt(i) != '\n'; i++) {
+                    length++;
+                }
 
-                    render(m.start(), m.start() + length, highlight);//这里的位置有待斟酌
-                    //标记
-                    for (int i = m.start(); i < m.start() + length; i++)
-                        highlighted[i] = 1;
+                render(m.start(), m.start() + length, highlight);//这里的位置有待斟酌
+                //标记
+                for (int i = m.start(); i < m.start() + length; i++)
+                    highlighted[i] = 1;
                 }
             } else if (highlight.getType() == Highlight.PART) {//部分
                 Matcher m1 = Pattern.compile(highlight.getKey1()).matcher(text);
@@ -171,9 +188,9 @@ public class SimpleHighlighter {
                         end = m2.end();
                         //要被高亮的部分
                         boolean done = render(start, end, highlight);
-                        if(!done){//被中断了，代表不可分割，就忽略start，从end之前再次开始
-                            start = end-1;
-                        }else{
+                        if (!done) {//被中断了，代表不可分割，就忽略start，从end之前再次开始
+                            start = end - 1;
+                        } else {
                             //标记
                             for (int i = start; i < end; i++)
                                 highlighted[i] = 1;
@@ -181,10 +198,11 @@ public class SimpleHighlighter {
                             start = end;
                         }
 
-                    }else
+                    } else
                         break;
                 }
             }
+        }
     }
 
     /**
@@ -223,10 +241,11 @@ public class SimpleHighlighter {
                     return false;
 
                 flag = true;
-                this.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);
+                this.setCharacterAttributes(hltStart+index, len, styledDocument.getStyle("s"), true);
             }
         }
-        this.setCharacterAttributes(index, len, styledDocument.getStyle("s"), true);//最后一次
+        this.setCharacterAttributes(hltStart+index, len, styledDocument.getStyle("s"), true);//最后一次
+        //如果是跨行高亮，记录它的位置信息 token
 
         return true;
     }
@@ -247,7 +266,7 @@ public class SimpleHighlighter {
         //这里对Document的修改进行同步
         synchronized (this.styledDocument) {
             //从高亮起始位置
-            styledDocument.setCharacterAttributes(hltStart+offset, length, s, replace);
+            styledDocument.setCharacterAttributes(offset, length, s, replace);
         }
     }
 
@@ -261,7 +280,7 @@ public class SimpleHighlighter {
     }
 
     public int getHltEnd() {
-        return hltEnd;
+        return hltEnd==-1?textPane.getText().length():hltEnd;
     }
 
     public void setHltEnd(int hltEnd) {
