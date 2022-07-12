@@ -81,6 +81,8 @@ import java.util.concurrent.CountDownLatch;
  *       - 增加选中TAB功能
  *       - Opener打开文件采用StringBuilder，极大提升打开速度
  *
+ * >2.52 - 提供对Python的支持
+ *
  */
 /**
  * BUG

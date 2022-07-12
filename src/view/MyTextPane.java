@@ -335,7 +335,6 @@ public class MyTextPane extends JTextPane {
             from --;
         }
         String text = this.getText();
-        StringBuilder sb = new StringBuilder();
         while(from >= 0 && text.charAt(from) != '\n') from --;
         while(to < text.length() && text.charAt(to) != '\n') to ++;
         from++;
