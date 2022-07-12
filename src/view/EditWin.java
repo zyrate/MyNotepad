@@ -35,6 +35,7 @@ public class EditWin extends JFrame{
     private String content = null;//打开某个文件的内容
     private String fileName = null;//文件名
     private String pureFileName = null;//文件名,不带后缀
+    private String fileType = null;//文件后缀名
     private String currEncoding = DTUtil.getCharset();//当前编码类型，未打开文件时是默认编码
 
     //这里不同的电脑会不一样 DTUtil.getFontIndex()
@@ -490,6 +491,11 @@ public class EditWin extends JFrame{
         this.filePath = filePath;
         setFileName(new File(filePath).getName());
         setPureFileName(getFileName().replaceAll("\\.\\w+$", ""));
+        this.fileType = getFileName().substring(getFileName().lastIndexOf('.'));
+    }
+
+    public String getFileType(){
+        return this.fileType;
     }
 
     public JMenuItem getiTimer() {
