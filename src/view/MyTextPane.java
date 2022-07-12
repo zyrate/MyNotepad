@@ -25,6 +25,12 @@ public class MyTextPane extends JTextPane {
         this.setSelectedTextColor(new Color(247, 247, 247));
     }
 
+    //暂时为Python添加支持
+    private boolean isPyFile = false;
+    public void setPyFile(boolean isPyFile){
+        this.isPyFile = isPyFile;
+    }
+
     //Ctrl + F12 测试
     public void test(){
         autoTab();
@@ -122,7 +128,9 @@ public class MyTextPane extends JTextPane {
             }
         }
         insert(indent, pos);
-        if(firstNonBlank == '{' && isAnother){//第一个非空白字符是{的话就再缩进一个TAB
+        if(!isPyFile && firstNonBlank == '{' && isAnother){//第一个非空白字符是{的话就再缩进一个TAB
+            insert(TAB, pos+indent.length());
+        }else if(isPyFile && firstNonBlank == ':' && isAnother){//python文件
             insert(TAB, pos+indent.length());
         }
         //在当前位置插入的时候。系统的光标好像是会自动跟进，所以不用再setpostion了
@@ -151,7 +159,7 @@ public class MyTextPane extends JTextPane {
                 indentL++;
             }
         }
-        if(firstNonBlank == '{' && isAnother){//第一个非空白字符是{的话就再缩进一个TAB
+        if(!isPyFile && firstNonBlank == '{' && isAnother){//第一个非空白字符是{的话就再缩进一个TAB
             indentL += TAB.length();
         }
         return indentL;
@@ -177,7 +185,7 @@ public class MyTextPane extends JTextPane {
     }
     /**
      * 自动退格 - 如果光标前面一行都空白的话，就删到缩进处
-     *         - 如果是成对的中间的话，就都删除 如[]
+     *         - python的话一次删一个缩进
      */
     public void autoBackspace(){
         if(this.getSelectedText() != null) {//选中了内容
@@ -191,13 +199,22 @@ public class MyTextPane extends JTextPane {
         for(int i = pos-1; i >= 0; i--){
             char ch = text.charAt(i);
             length++;
-            if(ch == '\n')
+            if(ch == '\n') {
                 break;
+            }
             if(!JavaUtil.isBlank(ch)) {//普通退格的作用
                 backSpace();
                 return;
             }
         }
+
+        if(isPyFile){
+            if(text.charAt(pos-1) == '\n') backSpace();
+            else if(length-1 < TAB.length()) replaceRange("", pos-length+1, pos);
+            else replaceRange("", pos-TAB.length(), pos);
+            return;
+        }
+
         //别忘了-1
         if(length-1 > expected){
             replaceRange("", pos-(length-expected)+1, pos);
@@ -358,10 +375,13 @@ public class MyTextPane extends JTextPane {
      * 自动注释
      */
     public void autoComment(){
+        String commentLabel;
+        if(isPyFile) commentLabel = "#";
+        else commentLabel = "//";
         if(this.getSelectedText() == null){//无选中
-            boolean removed = rmAtBeginOfLine("//", -1);
+            boolean removed = rmAtBeginOfLine(commentLabel, -1);
             if(!removed)//没有//就加上
-                addAtBeginOfLine("//", -1);
+                addAtBeginOfLine(commentLabel, -1);
         }else{//选中
             int start = getSelectionStart();
             int end = getSelectionEnd();
@@ -369,16 +389,16 @@ public class MyTextPane extends JTextPane {
             String text = this.getText();
             for(int i = start; i < end; i++){
                 if(text.charAt(i) == '\n' || i == end-1){
-                    if(!isAtBeginOfLine("//", i)){
+                    if(!isAtBeginOfLine(commentLabel, i)){
                         allCommented = false;
                         break;
                     }
                 }
             }
             if(allCommented){//所有行均注释
-                rmForEachLine(start, end, "//");
+                rmForEachLine(start, end, commentLabel);
             }else{
-                addForEachLine(start, end, "//");
+                addForEachLine(start, end, commentLabel);
             }
         }
     }
