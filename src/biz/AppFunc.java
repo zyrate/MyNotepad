@@ -461,6 +461,12 @@ public class AppFunc {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                //标记Python
+                if(editWin.getFileType().equals(".py"))
+                    editWin.getTextPane().setPyFile(true);
+                else
+                    editWin.getTextPane().setPyFile(false);
+
                 editWin.changeStatus("正在高亮...");
                 //开启高亮响应
                 pauseHlt = false;
