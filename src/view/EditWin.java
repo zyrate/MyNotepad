@@ -26,7 +26,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer, iCmd;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -101,6 +101,7 @@ public class EditWin extends JFrame{
         iRun = CompFactory.createMenuItem("运行(B)", "control B");
         iTranslate = CompFactory.createMenuItem("使用谷歌翻译", "control G");
         iTimer = CompFactory.createMenuItem("计时器", "F4");
+        iCmd = CompFactory.createMenuItem("命令行(L)", "control L");
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -171,6 +172,7 @@ public class EditWin extends JFrame{
         mTools.add(iNote);
         mTools.add(iTimer);
         mRun.add(iRun);
+        mRun.add(iCmd);
         mHelp.add(iAbout);
         mHighlight.add(iNoHL);
         this.add(menuBar, BorderLayout.NORTH);
@@ -398,6 +400,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iRun, "运行当前文件，Ctrl + B");
         addFootTipListener(iLineNum, "是否显示行号");
         addFootTipListener(iTimer, "正计时或倒计时");
+        addFootTipListener(iCmd, "在文件所在路径打开命令行，Ctrl + L");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -604,5 +607,9 @@ public class EditWin extends JFrame{
 
     public JMenuItem getiTranslate() {
         return iTranslate;
+    }
+
+    public JMenuItem getiCmd() {
+        return iCmd;
     }
 }

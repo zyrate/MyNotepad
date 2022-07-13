@@ -6,6 +6,7 @@ import view.EditWin;
 
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +25,6 @@ public class RunBiz {
 
     public RunBiz(EditWin editWin){
         this.editWin = editWin;
-
 
         File path = new File(SCRIPT_PATH);
         //scripts路径不存在
@@ -45,6 +45,7 @@ public class RunBiz {
      * 菜单事件处理
      */
     public static final int RUN = 1;
+    public static final int CMD = 2;
     private void dealMenu(int event){
         new Thread(){
             @Override
@@ -53,9 +54,25 @@ public class RunBiz {
                     case RUN:
                         runFile();
                         break;
+                    case CMD:
+                        openCmd();
+                        break;
                 }
             }
         }.start();
+    }
+
+    private void openCmd(){
+        file = editWin.getFilePath();
+        if (file == null) {
+            editWin.changeStatus("当前没有打开文件");
+            return;
+        }
+        try {
+            Runtime.getRuntime().exec("cmd /c start", null, new File(file).getParentFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void runFile(){
@@ -98,6 +115,14 @@ public class RunBiz {
                 if(!editWin.getTextPane().getCodeMode())//不是代码模式
                     return;
                 dealMenu(RUN);
+            }
+        });
+        editWin.getiCmd().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!editWin.getTextPane().getCodeMode())//不是代码模式
+                    return;
+                dealMenu(CMD);
             }
         });
         editWin.addWindowListener(new WindowAdapter() {
