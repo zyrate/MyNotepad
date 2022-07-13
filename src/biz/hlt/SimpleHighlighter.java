@@ -64,6 +64,7 @@ public class SimpleHighlighter {
         this.importantList = conf.getImportantList();
         this.unimportantList = conf.getUnimportantList();
 
+        spanLinesTokens = new LinkedList<>();
     }
 
     //设置默认样式
@@ -92,8 +93,6 @@ public class SimpleHighlighter {
     public void highlightSpanLines(){
         if(!hasPrepared())//没有准备或无设置就不高亮
             return;
-
-        spanLinesTokens = new LinkedList<>();
 
         setHltStart(0);
         setHltEnd(-1);
@@ -246,7 +245,9 @@ public class SimpleHighlighter {
         }
         this.setCharacterAttributes(hltStart+index, len, styledDocument.getStyle("s"), true);//最后一次
         //如果是跨行高亮，记录它的位置信息 token
-
+        if(highlight.isCanSpanLines()){
+            spanLinesTokens.add(new HltToken(start, end));
+        }
         return true;
     }
 

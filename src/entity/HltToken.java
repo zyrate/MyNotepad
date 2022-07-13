@@ -6,4 +6,8 @@ package entity;
 public class HltToken {
     public int start;
     public int end;
+    public HltToken(int start, int end){
+        this.start = start;
+        this.end = end;
+    }
 }
