@@ -19,21 +19,28 @@ public class Runner {
     private InputStream in, err;
     private OutputStream out;
     private int exitCode;//退出码
+    private boolean isPythonFile = false;
 
     private MessageDialog errDlg = null;
 
-    public Runner(ArrayList cmds, String path){
+    public Runner(ArrayList<String> cmds, String path){
         this.cmds = cmds;
         this.path = path;
         runtime = Runtime.getRuntime();
         if(errDlg == null)
             errDlg = new MessageDialog("错误输出", 800, 300);
+        if(cmds.get(0).trim().startsWith("python")){
+            isPythonFile = true;
+        }else{
+            isPythonFile = false;
+        }
     }
 
     public void run(){
         try {
             for(int i = 0; i < cmds.size(); i++){
                 if(i != cmds.size()-1) {
+                    System.out.println(cmds.get(i));
                     process = runtime.exec(cmds.get(i), null, new File(path));
                     in = process.getInputStream();
                     err = process.getErrorStream();
@@ -46,7 +53,14 @@ public class Runner {
                     File batFile = new File(batPath);
                     batFile.createNewFile();
                     FileWriter writer = new FileWriter(batFile);
-                    writer.write("cls && cmd /c "+cmds.get(i)+"&& echo. && pause\nexit"); //后面是换行+停留+退出
+                    //如果是Python的话不要加 pause和exit
+                    String cmdStr;
+                    if(isPythonFile){
+                        cmdStr = " && echo.";
+                    }else{
+                        cmdStr = " && echo. && pause\nexit";
+                    }
+                    writer.write("cls && cmd /c "+cmds.get(i)+cmdStr); //后面是换行+停留+退出
                     writer.flush();
                     writer.close();
                     process = runtime.exec("cmd /c start "+ batPath, null, new File(path));

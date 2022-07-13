@@ -92,23 +92,11 @@ public class RunBiz {
     }
 
     private void addListener(){
-        editWin.getTextPane().addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(!editWin.getTextPane().getCodeMode())//不是代码模式
-                    return;
-
-                boolean ctrl = e.isControlDown();
-                int code = e.getKeyCode();
-                if(ctrl && code == KeyEvent.VK_B){
-                    //运行
-                    runFile();
-                }
-            }
-        });
         editWin.getiRun().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(!editWin.getTextPane().getCodeMode())//不是代码模式
+                    return;
                 dealMenu(RUN);
             }
         });

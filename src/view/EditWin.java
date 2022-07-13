@@ -98,7 +98,7 @@ public class EditWin extends JFrame{
         iReOpen = CompFactory.createMenuItem("重新载入(U)", "control U");
         iPrint = CompFactory.createMenuItem("打印(P)...", "control P");
         iBaidu = CompFactory.createMenuItem("使用百度搜索", "control E");
-        iRun = CompFactory.createMenuItem("运行(B)", "control R");
+        iRun = CompFactory.createMenuItem("运行(B)", "control B");
         iTranslate = CompFactory.createMenuItem("使用谷歌翻译", "control G");
         iTimer = CompFactory.createMenuItem("计时器", "F4");
     }
