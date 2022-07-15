@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -467,6 +468,11 @@ public class AppFunc {
                     editWin.getTextPane().setPyFile(true);
                 else
                     editWin.getTextPane().setPyFile(false);
+                //标记html
+                if(editWin.getFileType().equals(".html")||editWin.getFileType().equals(".xml"))
+                    editWin.getTextPane().setHtmlFile(true);
+                else
+                    editWin.getTextPane().setHtmlFile(false);
                 //准备补全
                 editWin.getCompleter().collectWords();
 
@@ -964,6 +970,8 @@ public class AppFunc {
                         e.consume();
                         tp.offsetFromCare(1);
                     }
+                }else if(ch == '>'){
+                    tp.completeHtmlTag();
                 }
 
             }

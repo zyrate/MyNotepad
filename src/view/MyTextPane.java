@@ -30,6 +30,12 @@ public class MyTextPane extends JTextPane {
     public void setPyFile(boolean isPyFile){
         this.isPyFile = isPyFile;
     }
+    //为HTML补全添加支持
+    private boolean isHtmlFile = false;
+    public void setHtmlFile(boolean isHtmlFile){
+        this.isHtmlFile = isHtmlFile;
+    }
+
 
     //Ctrl + F12 测试
     public void test(){
@@ -467,6 +473,27 @@ public class MyTextPane extends JTextPane {
         return getSelectedText().replaceAll("\\s+", "").length();
     }
 
+    /**
+     * 补全HTML标签
+     */
+    public void completeHtmlTag(){
+        if(isHtmlFile){
+            String text = getLine();
+            int pos = getCursorColumn()-1;
+            int i = pos-1;
+            int firstBlankIndex = i+1; //从<开始第一个空白(或>)字符下标
+            while(text.length()!=0 && i>=0 && text.charAt(i) != '<'){
+                if(text.charAt(i) == '>') return;
+                if(JavaUtil.isBlank(text.charAt(i)))
+                    firstBlankIndex = i;
+                i--;
+            }
+            if(i != -1 && i+1 != firstBlankIndex){
+                String tagName = text.substring(i+1, firstBlankIndex);
+                asynInsert("</"+tagName+">");
+            }
+        }
+    }
 
 
 
