@@ -1042,15 +1042,17 @@ public class AppFunc {
                     return;
                 int code = e.getKeyCode();
                 char ch = e.getKeyChar();
-                if(JavaUtil.isWordChar(ch)) {
+                if(JavaUtil.isWordChar(ch)) { //是单词字符
                     //提示框部分
                     editWin.showCompleter();
-                }else if(code == KeyEvent.VK_SPACE){
-                    editWin.getCompleter().hidePanel();
-                    editWin.getCompleter().collectWords();
-                }else if(code == KeyEvent.VK_BACK_SPACE){
-                    if(editWin.getCompleter().isVisible()){
-                        editWin.showCompleter();
+                }else{ //非单词字符
+                    if(code == KeyEvent.VK_BACK_SPACE){ //退格
+                        if(editWin.getCompleter().isVisible()){
+                            editWin.showCompleter();
+                        }
+                    }else if(code != KeyEvent.VK_DOWN && code != KeyEvent.VK_UP){ //如果是其他按键（除了上下），都会取消提示框
+                        editWin.getCompleter().hidePanel();
+                        editWin.getCompleter().collectWords();
                     }
                     editWin.getCompleter().collectWords();
                 }

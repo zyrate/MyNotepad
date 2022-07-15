@@ -29,20 +29,23 @@ public class Completer extends ListAndScroll<String>{
         this.setBackground(Color.white);
         this.setVisible(false);
         textPane = (MyTextPane) pane.getViewport().getView();
-        fontSize = textPane.getFont().getSize();
-        height = (fontSize+22)*4;
-        yOffset = fontSize*2;
         this.initList(250);
-        this.getList().setVisibleRowCount(4);
-        this.getList().setFont(new Font("Consolas", 0, fontSize+10));
         collectWords();
     }
 
     //调整提示框位置 - 生成列表
     public void adjustCompleter(){
-        Caret caret = textPane.getCaret();
-        findCandidates();
+        //调整参数
+        fontSize = textPane.getFont().getSize();
+        height = yOffset*4;
+        yOffset = fontSize+10;
         currIndex = 0;
+        this.getList().setVisibleRowCount(4);
+        this.getList().setFont(new Font("Consolas", 0, fontSize));
+        this.findCandidates();
+        this.refreshList(candidates);
+
+        Caret caret = textPane.getCaret();
         if(candidates.length != 0) {
             Point p = caret.getMagicCaretPosition();
             if (p != null) {
@@ -65,7 +68,6 @@ public class Completer extends ListAndScroll<String>{
             return;
         }
 
-        this.refreshList(candidates);
         this.select(currIndex);
         completion = candidates[currIndex>=candidates.length?0:currIndex].substring(halfTyped.length());
     }
