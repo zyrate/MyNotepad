@@ -11,23 +11,32 @@ class ListAndScroll<E> extends JPanel {
     private DefaultListModel<E> model;
     private JList<E> list;
     private JScrollPane pane;
+    public ListAndScroll(){}
     public ListAndScroll(E[] arr, int width){
-        /*创建列表的步骤*/
-        model = new DefaultListModel<>();
-        for(E e : arr){
-            model.addElement(e);
-        }
-        list = new JList<>(model);
+        initList(width);
+        refreshList(arr);
+    }
+
+    public void initList(int width){
+        list = new JList<>();
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setLayoutOrientation(JList.VERTICAL);
         list.setFont(new Font("微软雅黑", 0, 18));
         list.setFixedCellWidth(width);
         list.setVisibleRowCount(8);
-
         //添加滚动条
         pane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(pane);
+    }
+
+    public void refreshList(E[] arr){
+        /*创建列表的步骤*/
+        model = new DefaultListModel<>();
+        for(E e : arr){
+            model.addElement(e);
+        }
+        list.setModel(model);
     }
 
     //跳到某项

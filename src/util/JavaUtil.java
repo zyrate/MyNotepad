@@ -8,6 +8,15 @@ public class JavaUtil {
     public static CountDownLatch setTextLatch = null; //文本变动的锁，即先文本变动后高亮。
 
     /**
+     * 是否是单词字符
+     * @param ch
+     * @return
+     */
+    public static boolean isWordChar(char ch){
+        return String.valueOf(ch).matches("\\w");
+    }
+
+    /**
      * 是否是空白字符
      * @param ch
      * @return

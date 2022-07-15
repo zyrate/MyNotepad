@@ -6,10 +6,9 @@ import util.DTUtil;
 import util.JavaUtil;
 
 import javax.swing.*;
+import javax.swing.text.Caret;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.DecimalFormat;
@@ -21,7 +20,10 @@ import java.util.ArrayList;
 
 public class EditWin extends JFrame{
     private JPanel pCenter, pFoot, pFootLeft, pFootRight;
-    private MyTextPane textPane;//改 - 富文本
+    private JLayeredPane pCenterLayer;//层次Panel，为了添加补全提示框
+    private JPanel completeBack;//补全框的 wrapper
+    private MyTextPane textPane;//富文本
+    private Completer completer;//补全框
     private JScrollPane pane;
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
@@ -56,11 +58,15 @@ public class EditWin extends JFrame{
         addListener();
         setVisible(true);
         update();
+        //触发窗口变化
+        setSize(getWidth()-1, getHeight());
         starAnimation();
+        textPane.grabFocus();
     }
 
     private void init(){
         pCenter = new JPanel();
+        pCenterLayer = new JLayeredPane();
         pFoot = new JPanel();
         pFootRight = new JPanel();
         pFootLeft = new JPanel();
@@ -102,6 +108,9 @@ public class EditWin extends JFrame{
         iTranslate = CompFactory.createMenuItem("使用谷歌翻译", "control G");
         iTimer = CompFactory.createMenuItem("计时器", "F4");
         iCmd = CompFactory.createMenuItem("命令行(L)", "control L");
+
+        completeBack = new JPanel();
+        completer = new Completer(pane);
     }
     private void set(){
         //从文件中读取窗口位置大小
@@ -112,7 +121,7 @@ public class EditWin extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         ImageIcon imageIcon = new ImageIcon(EditWin.class.getResource("/icons/notepad.png"));
         this.setIconImage(imageIcon.getImage());
-        pCenter.setLayout(new BorderLayout());
+        pCenter.setLayout(null);
         pFoot.setLayout(new BorderLayout());
         pFoot.setPreferredSize(new Dimension(1, 25));//底部高度
         pFootLeft.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));//这句话是流式布局的垂直居中和水平边距
@@ -120,6 +129,7 @@ public class EditWin extends JFrame{
         menuBar.setBackground(Color.WHITE);
         textPane.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         textPane.setFont(textFont);
+        completeBack.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         iNoHL.setState(true);
 
         //文件读取
@@ -127,7 +137,15 @@ public class EditWin extends JFrame{
         iLineWrap.setState(DTUtil.getLineWrap());
         iCode.setState(DTUtil.getCodeMode());
         textPane.setCodeMode(DTUtil.getCodeMode());
-        pane.setRowHeaderView(DTUtil.getShowLineNum()?new TextLineNumber(textPane):null);
+
+        boolean b = DTUtil.getShowLineNum();
+        pane.setRowHeaderView(b?new TextLineNumber(textPane):null);
+        if(b) this.getCompleter().setxOffset(50);
+        else this.getCompleter().setxOffset(0);
+
+        pane.setOpaque(true);
+        completeBack.setOpaque(false);
+        completeBack.setLayout(null);
     }
     private void add(){
         menuBar.add(mFile);
@@ -136,7 +154,10 @@ public class EditWin extends JFrame{
         menuBar.add(mHighlight);
         menuBar.add(mRun);
         menuBar.add(mHelp);
-        pCenter.add(pane);//滚动条
+        pCenter.add(pCenterLayer);
+        pCenterLayer.add(pane, Integer.valueOf(0));//滚动条
+        pCenterLayer.add(completeBack, Integer.valueOf(1));//补全框区域
+        completeBack.add(completer);
 
         pFoot.add(pFootLeft, BorderLayout.WEST);
         pFoot.add(pFootRight, BorderLayout.EAST);
@@ -248,10 +269,13 @@ public class EditWin extends JFrame{
     }
     //开始动画
     private void starAnimation(){
-        if(!DTUtil.getMaxFrame())//没有最大化才有动画
-            for(int i = 50; i >= 0; i--){
-               setLocation(DTUtil.getX()-i, DTUtil.getY());
+        if(!DTUtil.getMaxFrame()) {//没有最大化才有动画
+            //触发窗口变化
+            setSize(getWidth()+1, getHeight());
+            for (int i = 50; i >= 0; i--) {
+                setLocation(DTUtil.getX() - i, DTUtil.getY());
             }
+        }
     }
     //关闭动画
     public void closeAnimation(){
@@ -367,6 +391,12 @@ public class EditWin extends JFrame{
         }.start();
     }
 
+    public void showCompleter(){
+        completer.adjustCompleter();
+        showStatus(""); //加这句话，修正第一次的位置
+        showStatus(mainMessage);
+    }
+
     /*为菜单等添加提示信息监听*/
     private void addListener(){
         addFootTipListener(textPane, null);
@@ -411,6 +441,18 @@ public class EditWin extends JFrame{
                 }
             });
         }
+
+        //为pCenter添加监听器
+        pCenter.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                pCenterLayer.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
+                pane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
+                textPane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());//必须加这句话
+                completeBack.setBounds(0, 0, pCenter.getWidth()-pane.getVerticalScrollBar().getWidth(), pCenter.getHeight()-pane.getHorizontalScrollBar().getHeight());
+            }
+        });
+
     }
     /*为组件添加页脚提示监听器*/
     private void addFootTipListener(JComponent comp, String tip){
@@ -418,13 +460,19 @@ public class EditWin extends JFrame{
             @Override
             public void mouseEntered(MouseEvent e) {
                 showStatus(tip==null?mainMessage:tip);//如果tip是null就显示mainMessage
+
+                pCenterLayer.setBounds(0,0,pCenter.getWidth(),pCenter.getHeight());
+                pane.setBounds(0,0,pCenter.getWidth(),pCenter.getHeight());
             }
         });
     }
 
 
-
     //getter and setter
+
+    public Completer getCompleter() {
+        return completer;
+    }
 
     public JCheckBoxMenuItem getiLineNum() {
         return iLineNum;

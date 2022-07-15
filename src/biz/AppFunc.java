@@ -82,6 +82,7 @@ import java.util.concurrent.CountDownLatch;
  *       - Opener打开文件采用StringBuilder，极大提升打开速度
  *
  * >2.52 - 提供对Python的支持
+ * >2.53 - 增加自动补全功能
  *
  */
 /**
@@ -466,6 +467,8 @@ public class AppFunc {
                     editWin.getTextPane().setPyFile(true);
                 else
                     editWin.getTextPane().setPyFile(false);
+                //准备补全
+                editWin.getCompleter().collectWords();
 
                 editWin.changeStatus("正在高亮...");
                 //开启高亮响应
@@ -676,9 +679,11 @@ public class AppFunc {
             public void actionPerformed(ActionEvent e) {
                 if(editWin.getiLineNum().getState() == true){
                     editWin.getPane().setRowHeaderView(new TextLineNumber(editWin.getTextPane()));
+                    editWin.getCompleter().setxOffset(50);
                     DTUtil.setShowLineNum(true);
                 }else{
                     editWin.getPane().setRowHeaderView(null);
+                    editWin.getCompleter().setxOffset(0);
                     DTUtil.setShowLineNum(false);
                 }
             }
@@ -960,6 +965,7 @@ public class AppFunc {
                         tp.offsetFromCare(1);
                     }
                 }
+
             }
             @Override
             public void keyPressed(KeyEvent e) {
@@ -972,12 +978,18 @@ public class AppFunc {
                 //这里的consume方法是销毁这个事件，这样系统就不会再自动添加这个键了
                 if(!shift && code == KeyEvent.VK_ENTER) {//自动缩进
                     e.consume();
-                    tp.insert("\n");
-                    tp.autoIndent(-1, true);
-                    //如果是在大括号中间回车，把}放到下一行
-                    if(tp.getNextChar().equals("}")){
-                        tp.asynInsert("\n");
-                        tp.autoIndent(tp.getCaretPosition()+1, false);
+                    if(editWin.getCompleter().isVisible()){
+                        //确定补全
+                        editWin.getCompleter().complete();
+                    }else {
+                        editWin.getCompleter().collectWords();
+                        tp.insert("\n");
+                        tp.autoIndent(-1, true);
+                        //如果是在大括号中间回车，把}放到下一行
+                        if (tp.getNextChar().equals("}")) {
+                            tp.asynInsert("\n");
+                            tp.autoIndent(tp.getCaretPosition() + 1, false);
+                        }
                     }
                 }else if(!shift && code == KeyEvent.VK_TAB){//Tab键默认4个空格
                     e.consume();
@@ -999,6 +1011,40 @@ public class AppFunc {
                     //注释完后再高亮所有行
                     highlight(tp.getLineStart(tp.getSelectionStart()),
                             tp.getLineEnd(tp.getSelectionEnd()-tp.getSelectionStart()), "insert");
+                }else if(code == KeyEvent.VK_UP){
+                    if(editWin.getCompleter().isVisible()) {
+                        e.consume();
+                        editWin.getCompleter().pre();
+                    }
+                }else if(code == KeyEvent.VK_DOWN){
+                    if(editWin.getCompleter().isVisible()) {
+                        e.consume();
+                        editWin.getCompleter().next();
+                    }
+                }else if(code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT){
+                    if(editWin.getCompleter().isVisible()) {
+                        editWin.showCompleter();
+                    }
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!tp.isCodeMode())
+                    return;
+                int code = e.getKeyCode();
+                char ch = e.getKeyChar();
+                if(JavaUtil.isWordChar(ch)) {
+                    //提示框部分
+                    editWin.showCompleter();
+                }else if(code == KeyEvent.VK_SPACE){
+                    editWin.getCompleter().hidePanel();
+                    editWin.getCompleter().collectWords();
+                }else if(code == KeyEvent.VK_BACK_SPACE){
+                    if(editWin.getCompleter().isVisible()){
+                        editWin.showCompleter();
+                    }
+                    editWin.getCompleter().collectWords();
                 }
             }
         });
@@ -1007,7 +1053,22 @@ public class AppFunc {
             @Override
             public void caretUpdate(CaretEvent e) {
                 editWin.cursorChange();
+            }
+        });
 
+        //滑动事件
+        editWin.getPane().getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if(editWin.getCompleter().isVisible())
+                    editWin.showCompleter();
+            }
+        });
+        editWin.getPane().getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if(editWin.getCompleter().isVisible())
+                    editWin.showCompleter();
             }
         });
 
@@ -1019,6 +1080,7 @@ public class AppFunc {
                 if(e.getButton() == MouseEvent.BUTTON3){
                     popup.show(editWin.getTextPane(), e.getX(), e.getY());
                 }
+                editWin.getCompleter().hidePanel();
             }
 
             @Override
