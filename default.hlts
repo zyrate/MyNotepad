@@ -6,14 +6,14 @@
 'int' : #3355cc bold;;'for' : #3355cc bold;;'if' : #3355cc bold;;'while' : #3355cc bold;;'do' : #3355cc bold;;
 'void' : #3355cc bold;;'float' : #3355cc bold;;'double' : #3355cc bold;;'char' : #3355cc bold;;
 'final' : #3355cc bold;; 'static' : #3355cc bold;; 'switch' : #3355cc bold;; 'case' : #3355cc bold;;
-'[A-Z0-9_]+' : #7E3D76 bold;;
+'[A-Z]+[A-Z0-9_]*' : #7E3D76 bold;;
 '<[\!\#\$\%\^&\*\(\)\+\-\=\{\}\[\]\:\;\,\.\<\>\?\~\\|]>' : #6C3365;;
 ]
 <
 '//' : #019858 !;;
 >
 (
-'/\*' '\*/' : #7373b9 !;;
+'/\*' '\*/' : #7373b9 span !;;
 '\"' '\"' : #d26900 ~ !;;
 '\'' '\'' : #ff8000 ~;;
 )
@@ -43,12 +43,12 @@
 '`' '`' : b#f9f2f4 #c7254e "Consolas" !;;
 '~~\w+' '~~' : #D4D4D4 "Consolas" {cpp} !;;
 '\'' '\'' : #bb3d00 !;;
-'\*\*\*' '\*\*\*' : #007979;;
-'\{.+\}\n' '\{end\}\n' : #ae8f00;;
+'\*\*\*' '\*\*\*' : #007979 span;;
+'\{.+\}\n' '\{end\}\n' : #ae8f00 span;;
 '\(' '\)' : #6e6e6e;;
 '（' '）' : #6e6e6e;;
 '\"' '\"' : #0077ee !;;
-'\|“' '”\|' : #6c6c6c "楷体";;
+'\|“' '”\|' : #6c6c6c "楷体" span;;
 )
 }
 高亮
@@ -56,7 +56,7 @@
 [
 '<#[0-9a-fA-F]{6}>' : #9f35ff;;'<[bB]#[0-9a-fA-F]{6}>' : #9f35ff b#dddddd !;;
 '<\;\;>' : #930000;;
-'bold' : #3355cc;;'italic' : #3355cc;;'underline' : #3355cc;;
+'bold' : #3355cc;;'italic' : #3355cc;;'underline' : #3355cc;;'span' : #3355cc;;
 '<\.\w+\s+>' : #f75000;;
 '<[\!\?]>' : #000097 bold;;
 '<[\<\>\[\]\(\)\}\{]>' : #613030 30 "Consola";;
@@ -81,7 +81,7 @@ Java代码
 Scala
 {.scala
 [
-'object' : #3355cc bold;;'val' : #3355cc bold;;'var' : #3355cc bold;;'def' : #3355cc bold;;'trait' : #3355cc bold;;
+'override' : #3355cc bold;;'object' : #3355cc bold;;'val' : #3355cc bold;;'var' : #3355cc bold;;'def' : #3355cc bold;;'trait' : #3355cc bold;;
 'match' : #3355cc bold;;'implicit' : #3355cc bold;;'sealed' : #3355cc bold;;'Nil' : #9F4D95;;
 'String' : #2874A6;;'List' : #2874A6;;'Map' : #2874A6;;'Seq' : #2874A6;;'Iterable' : #2874A6;;'Iterator' : #2874A6;;
 'int' : #000000 !;;'double' : #000000 !;;'float' : #000000 !;;
@@ -92,21 +92,26 @@ Scala
 Python
 {.py
 [
-'def' : #3355cc bold;;'if' : #3355cc bold;;'elif' : #3355cc bold;;'else' : #3355cc bold;;'for' : #3355cc bold;;
-'in' : #3355cc bold;;'try' : #3355cc bold;;'except' : #3355cc bold;;
+'def' : #3355cc bold;;'lambda' : #3355cc bold;;'class' : #3355cc bold;;'if' : #3355cc bold;;'elif' : #3355cc bold;;'else' : #3355cc bold;;'for' : #3355cc bold;;
+'in' : #3355cc bold;;'try' : #3355cc bold;;'except' : #3355cc bold;;'while' : #3355cc bold;;
 'pass' : #3355cc bold;;'return' : #3355cc bold;;'is' : #3355cc bold;;'break' : #3355cc bold;;'continue' : #3355cc bold;;
 'not' : #3355cc bold;;'raise' : #3355cc bold;;'import' : #3355cc bold;;'from' : #3355cc bold;;'yield' : #3355cc bold;;
 'with' : #3355cc bold;;'or' : #3355cc bold;;'and' : #3355cc bold;;'as' : #3355cc bold;;
-'finally' : #3355cc bold;;'assert' : #3355cc bold;;
+'finally' : #3355cc bold;;'assert' : #3355cc bold;;'global' : #3355cc bold;;'nonlocal' : #3355cc bold;;
 'None' : #9F4D95 bold;;'True' : #9F4D95 bold;;'False' : #9F4D95 bold;;
+'<__\w+__>' : #9F4D95;;'self' : #9F4D95;;'[0-9]+\.?[0-9]*' : #ff4400;;'<@[\w\.]+>' : #c6a300 bold;;
+'<[\!\#\$\%\^&\*\(\)\+\-\=\{\}\[\]\:\;\,\.\<\>\?\~\\|]>' : #3c3c3c;;
+'<[\(\,]\s*[\w_]+\s*=>' : #3355cc italic;;
+'class\s+[\w_]+' : #008080;;'def\s+[\w_]+' : #922B21;;'<\.\s*[\w_]+\(>' : #922B21;;
 ]
 <
-'#' : #019858 !;;
+'#' : #8c8c8c !;;
 >
 (
-'\"' '\"' : #d26900 ~;;
-'\"\"\"' '\"\"\"' : #d26900 ~;;
-'\'' '\'' : #ff8000 ~;;
+'[rbu]{0,1}\"\"\"' '\"\"\"' : #ff8000 span ?;;
+'[rbu]{0,1}\'\'\'' '\'\'\'' : #ff8000 span ?;;
+'[rbu]{0,1}\"' '\"' : #ff8000 span !;;
+'[rbu]{0,1}\'' '\'' : #d26900 span ? ~;;
 )
 }
 C语言
@@ -151,17 +156,17 @@ JavaScript
 层叠样式表
 {.css
 [
-'<\.[a-zA-z0-9-_]+>' : #ae00ae;;
 '<#[a-zA-z0-9-_]+>' : #007979;;
-'<\{|\}>' : #9d9d9d;;
+'<\{|\}>' : #4e4e4e;;
 '<[a-zA-Z0-9-]+\s*:>' : #ff4400;;
-'<([a-zA-Z0-9#-]|\s)+[;\n]>' : #b15bff;;
+'<[a-zA-Z0-9#-,\s\(\)\.]+[;\n]>' : #b15bff;;
+'<\.[a-zA-z0-9-_]+>' : #ae00ae;;
 '<:>' : #000000 !;;
 '<;>' : #000000 !;;
-'<\.>' : #9d9d9d !;;
+'<\.>' : #4e4e4e !;;
 ]
 (
-'/\*' '\*/' : #9d9d9d italic !;;
+'/\*' '\*/' : #9d9d9d italic span !;;
 '\'' '\'' : #984b4b !;;'\"' '\"' : #984b4b !;;
 )
 }
@@ -175,8 +180,8 @@ JSP
 '\"' '\"' : #d26900;;
 '<%@' '%>' : #bb00bb;;
 '<%' '%>' : #3c3c3c;;
-'<script.*>' '</script>' : #3c3c3c;;
-'<%--' '--%>' : #9d9d9d italic !;;
+'<script.*>' '</script>' : #3c3c3c span;;
+'<%--' '--%>' : #9d9d9d italic span !;;
 )
 }
 超文本标记语言
@@ -191,11 +196,11 @@ JSP
 '<&[a-z]+;>' : #9f35ff !;;
 ]
 (
-'<!--' '-->' : #9d9d9d italic !;;
+'<!--' '-->' : #9d9d9d italic span !;;
 '<' '>' : #4F94CD;;
 )
 }
-{.properties
+{.properties .conf .ini
 [
 '<.>' : #00568E;;
 '<=>' : #000000 !;;
