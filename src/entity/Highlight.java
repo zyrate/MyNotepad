@@ -84,7 +84,6 @@ public class Highlight {
             else if(key2 == null)
                 key2 = k;
         }
-        if(key1.equals("/\\*") && key2.equals("\\*/")) this.canSpanLines = true;
         //这样就不用考虑顺序了
         int index;
         if((index = contains("[bB]{0}#[0-9a-fA-F]{6}")) != -1){
@@ -107,6 +106,9 @@ public class Highlight {
         }
         if((index = contains("underline")) != -1){
             this.underline = values[index].equals("underline");
+        }
+        if((index = contains("span")) != -1){
+            this.canSpanLines = values[index].equals("span");
         }
         if(contains("~") != -1){//此高亮不可分割
             this.canDivided = false;
