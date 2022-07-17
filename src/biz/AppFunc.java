@@ -550,9 +550,9 @@ public class AppFunc {
         //是否改动
         if(editWin.getContent() != null){//content等于null代表目前没有打开任何已存在文件
             if(contentChange()){
-                editWin.setTitle("*"+editWin.getFilePath()+" - 记事本");
+                editWin.setTitle("*"+editWin.getFilePath()+" - "+About.APP_NAME);
             }else{
-                editWin.setTitle(editWin.getFilePath()+" - 记事本");
+                editWin.setTitle(editWin.getFilePath()+" - "+About.APP_NAME);
             }
         }
         editWin.textChange();
@@ -782,6 +782,16 @@ public class AppFunc {
             @Override
             public void actionPerformed(ActionEvent e) {
                 menuDeal(TIMER);
+            }
+        });
+        editWin.getiGithub().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("https://github.com/PowerPollery/MyNotepad"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 

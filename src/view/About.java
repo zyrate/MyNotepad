@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
  */
 
 public class About extends JDialog{
+    //软件名称
+    public static final String APP_NAME = "MyNotepad";
     //统一版本号，只需修改这里
     public static final String VERSION = "V2.53";
     //更新时间
@@ -18,7 +20,7 @@ public class About extends JDialog{
     public About(EditWin editWin){
         setModal(true);
         //setUndecorated(true);//隐藏标题栏 - 只用于JFrame
-        setTitle("关于记事本");
+        setTitle("关于 "+APP_NAME);
         setSize(500, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -37,7 +39,7 @@ public class About extends JDialog{
         ta.setFont(new Font("微软雅黑", 0, 15));
         ta.setEnabled(false);
         ta.setLineWrap(true);
-        ta.setText("版本：记事本"+VERSION+" (UTF8)\n\n作者：郑云瑞\n开发语言：Java\n开发环境：IntelliJ IDEA\n更新时间："+UPDATE+"\n\n简易记事本，记录每一天！\n日积月累，点击进步。");
+        ta.setText("版本："+APP_NAME+" "+VERSION+" (UTF8)\n\n作者：PowerPollery\n邮箱：814916894@qq.com\n开发语言：Java\n开发环境：IntelliJ IDEA\n更新时间："+UPDATE+"\n\n简易记事本，记录每一天！\n日积月累，点击进步。");
         JButton button = new JButton("确定");
         button.setBounds(380, 400, 80, 30);
         button.addActionListener(new ActionListener() {

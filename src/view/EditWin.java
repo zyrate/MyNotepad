@@ -28,7 +28,7 @@ public class EditWin extends JFrame{
     private JMenuBar menuBar;
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
-                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer, iCmd;
+                        iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer, iCmd, iGithub;
     private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
@@ -88,7 +88,7 @@ public class EditWin extends JFrame{
         iSaveAnother = CompFactory.createMenuItem("另存为(A)...");
         iFont = CompFactory.createMenuItem("字体(T)...", "control T");
         iReset = CompFactory.createMenuItem("恢复默认设置");
-        iAbout = CompFactory.createMenuItem("关于记事本");
+        iAbout = CompFactory.createMenuItem("关于 "+About.APP_NAME);
         iCount = CompFactory.createMenuItem("字数统计", "F1");
         iDate = CompFactory.createMenuItem("日期", "F2");
         iNote = CompFactory.createMenuItem("笔记", "F3");
@@ -108,6 +108,7 @@ public class EditWin extends JFrame{
         iTranslate = CompFactory.createMenuItem("使用谷歌翻译", "control G");
         iTimer = CompFactory.createMenuItem("计时器", "F4");
         iCmd = CompFactory.createMenuItem("命令行(L)", "control L");
+        iGithub = CompFactory.createMenuItem("介绍与代码");
 
         completeBack = new JPanel();
         completer = new Completer(pane);
@@ -194,6 +195,7 @@ public class EditWin extends JFrame{
         mTools.add(iTimer);
         mRun.add(iRun);
         mRun.add(iCmd);
+        mHelp.add(iGithub);
         mHelp.add(iAbout);
         mHighlight.add(iNoHL);
         this.add(menuBar, BorderLayout.NORTH);
@@ -300,9 +302,9 @@ public class EditWin extends JFrame{
     //更新显示
     public void update(){
         if(filePath == null)
-            setTitle("未命名 - 记事本");
+            setTitle("未命名 - MyNotepad");
         else
-            setTitle(filePath+" - 记事本");
+            setTitle(filePath+" - MyNotepad");
         textPane.setFont(textFont);
         lFoot1.setText(footMessage);
         lFoot2.setText(currEncoding);
@@ -402,14 +404,14 @@ public class EditWin extends JFrame{
         addFootTipListener(textPane, null);
         addFootTipListener(mFile, "打开、保存、恢复默认设置等");
         addFootTipListener(mEdit, "关于文本的编辑、输入、显示等");
-        addFootTipListener(mHelp, "有关该记事本的帮助信息");
+        addFootTipListener(mHelp, "有关"+About.APP_NAME+"的帮助信息");
         addFootTipListener(mHighlight, "设置是否启用高亮功能以及其样式");
         addFootTipListener(mTools, "实用小工具");
         addFootTipListener(mRun, "运行代码");
         addFootTipListener(iCode, "是否进入代码模式，Ctrl + \\");
         addFootTipListener(iReplace, "替换文本，Ctrl + R");
         addFootTipListener(iFind, "查找文本，Ctrl + F");
-        addFootTipListener(iAbout, "关于记事本");
+        addFootTipListener(iAbout, "关于"+About.APP_NAME);
         addFootTipListener(iCount, "统计中英文字数、句数，F1");
         addFootTipListener(iDate, "追加当前日期，F2");
         addFootTipListener(iFont, "选择字体，Ctrl + T");
@@ -431,6 +433,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iLineNum, "是否显示行号");
         addFootTipListener(iTimer, "正计时或倒计时");
         addFootTipListener(iCmd, "在文件所在路径打开命令行，Ctrl + L");
+        addFootTipListener(iGithub, "打开本项目的GitHub页面，获取详细介绍与代码");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -661,5 +664,9 @@ public class EditWin extends JFrame{
 
     public JMenuItem getiCmd() {
         return iCmd;
+    }
+
+    public JMenuItem getiGithub() {
+        return iGithub;
     }
 }
