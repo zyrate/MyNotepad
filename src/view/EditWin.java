@@ -448,8 +448,10 @@ public class EditWin extends JFrame{
             public void componentResized(ComponentEvent e) {
                 pCenterLayer.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
                 pane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
-                textPane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());//必须加这句话
+                //textPane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());//必须加这句话 - 这句话引入了新的滚动条BUG，用下面那两行
                 completeBack.setBounds(0, 0, pCenter.getWidth()-pane.getVerticalScrollBar().getWidth(), pCenter.getHeight()-pane.getHorizontalScrollBar().getHeight());
+                showStatus(""); //加这两句话，修正最大化Bug
+                showStatus(mainMessage);
             }
         });
 
