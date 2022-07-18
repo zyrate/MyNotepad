@@ -61,14 +61,15 @@ public class MyTextPane extends JTextPane {
      */
     public void highlightChangedLine(int offset, int length, String type){
         if(highlighter != null) {
-            int start = getLineStart(offset);
-            int end = start;
-            if(type.equals("insert")) end = getLineEnd(offset+length);
-            else if(type.equals("remove")) end = getLineEnd(offset); //如果是删除的话只高亮一行
-            highlighter.setHltStart(start);
-            highlighter.setHltEnd(end);
+            //暂时不进行优化
+//            int start = getLineStart(offset);
+//            int end = start;
+//            if(type.equals("insert")) end = getLineEnd(offset+length);
+//            else if(type.equals("remove")) end = getLineEnd(offset); //如果是删除的话只高亮一行
+//            highlighter.setHltStart(start);
+//            highlighter.setHltEnd(end);
             highlighter.highlight();
-            highlighter.highlightSpanLines();
+//            highlighter.highlightSpanLines();
         }
     }
     public void defaultView(){
