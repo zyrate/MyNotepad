@@ -10,11 +10,20 @@ public class Settings implements Serializable{
     private boolean isMaxFrame=false;
     private boolean notesExt = false;//笔记是否有扩展名
     private boolean codeMode = true;//代码模式
+    private boolean darkMode = false;//暗色模式
     private boolean showLineNum = false;//是否显示行号
     private String highlightName = null;
     private String lastOpenPath = "C:\\";//上一次打开的文件目录
     private String lastSavePath = "C:\\";//上一次保存的文件目录
-    private String charset = "GBK";//编码
+    private String charset = "UTF-8";//编码
+
+    public boolean isDarkMode() {
+        return darkMode;
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
+    }
 
     public String getLastSavePath() {
         return lastSavePath;

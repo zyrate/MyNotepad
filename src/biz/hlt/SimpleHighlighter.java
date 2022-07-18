@@ -2,6 +2,7 @@ package biz.hlt;
 
 import entity.Highlight;
 import entity.HltToken;
+import view.MyTextPane;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -34,7 +35,7 @@ public class SimpleHighlighter {
     String settingName;
     String fileType;
     StyledDocument styledDocument;
-    JTextPane textPane; // 这里改回了JTextPane
+    MyTextPane textPane; // 这里改回了JTextPane
     public static final String PATH= "C:\\NotepadData\\highlights";
     public static final String CONF_TYPE = ".hlts";//当前使用的配置文件类型 .xml 或 .hlts
 
@@ -48,7 +49,7 @@ public class SimpleHighlighter {
     private LinkedList<HltToken> spanLinesTokens;//跨行高亮标记
     Style sys = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 
-    public SimpleHighlighter(JTextPane textPane){
+    public SimpleHighlighter(MyTextPane textPane){
         this.textPane = textPane;
         this.styledDocument = textPane.getStyledDocument();
     }
@@ -59,7 +60,7 @@ public class SimpleHighlighter {
         this.fileType = fileType.toLowerCase();//不管大小写
         if(settingName == null) return;
         //可读取不同类型的配置文件
-        HltConfReader conf = new HltDefaultReader(PATH+"\\"+settingName, fileType);
+        HltConfReader conf = new HltDefaultReader(PATH+"\\"+settingName, fileType, textPane.getDarkMode());
         this.normalList = conf.getNormalList();
         this.importantList = conf.getImportantList();
         this.unimportantList = conf.getUnimportantList();
@@ -214,8 +215,13 @@ public class SimpleHighlighter {
     protected boolean render(int start, int end, Highlight highlight){
         Style s = styledDocument.addStyle("s", sys);
         //这里如果颜色没设置的话，就默认
-        StyleConstants.setForeground(s, highlight.getColor()==null?Color.black:highlight.getColor());
-        StyleConstants.setBackground(s, highlight.getBackColor()==null? Color.white:highlight.getBackColor());
+        if(textPane.getDarkMode()){ //暗色模式
+            StyleConstants.setForeground(s, highlight.getColor()==null?Color.white:highlight.getColor());
+            StyleConstants.setBackground(s, highlight.getBackColor()==null? Color.black:highlight.getBackColor());
+        }else{
+            StyleConstants.setForeground(s, highlight.getColor()==null?Color.black:highlight.getColor());
+            StyleConstants.setBackground(s, highlight.getBackColor()==null? Color.white:highlight.getBackColor());
+        }
         StyleConstants.setBold(s, highlight.isBold());
         StyleConstants.setItalic(s, highlight.isItalic());
         StyleConstants.setUnderline(s, highlight.isUnderline());

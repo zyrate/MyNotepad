@@ -1,3 +1,0 @@
-[c; gcc "%FILE%" -o "%PATH%\%NAME%.exe"; "%PATH%\%NAME%.exe";]
-[cpp; g++ "%FILE%" -o "%PATH%\%NAME%.exe"; "%PATH%\%NAME%.exe";]
-[java; javac -d "%PATH%" "%FILE%"; java %NAME%;]

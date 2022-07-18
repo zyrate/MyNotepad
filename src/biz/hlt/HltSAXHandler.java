@@ -25,6 +25,7 @@ public class HltSAXHandler extends DefaultHandler {
     private boolean underline;
     private boolean isRegex;//key1是否是正则
 
+    private boolean isDarkMode = false;
 
     //如果要规范的话，每个优先级内部都应该确保 PART > ALL_LINE > KEYWORD
     private ArrayList<Highlight> normalList = new ArrayList();
@@ -39,8 +40,9 @@ public class HltSAXHandler extends DefaultHandler {
     private boolean typeMatch;//该高亮文件类型符合当前文件
     private int prior;//高亮优先级 0低 1正常 2高
 
-    public HltSAXHandler(String fileType){
+    public HltSAXHandler(String fileType, boolean isDarkMode){
         this.fileType = fileType.substring(1);//去掉点号
+        this.isDarkMode = isDarkMode;
     }
 
     @Override
@@ -151,7 +153,7 @@ public class HltSAXHandler extends DefaultHandler {
     private void addHighlight(){
         if(!typeMatch) return;//文件类型不符合
 
-        Highlight highlight = new Highlight(type, key1, key2, color, backColor,
+        Highlight highlight = new Highlight(isDarkMode, type, key1, key2, color, backColor,
                 bold, size, font, italic, underline, isRegex, canDivided);
         if(prior == 1){
             normalList.add(highlight);

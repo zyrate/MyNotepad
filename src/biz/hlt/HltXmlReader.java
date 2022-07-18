@@ -13,11 +13,11 @@ public class HltXmlReader implements HltConfReader {
     private SAXParser parser;
     private HltSAXHandler handler;
 
-    public HltXmlReader(String settingPath, String fileType){
+    public HltXmlReader(String settingPath, String fileType, boolean isDarkMode){
         SAXParserFactory spf = SAXParserFactory.newInstance();
         try {
             parser = spf.newSAXParser();
-            handler = new HltSAXHandler(fileType);
+            handler = new HltSAXHandler(fileType, isDarkMode);
             parser.parse(settingPath+SimpleHighlighter.CONF_TYPE, handler);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();

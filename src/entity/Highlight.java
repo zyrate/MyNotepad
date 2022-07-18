@@ -29,10 +29,14 @@ public class Highlight {
     //此字段只用作标记性，在区域高亮的时候，会额外对可以跨行的高亮进行渲染
     private boolean canSpanLines = false;
 
+    //是否暗色模式
+    private boolean isDarkMode = false;
+
     String[] keys, values;
 
     //该构造方法供自定义配置用
-    public Highlight(int type, String[] keys, String[] values){
+    public Highlight(boolean isDarkMode, int type, String[] keys, String[] values){
+        this.isDarkMode = isDarkMode;
         this.type = type;
         this.keys = keys;
         this.values = values;
@@ -40,8 +44,9 @@ public class Highlight {
     }
 
     //该构造方法供xml配置用
-    public Highlight(int type, String key1, String key2, String color, String backColor, boolean bold,
+    public Highlight(boolean isDarkMode, int type, String key1, String key2, String color, String backColor, boolean bold,
                      int size, String font, boolean italic, boolean underline, boolean keyWordRegex, boolean canDivided){
+        this.isDarkMode = isDarkMode;
         this.type = type;
         this.key1 = key1;
         this.key2 = key2;
@@ -70,7 +75,8 @@ public class Highlight {
             g = Integer.parseInt(color.substring(4, 6), 16);
             b = Integer.parseInt(color.substring(6, 8), 16);
         }
-        return new Color(r, g, b);
+        if(isDarkMode) return new Color(255-r, 255-g, 255-b);
+        else return new Color(r, g, b);
     }
 
     private void init(){

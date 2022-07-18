@@ -29,7 +29,7 @@ public class EditWin extends JFrame{
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer, iCmd, iGithub;
-    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum;
+    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum, iDark;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
@@ -96,6 +96,7 @@ public class EditWin extends JFrame{
         iFind = CompFactory.createMenuItem("查找(F)...", "control F");
         iReplace = CompFactory.createMenuItem("替换(R)...", "control R");
         iCode = CompFactory.createCheckMenuItem("代码模式 (\\)");
+        iDark = CompFactory.createCheckMenuItem("暗色模式");
         iLineNum = CompFactory.createCheckMenuItem("显示行号");
         imEncoding = CompFactory.createMenu("默认编码方式");
         imCurrEncoding = CompFactory.createMenu("当前编码方式");
@@ -135,6 +136,8 @@ public class EditWin extends JFrame{
         textPane.setLineWrap(DTUtil.getLineWrap());
         iLineWrap.setState(DTUtil.getLineWrap());
         iCode.setState(DTUtil.getCodeMode());
+        iDark.setState(DTUtil.getDarkMode());
+        textPane.setDarkMode(DTUtil.getDarkMode());
         textPane.setCodeMode(DTUtil.getCodeMode());
 
         boolean b = DTUtil.getShowLineNum();
@@ -178,6 +181,7 @@ public class EditWin extends JFrame{
         mEdit.add(iLineWrap);
         mEdit.addSeparator();
         mEdit.add(iCode);
+        mEdit.add(iDark);
         mEdit.add(iLineNum);
         mEdit.add(imCurrEncoding);
         mEdit.add(imEncoding);
@@ -417,6 +421,7 @@ public class EditWin extends JFrame{
         addFootTipListener(mTools, "实用小工具");
         addFootTipListener(mRun, "运行代码");
         addFootTipListener(iCode, "是否进入代码模式，Ctrl + \\");
+        addFootTipListener(iDark, "是否进入暗色模式");
         addFootTipListener(iReplace, "替换文本，Ctrl + R");
         addFootTipListener(iFind, "查找文本，Ctrl + F");
         addFootTipListener(iAbout, "关于"+About.APP_NAME);
@@ -595,6 +600,10 @@ public class EditWin extends JFrame{
 
     public JMenu getmTools() {
         return mTools;
+    }
+
+    public JCheckBoxMenuItem getiDark() {
+        return iDark;
     }
 
     public JMenu getmHelp() {

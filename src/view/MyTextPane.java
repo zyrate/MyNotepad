@@ -5,8 +5,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -20,6 +18,7 @@ public class MyTextPane extends JTextPane {
     private SimpleHighlighter highlighter;
     private boolean isCodeMode = true;//是否是代码模式
     private boolean isWrap = false;//是否自动换行
+    private boolean isDarkMode = false;//是否暗色模式
     public MyTextPane(){
         this.setSelectionColor(new Color(89, 116, 171));
         this.setSelectedTextColor(new Color(247, 247, 247));
@@ -84,6 +83,23 @@ public class MyTextPane extends JTextPane {
     }
     public boolean getCodeMode(){
         return this.isCodeMode;
+    }
+
+    //设置暗色模式
+    public void setDarkMode(boolean isDarkMode){
+        this.isDarkMode = isDarkMode;
+        if(isDarkMode){
+            this.setBackground(Color.black);
+            this.setForeground(Color.white);
+            this.setCaretColor(Color.yellow);
+        }else{
+            this.setBackground(Color.white);
+            this.setForeground(Color.black);
+            this.setCaretColor(Color.black);
+        }
+    }
+    public boolean getDarkMode(){
+        return this.isDarkMode;
     }
 
     /**

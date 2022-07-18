@@ -13,9 +13,9 @@ public class About extends JDialog{
     //软件名称
     public static final String APP_NAME = "MyNotepad";
     //统一版本号，只需修改这里
-    public static final String VERSION = "V2.53";
+    public static final String VERSION = "V2.54";
     //更新时间
-    public static final String UPDATE = "2022-"+"7-14";
+    public static final String UPDATE = "2022-"+"7-18";
 
     public About(EditWin editWin){
         setModal(true);

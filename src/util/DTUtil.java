@@ -51,6 +51,15 @@ public class DTUtil {
         }
     }
 
+    public static void setDarkMode(boolean isDarkMode){
+        read();
+        settings.setDarkMode(isDarkMode);
+        write(settings);
+    }
+    public static boolean getDarkMode(){
+        read();
+        return settings.isDarkMode();
+    }
     public static void setCharset(String charset){
         read();
         settings.setCharset(charset);

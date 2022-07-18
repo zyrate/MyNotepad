@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -84,6 +83,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * >2.52 - 提供对Python的支持
  * >2.53 - 增加自动补全功能
+ * >2.54 - 加入暗色模式
  *
  */
 /**
@@ -256,7 +256,7 @@ public class AppFunc {
     }
 
     //代码模式
-    private void onCodeModel(){
+    private void onCodeMode(){
         if(!editWin.getTextPane().getCodeMode()){
             editWin.getTextPane().setCodeMode(true);
             DTUtil.setCodeMode(true);
@@ -268,6 +268,22 @@ public class AppFunc {
             editWin.getiCode().setState(false);
             editWin.changeStatus("退出代码模式");
         }
+    }
+    //暗色模式
+    private void onDarkMode(){
+        if(!editWin.getTextPane().getDarkMode()){
+            editWin.getTextPane().setDarkMode(true);
+            DTUtil.setDarkMode(true);
+            editWin.getiDark().setState(true);
+            editWin.changeStatus("暗色模式");
+        }else{
+            editWin.getTextPane().setDarkMode(false);
+            DTUtil.setDarkMode(false);
+            editWin.getiDark().setState(false);
+            editWin.changeStatus("退出暗色模式");
+        }
+        prepareHighlight();
+        highlight();
     }
     //查找
     private void find(){
@@ -749,7 +765,14 @@ public class AppFunc {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //代码模式
-                onCodeModel();
+                onCodeMode();
+            }
+        });
+        editWin.getiDark().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //暗色模式
+                onDarkMode();
             }
         });
         editWin.getiReOpen().addActionListener(new ActionListener() {
@@ -876,7 +899,7 @@ public class AppFunc {
                     //测试键
                     editWin.getTextPane().test();
                 }else if(ctrl && e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-                    onCodeModel();
+                    onCodeMode();
                 }
 
                 //下面是鸡肋功能
