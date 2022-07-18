@@ -58,8 +58,6 @@ public class EditWin extends JFrame{
         addListener();
         setVisible(true);
         update();
-        //触发窗口变化
-        setSize(getWidth()-1, getHeight());
         starAnimation();
         textPane.grabFocus();
     }
@@ -272,12 +270,11 @@ public class EditWin extends JFrame{
     //开始动画
     private void starAnimation(){
         if(!DTUtil.getMaxFrame()) {//没有最大化才有动画
-            //触发窗口变化
-            setSize(getWidth()+1, getHeight());
             for (int i = 50; i >= 0; i--) {
                 setLocation(DTUtil.getX() - i, DTUtil.getY());
             }
         }
+        adjustCenterPanel();
     }
     //关闭动画
     public void closeAnimation(){
@@ -393,9 +390,20 @@ public class EditWin extends JFrame{
         }.start();
     }
 
+    //可以显示补全框
     public void showCompleter(){
         completer.adjustCompleter();
         showStatus(""); //加这句话，修正第一次的位置
+        showStatus(mainMessage);
+    }
+
+    //中间Panel适应窗口
+    private void adjustCenterPanel(){
+        pCenterLayer.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
+        pane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
+        //textPane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());//必须加这句话 - 这句话引入了新的滚动条BUG，用下面那两行
+        completeBack.setBounds(0, 0, pCenter.getWidth()-pane.getVerticalScrollBar().getWidth(), pCenter.getHeight()-pane.getHorizontalScrollBar().getHeight());
+        showStatus(""); //加这两句话，修正最大化Bug
         showStatus(mainMessage);
     }
 
@@ -449,12 +457,7 @@ public class EditWin extends JFrame{
         pCenter.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                pCenterLayer.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
-                pane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());
-                //textPane.setBounds(0, 0, pCenter.getWidth(), pCenter.getHeight());//必须加这句话 - 这句话引入了新的滚动条BUG，用下面那两行
-                completeBack.setBounds(0, 0, pCenter.getWidth()-pane.getVerticalScrollBar().getWidth(), pCenter.getHeight()-pane.getHorizontalScrollBar().getHeight());
-                showStatus(""); //加这两句话，修正最大化Bug
-                showStatus(mainMessage);
+                adjustCenterPanel();
             }
         });
 
