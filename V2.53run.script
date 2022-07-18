@@ -1,0 +1,5 @@
+[c; gcc "%FILE%" -o "%PATH%\%NAME%.exe"; "%PATH%\%NAME%.exe";]
+[cpp; g++ "%FILE%" -o "%PATH%\%NAME%.exe"; "%PATH%\%NAME%.exe";]
+[java; javac -d "%PATH%" "%FILE%"; java %NAME%;]
+[scala; scalac.bat -d "%PATH%" "%FILE%"; scala.bat %NAME%;]
+[py; python "%FILE%";]
