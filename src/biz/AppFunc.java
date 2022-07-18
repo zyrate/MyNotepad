@@ -1060,9 +1060,10 @@ public class AppFunc {
                         if(editWin.getCompleter().isVisible()){
                             editWin.showCompleter();
                         }
-                    }else if(code != KeyEvent.VK_DOWN && code != KeyEvent.VK_UP){ //如果是其他按键（除了上下），都会取消提示框
+                    }else if(code != KeyEvent.VK_DOWN && code != KeyEvent.VK_UP
+                            && code != KeyEvent.VK_CONTROL && code != KeyEvent.VK_ALT && code != KeyEvent.VK_SHIFT){
+                        //如果是其他按键（除了上下和控制键），都会取消提示框
                         editWin.getCompleter().hidePanel();
-                        editWin.getCompleter().collectWords();
                     }
                     editWin.getCompleter().collectWords();
                 }

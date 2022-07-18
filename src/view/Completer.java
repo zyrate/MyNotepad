@@ -51,14 +51,20 @@ public class Completer extends ListAndScroll<String>{
             if (p != null) {
                 int x = p.x + xOffset - pane.getHorizontalScrollBar().getValue();
                 int y = p.y + yOffset - pane.getVerticalScrollBar().getValue();
+                boolean isCoverdByTop = false;
                 if(y + height > pane.getHeight()){//提示框被下面挡住了
                     y = y - height - yOffset ; //放到光标上面去
                     if(y < 0){//被上面挡住了
                         y += height;
                         x += fontSize*2;
+                        isCoverdByTop = true;
                     }
-                }if(x + width > pane.getWidth()){//提示框被右面挡住了
-                    x = x - width - fontSize ; //放到光标左面去
+                }
+                if(x + width > pane.getWidth()){//提示框被右面挡住了
+                    x = x - width ; //放到光标左面去
+                    if(isCoverdByTop){//被上面挡住了
+                        x -= fontSize*4;
+                    }
                 }
                 this.setBounds(x, y, width, height);
             }
