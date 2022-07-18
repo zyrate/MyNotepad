@@ -141,7 +141,7 @@ public class EditWin extends JFrame{
         textPane.setCodeMode(DTUtil.getCodeMode());
 
         boolean b = DTUtil.getShowLineNum();
-        pane.setRowHeaderView(b?new TextLineNumber(textPane):null);
+        pane.setRowHeaderView(b?new TextLineNumber(textPane, DTUtil.getDarkMode()):null);
         if(b) this.getCompleter().setxOffset(50);
         else this.getCompleter().setxOffset(0);
 

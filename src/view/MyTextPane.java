@@ -92,10 +92,12 @@ public class MyTextPane extends JTextPane {
             this.setBackground(Color.black);
             this.setForeground(Color.white);
             this.setCaretColor(Color.yellow);
+            this.setBorder(BorderFactory.createLineBorder(Color.darkGray));
         }else{
             this.setBackground(Color.white);
             this.setForeground(Color.black);
             this.setCaretColor(Color.black);
+            this.setBorder(BorderFactory.createLineBorder(Color.white));
         }
     }
     public boolean getDarkMode(){

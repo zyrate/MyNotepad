@@ -282,6 +282,9 @@ public class AppFunc {
             editWin.getiDark().setState(false);
             editWin.changeStatus("退出暗色模式");
         }
+        if(DTUtil.getShowLineNum()) {
+            editWin.getPane().setRowHeaderView(new TextLineNumber(editWin.getTextPane(), DTUtil.getDarkMode()));
+        }
         prepareHighlight();
         highlight();
     }
@@ -700,7 +703,7 @@ public class AppFunc {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(editWin.getiLineNum().getState() == true){
-                    editWin.getPane().setRowHeaderView(new TextLineNumber(editWin.getTextPane()));
+                    editWin.getPane().setRowHeaderView(new TextLineNumber(editWin.getTextPane(), DTUtil.getDarkMode()));
                     editWin.getCompleter().setxOffset(50);
                     DTUtil.setShowLineNum(true);
                 }else{

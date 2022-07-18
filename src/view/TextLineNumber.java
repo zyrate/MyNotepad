@@ -61,9 +61,9 @@ public class TextLineNumber extends JPanel
      *
      *  @param component  the related text component
      */
-    public TextLineNumber(JTextComponent component)
+    public TextLineNumber(JTextComponent component, boolean isDarkMode)
     {
-        this(component, 4);
+        this(component, 4, isDarkMode);
     }
 
     /**
@@ -73,7 +73,7 @@ public class TextLineNumber extends JPanel
      *  @param minimumDisplayDigits  the number of digits used to calculate
      *                               the minimum width of the component
      */
-    public TextLineNumber(JTextComponent component, int minimumDisplayDigits)
+    public TextLineNumber(JTextComponent component, int minimumDisplayDigits, boolean isDarkMode)
     {
         this.component = component;
 
@@ -81,10 +81,18 @@ public class TextLineNumber extends JPanel
 //        setFont( component.getFont() );//#
 
         setBorderGap( 5 );
-        setCurrentLineForeground( Color.BLACK );
-        setLineForeground( new Color(176, 176, 176) );
         setDigitAlignment( RIGHT );
         setMinimumDisplayDigits( minimumDisplayDigits );
+
+        if(isDarkMode){
+            setBackground(Color.black);
+            setCurrentLineForeground( Color.green );
+            setLineForeground(Color.darkGray);
+        }else {
+            setBackground(new Color(240, 240, 240));
+            setCurrentLineForeground( Color.BLACK );
+            setLineForeground( new Color(176, 176, 176) );
+        }
 
         component.getDocument().addDocumentListener(this);
         component.addCaretListener( this );
