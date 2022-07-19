@@ -2,6 +2,7 @@ package biz.hlt;
 
 import entity.Highlight;
 import entity.HltToken;
+import util.CompFactory;
 import view.MyTextPane;
 
 import javax.swing.*;
@@ -217,7 +218,7 @@ public class SimpleHighlighter {
         //这里如果颜色没设置的话，就默认
         if(textPane.getDarkMode()){ //暗色模式
             StyleConstants.setForeground(s, highlight.getColor()==null?Color.white:highlight.getColor());
-            StyleConstants.setBackground(s, highlight.getBackColor()==null? Color.black:highlight.getBackColor());
+            StyleConstants.setBackground(s, highlight.getBackColor()==null? CompFactory.color1 :highlight.getBackColor());
         }else{
             StyleConstants.setForeground(s, highlight.getColor()==null?Color.black:highlight.getColor());
             StyleConstants.setBackground(s, highlight.getBackColor()==null? Color.white:highlight.getBackColor());

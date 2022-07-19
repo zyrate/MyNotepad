@@ -85,7 +85,7 @@ public class TextLineNumber extends JPanel
         setMinimumDisplayDigits( minimumDisplayDigits );
 
         if(isDarkMode){
-            setBackground(Color.black);
+            setBackground(new Color(28, 28, 28));
             setCurrentLineForeground( Color.green );
             setLineForeground(Color.darkGray);
         }else {

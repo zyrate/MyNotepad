@@ -1,5 +1,6 @@
 package view;
 import biz.hlt.SimpleHighlighter;
+import util.CompFactory;
 import util.JavaUtil;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -89,7 +90,7 @@ public class MyTextPane extends JTextPane {
     public void setDarkMode(boolean isDarkMode){
         this.isDarkMode = isDarkMode;
         if(isDarkMode){
-            this.setBackground(Color.black);
+            this.setBackground(CompFactory.color1);
             this.setForeground(Color.white);
             this.setCaretColor(Color.yellow);
             this.setBorder(BorderFactory.createLineBorder(Color.darkGray));

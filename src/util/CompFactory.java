@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 public class CompFactory {
     public static final Font font1 = new Font("微软雅黑", 0, 18);//label字体
     public static final Font font2 = new Font("微软雅黑", 0, 17);//菜单字体
+    public static final Color color1 = new Color(22, 22, 22);//暗色背景
     public static JTextArea createTextArea(int x, int y, int width, int height){
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
