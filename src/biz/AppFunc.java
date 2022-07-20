@@ -1006,8 +1006,8 @@ public class AppFunc {
                         e.consume();
                         tp.offsetFromCare(1);
                     }
-                }else if(ch == '>'){
-                    tp.completeHtmlTag();
+                }else if(ch == '>' || ch == '-'){
+                    tp.completeHtmlTag(ch);
                 }
 
             }

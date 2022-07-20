@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -496,7 +498,13 @@ public class MyTextPane extends JTextPane {
     /**
      * 补全HTML标签
      */
-    public void completeHtmlTag(){
+
+    //空标签
+    private List<String> emptyTags = Arrays.asList(new String[]{
+            "br", "hr", "img", "input", "link", "meta",
+            "area", "base", "col", "colgroup", "embed", "source", "wbr",
+            "isindex", "basefont", "bgsound", "keygen", "param", "nextid"});
+    public void completeHtmlTag(char typedChar){
         if(isHtmlFile){
             String text = getLine();
             int pos = getCursorColumn()-1;
@@ -510,7 +518,17 @@ public class MyTextPane extends JTextPane {
             }
             if(i != -1 && i+1 != firstBlankIndex){
                 String tagName = text.substring(i+1, firstBlankIndex);
-                asynInsert("</"+tagName+">");
+                if(typedChar == '-' && tagName.equals("!-")){//注释
+                    asynInsert("  -->");
+                    SwingUtilities.invokeLater(new Runnable() {//要移动光标就要later
+                        @Override
+                        public void run() {
+                            setCaretPosition(getCaretPosition()+1);
+                        }
+                    });
+                }else if(typedChar == '>' && !emptyTags.contains(tagName)) {
+                    asynInsert("</" + tagName + ">");
+                }
             }
         }
     }
