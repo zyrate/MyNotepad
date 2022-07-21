@@ -51,6 +51,16 @@ public class DTUtil {
         }
     }
 
+    public static void setAnimation(boolean hasAnimation){
+        read();
+        settings.setHasAnimation(hasAnimation);
+        write(settings);
+    }
+    public static boolean getAnimation(){
+        read();
+        return settings.isHasAnimation();
+    }
+
     public static void setDarkMode(boolean isDarkMode){
         read();
         settings.setDarkMode(isDarkMode);

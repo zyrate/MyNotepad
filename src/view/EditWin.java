@@ -29,7 +29,7 @@ public class EditWin extends JFrame{
     private JMenu mFile, mEdit, mTools, mHelp, mHighlight, imEncoding, imCurrEncoding, mRun;
     private JMenuItem iOpen, iSave, iSaveAnother, iFont, iReset, iAbout, iCount, iNew, iDate, iNote,
                         iFind, iReplace, iReOpen, iPrint, iBaidu, iRun, iTranslate, iTimer, iCmd, iGithub;
-    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum, iDark;
+    private JCheckBoxMenuItem iLineWrap, iNoHL, iCode, iLineNum, iDark, iAnim;
     private JLabel lFoot1, lFoot2, lFoot3, lFoot4; //底部的各个信息标签，1-介绍，2-编码，3-位置，4-字数
     private String mainMessage = "就绪";//当前主要页脚信息
     private String footMessage = mainMessage;//显示的页脚信息
@@ -98,6 +98,7 @@ public class EditWin extends JFrame{
         iCode = CompFactory.createCheckMenuItem("代码模式 (\\)");
         iDark = CompFactory.createCheckMenuItem("暗色模式");
         iLineNum = CompFactory.createCheckMenuItem("显示行号");
+        iAnim = CompFactory.createCheckMenuItem("过渡动画");
         imEncoding = CompFactory.createMenu("默认编码方式");
         imCurrEncoding = CompFactory.createMenu("当前编码方式");
         iReOpen = CompFactory.createMenuItem("重新载入(U)", "control U");
@@ -139,6 +140,7 @@ public class EditWin extends JFrame{
         iDark.setState(DTUtil.getDarkMode());
         textPane.setDarkMode(DTUtil.getDarkMode());
         textPane.setCodeMode(DTUtil.getCodeMode());
+        iAnim.setState(DTUtil.getAnimation());
 
         boolean b = DTUtil.getShowLineNum();
         pane.setRowHeaderView(b?new TextLineNumber(textPane, DTUtil.getDarkMode()):null);
@@ -176,6 +178,7 @@ public class EditWin extends JFrame{
         mFile.addSeparator();
         mFile.add(iPrint);
         mFile.addSeparator();
+        mFile.add(iAnim);
         mFile.add(iReset);
         mEdit.add(iFont);
         mEdit.add(iLineWrap);
@@ -273,7 +276,7 @@ public class EditWin extends JFrame{
     }
     //开始动画
     private void starAnimation(){
-        if(!DTUtil.getMaxFrame()) {//没有最大化才有动画
+        if(!DTUtil.getMaxFrame() && DTUtil.getAnimation()) {//没有最大化才有动画
             for (int i = 50; i >= 0; i--) {
                 setLocation(DTUtil.getX() - i, DTUtil.getY());
             }
@@ -282,7 +285,7 @@ public class EditWin extends JFrame{
     }
     //关闭动画
     public void closeAnimation(){
-        if(!DTUtil.getMaxFrame())
+        if(!DTUtil.getMaxFrame() && DTUtil.getAnimation())
             for(int i = DTUtil.getWidth(), j = 0; i >= 0; i-=10){
                 setSize(i, 0);
                 if(j<=50) {
@@ -447,6 +450,7 @@ public class EditWin extends JFrame{
         addFootTipListener(iTimer, "正计时或倒计时");
         addFootTipListener(iCmd, "在文件所在路径打开命令行，Ctrl + L");
         addFootTipListener(iGithub, "打开本项目的GitHub页面，获取详细介绍与代码");
+        addFootTipListener(iAnim, "是否打开过渡动画");
 
         for(int i = 0; i < highlightItems.size(); i++){
             JCheckBoxMenuItem item = highlightItems.get(i);
@@ -525,6 +529,10 @@ public class EditWin extends JFrame{
 
     public JMenuItem getiAbout() {
         return iAbout;
+    }
+
+    public JCheckBoxMenuItem getiAnim() {
+        return iAnim;
     }
 
     public JCheckBoxMenuItem getiLineWrap() {

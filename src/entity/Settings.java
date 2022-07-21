@@ -16,6 +16,16 @@ public class Settings implements Serializable{
     private String lastOpenPath = "C:\\";//上一次打开的文件目录
     private String lastSavePath = "C:\\";//上一次保存的文件目录
     private String charset = "UTF-8";//编码
+    private boolean hasAnimation = true;//是否有过渡动画
+
+
+    public boolean isHasAnimation() {
+        return hasAnimation;
+    }
+
+    public void setHasAnimation(boolean hasAnimation) {
+        this.hasAnimation = hasAnimation;
+    }
 
     public boolean isDarkMode() {
         return darkMode;

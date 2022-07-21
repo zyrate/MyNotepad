@@ -271,15 +271,13 @@ public class AppFunc {
     }
     //暗色模式
     private void onDarkMode(){
-        if(!editWin.getTextPane().getDarkMode()){
+        if(editWin.getiDark().getState()){
             editWin.getTextPane().setDarkMode(true);
             DTUtil.setDarkMode(true);
-            editWin.getiDark().setState(true);
             editWin.changeStatus("暗色模式");
         }else{
             editWin.getTextPane().setDarkMode(false);
             DTUtil.setDarkMode(false);
-            editWin.getiDark().setState(false);
             editWin.changeStatus("退出暗色模式");
         }
         if(DTUtil.getShowLineNum()) {
@@ -776,6 +774,17 @@ public class AppFunc {
             public void actionPerformed(ActionEvent e) {
                 //暗色模式
                 onDarkMode();
+            }
+        });
+        editWin.getiAnim().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //过渡动画
+                if(editWin.getiAnim().getState()){
+                    DTUtil.setAnimation(true);
+                }else{
+                    DTUtil.setAnimation(false);
+                }
             }
         });
         editWin.getiReOpen().addActionListener(new ActionListener() {
