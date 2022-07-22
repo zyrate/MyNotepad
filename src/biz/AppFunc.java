@@ -567,9 +567,9 @@ public class AppFunc {
         //是否改动
         if(editWin.getContent() != null){//content等于null代表目前没有打开任何已存在文件
             if(contentChange()){
-                editWin.setTitle("*"+editWin.getFilePath()+" - "+About.APP_NAME);
+                editWin.setTitle("*"+editWin.getFileName()+" ["+editWin.getFilePath()+"] - "+About.APP_NAME);
             }else{
-                editWin.setTitle(editWin.getFilePath()+" - "+About.APP_NAME);
+                editWin.setTitle(editWin.getFileName()+" ["+editWin.getFilePath()+"] - "+About.APP_NAME);
             }
         }
         editWin.textChange();

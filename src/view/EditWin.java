@@ -306,9 +306,9 @@ public class EditWin extends JFrame{
     //更新显示
     public void update(){
         if(filePath == null)
-            setTitle("未命名 - MyNotepad");
+            setTitle("未命名 - "+About.APP_NAME);
         else
-            setTitle(filePath+" - MyNotepad");
+            setTitle(getFileName()+" ["+filePath+"] - "+About.APP_NAME);
         textPane.setFont(textFont);
         lFoot1.setText(footMessage);
         lFoot2.setText(currEncoding);
