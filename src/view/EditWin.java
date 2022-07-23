@@ -281,7 +281,12 @@ public class EditWin extends JFrame{
                 setLocation(DTUtil.getX() - i, DTUtil.getY());
             }
         }
-        adjustCenterPanel();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                adjustCenterPanel();
+            }
+        });
     }
     //关闭动画
     public void closeAnimation(){
